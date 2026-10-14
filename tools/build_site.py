@@ -124,19 +124,44 @@ def color_dim(meta, t):
     return ds[0]
 
 
-def chips(tags, meta, rel, primary=()):
+GRADE_CLASS = {"红": "g-red", "橙": "g-orange", "蓝": "g-blue"}
+GRADE_LABEL = {"红": "高相关", "橙": "中相关", "蓝": "低相关"}
+
+
+def chips(tags, meta, rel, primary=(), grades=None, sort_by_grade=True):
+    """标签胶囊。实体类标签会按「相关性等级」着色，并按 红→橙→蓝 排序。
+
+    grades: {标签: "红"/"橙"/"蓝"}（来自 tags.json 的每篇等级）
+    """
+    grades = grades or {}
+    order = {"红": 0, "橙": 1, "蓝": 2}
+
+    def gkey(t):
+        # 主序：等级（红→橙→蓝）；次序：标签名（确定性、便于查找）
+        return (order.get(grades.get(t), 3), t)
+
+    seq = sorted(tags, key=gkey) if sort_by_grade else list(tags)
     out = []
-    for t in tags:
+    for t in seq:
         ds = tag_dims(meta, t)
+        g = grades.get(t)
         cls = "chip chip-%s%s" % (slugcls(color_dim(meta, t)),
                                   " chip-primary" if t in primary else "")
         title = "、".join(ds)
         if len(ds) > 1:
             cls += " chip-multi"
+        if g:
+            cls += " " + GRADE_CLASS.get(g, "")
+            title = "%s（%s）" % (title, GRADE_LABEL.get(g, g))
+        mark = ""
+        if len(ds) > 1:
+            mark += '<span class="multi-mark" title="跨维度标签">⋈</span>'
+        if g:
+            mark += '<span class="grade-dot %s" title="%s"></span>' % (
+                GRADE_CLASS.get(g, ""), GRADE_LABEL.get(g, g))
         out.append('<a class="%s" href="%stag/%s.html" title="%s">%s%s</a>'
-                   % (cls, rel, meta[t]["slug"], html.escape(title), html.escape(t),
-                      '<span class="multi-mark" title="跨维度标签">⋈</span>'
-                      if len(ds) > 1 else ""))
+                   % (cls, rel, meta[t]["slug"], html.escape(title),
+                      html.escape(t), mark))
     return "".join(out)
 
 
@@ -232,7 +257,7 @@ def render_entries(data, by_id, site, tag_to_cat=None):
   <h1>{html.escape(rec['title'])}</h1>
   <p class="meta">{html.escape(e['kind'])} · {e['chars']} 字 · {html.escape(e['origin'])}
       · <span class="mono">{eid}</span></p>
-  <div class="chips">{chips(e['tags'], meta, rel, e['primary'])}</div>
+  <div class="chips">{chips(e['tags'], meta, rel, e['primary'], e.get('grades'))}</div>
   {catmod.chips(eid, e['tags'], None, tag_to_cat, rel)}
 </header>
 {toc}
@@ -276,14 +301,22 @@ def render_tags(data, by_id, site, min_doc=2):
         thin = len(ids) < min_doc
         extra = ('<meta name="robots" content="noindex,follow">\n' if thin else "")
         rows = []
-        for eid in sorted(ids):
+        # 相关性降序：本篇里该标签的权重越大＝越相关（等级也是由它派生的）
+        _byid = {x["id"]: x for x in data["entries"]}
+        _sorted_ids = sorted(ids, key=lambda i: (-_byid[i]["weights"].get(t, 0), i))
+        for eid in _sorted_ids:
             e = next(x for x in data["entries"] if x["id"] == eid)
+            _e = _byid[eid]
+            _g = (_e.get("grades") or {}).get(t)
             rows.append('<li data-id="%s" data-kind="%s" data-layer="%s">'
                         '<a href="../entry/%s-%s.html">%s</a>'
-                        '<span class="muted">%s · %d 字 · %s</span></li>'
-                        % (eid, e["kind"], layer_of(e, meta), eid,
-                           common.slugify(e["title"]), html.escape(e["title"]),
-                           html.escape(e["kind"]), e["chars"], eid))
+                        '<span class="muted">%s · %d 字 · %s%s</span></li>'
+                        % (eid, _e["kind"], layer_of(_e, meta), eid,
+                           common.slugify(_e["title"]), html.escape(_e["title"]),
+                           html.escape(_e["kind"]), _e["chars"], eid,
+                           (' <span class="grade-dot %s" title="%s"></span>'
+                            % (GRADE_CLASS.get(_g, ""), GRADE_LABEL.get(_g, _g)))
+                           if _g else ""))
         related = []
         for t2 in sorted(idx, key=lambda x: -len(set(idx[x]) & set(ids))):
             if t2 == t:
@@ -345,6 +378,15 @@ def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
     subcats = subcats or {}
     cat_index = cat_index or []
     cat_by_key = {(c["dim"], c["name"]): c for c in cat_index}
+    # 每个标签在全集的「典型等级」：出现最多的档，平手取更高的档（首页标签墙染色用）
+    _ord = {"红": 0, "橙": 1, "蓝": 2}
+    tag_grade = {}
+    for _t in meta:
+        _cnt = collections.Counter(
+            (e.get("grades") or {}).get(_t) for e in data["entries"]
+            if (e.get("grades") or {}).get(_t))
+        if _cnt:
+            tag_grade[_t] = sorted(_cnt.items(), key=lambda kv: (-kv[1], _ord[kv[0]]))[0][0]
 
     # 栏目
     cols = []
@@ -352,7 +394,11 @@ def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
         t = c["tag"]
         if t not in idx:
             continue
-        picks = c.get("picks") or [e for e in idx[t]]
+        _all = idx[t]
+        # 相关性降序：该栏目标签在篇内的权重越大＝越相关
+        _w = {e["id"]: e.get("weights", {}) for e in data["entries"]}
+        _rank = sorted(_all, key=lambda i: (-_w.get(i, {}).get(t, 0), i))
+        picks = c.get("picks") or _rank
         picks = picks[: c.get("limit", 6)]
         rows = "".join(
             '<li><a href="entry/%s-%s.html">%s</a><span class="muted">%d 字</span></li>'
@@ -378,10 +424,14 @@ def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
         def chip_for(n, t):
             ds = tag_dims(meta, t)
             multi = len(ds) > 1
-            return ('<a class="chip chip-%s%s" href="tag/%s.html" title="%s">%s<b>%d</b>%s</a>'
-                    % (slugcls(color_dim(meta, t)), " chip-multi" if multi else "",
-                       meta[t]["slug"], "、".join(ds), html.escape(t), n,
-                       '<span class="multi-mark">⋈</span>' if multi else ""))
+            g = tag_grade.get(t)
+            gc = (" g-" + {"红": "red", "橙": "orange", "蓝": "blue"}[g]) if g else ""
+            title = "、".join(ds) + (("（%s）" % GRADE_LABEL[g]) if g else "")
+            dot = ('<span class="grade-dot g-%s"></span>' % {"红": "red", "橙": "orange", "蓝": "blue"}[g]) if g else ""
+            return ('<a class="chip chip-%s%s%s" href="tag/%s.html" title="%s">%s<b>%d</b>%s%s</a>'
+                    % (slugcls(color_dim(meta, t)), " chip-multi" if multi else "", gc,
+                       meta[t]["slug"], html.escape(title), html.escape(t), n,
+                       '<span class="multi-mark">⋈</span>' if multi else "", dot))
 
         # 有子分类定义就按子分类折叠；否则平铺
         if d in subcats:
@@ -399,7 +449,8 @@ def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
                 cnt = ('<span class="muted">%d 个标签 · %d 篇</span>'
                        % (len(members), len(c["entries"])) if c
                        else '<span class="muted">%d</span>' % len(members))
-                open_attr = ' open' if c and len(c["entries"]) >= 40 else ''
+                # 作者 2026-10-14：子分类**默认全部展开**，方便读者一眼看到内容量
+                open_attr = ' open'
                 sub_html.append(
                     '<details class="subcat"%s><summary><h4>%s<span class="sub-link">'
                     '查看该分类 →</span>%s</h4></summary>'
@@ -412,10 +463,11 @@ def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
                     '<div class="subcat subcat-rest"><h4>未分类<span class="muted">%d</span></h4>'
                     '<div class="chips">%s</div></div>'
                     % (len(rest), "".join(chip_for(n, t) for n, t in rest)))
+            # 维度层也默认展开
             group_html.append(
-                '<details class="tag-group" %s><summary><h3>%s<span class="muted">%d</span>'
+                '<details class="tag-group" open><summary><h3>%s<span class="muted">%d</span>'
                 '<span class="sub-hint">%d 个子分类</span></h3></summary>%s</details>'
-                % ("open" if len(lst) <= 60 else "", html.escape(d), len(lst),
+                % (html.escape(d), len(lst),
                    len([x for x in sub_html]), "".join(sub_html)))
         else:
             chips_html = "".join(chip_for(n, t) for n, t in lst)
@@ -482,6 +534,14 @@ def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
   <h2>全部标签</h2>
   <p class="muted">共 {data['tag_count']} 个标签，按维度分组；数字为该标签下的篇数。
      带 <span class="multi-mark">⋈</span> 的标签属于多个维度，会在每个维度下都出现。</p>
+  <div class="grade-legend">
+    <b>标签与文章的相关性</b>
+    <span><i style="background:var(--g-red)"></i>红 · 高相关：全篇围绕它展开</span>
+    <span><i style="background:var(--g-orange)"></i>橙 · 中相关：重要参与</span>
+    <span><i style="background:var(--g-blue)"></i>蓝 · 低相关：顺带提及</span>
+    <span>由频次、篇内占比、篇内排名与发言次数算出（只对人物／组织／地理／设施／剧情线）。
+    点开标签后，文章按相关性从高到低排列。</span>
+  </div>
   {multi_html}
   {''.join(group_html)}
 </section>
@@ -577,6 +637,22 @@ align-items:baseline}
 .subcat[open]>summary::before{content:"▾"}
 .sub-link{color:var(--accent2);font-size:.78em;font-weight:400;margin-left:auto}
 .chip-cat{border-left:3px solid var(--accent2)}
+/* 标签↔文章 相关性等级（乙方案：确定性公式）：红 > 橙 > 蓝 */
+:root{--g-red:#c8553d;--g-orange:#d98b2b;--g-blue:#5b7f95}
+.chip.g-red{border-color:var(--g-red)}
+.chip.g-orange{border-color:var(--g-orange)}
+.chip.g-blue{border-color:var(--g-blue);opacity:.92}
+.grade-dot{display:inline-block;width:.5em;height:.5em;border-radius:50%;
+margin-left:.3em;vertical-align:middle;background:var(--muted)}
+.grade-dot.g-red{background:var(--g-red)}
+.grade-dot.g-orange{background:var(--g-orange)}
+.grade-dot.g-blue{background:var(--g-blue)}
+.grade-legend{display:flex;gap:.9rem 1.2rem;flex-wrap:wrap;align-items:center;
+background:var(--card);border:1px solid var(--line);border-radius:10px;
+padding:.55rem .85rem;margin:.9rem 0;font-size:.85rem;color:var(--muted)}
+.grade-legend b{color:var(--fg);font-weight:600}
+.grade-legend i{display:inline-block;width:.6em;height:.6em;border-radius:50%;
+margin-right:.32em;vertical-align:middle}
 .cats{margin:.5rem 0 0;font-size:.88rem;color:var(--muted);display:flex;gap:.4rem;
 flex-wrap:wrap;align-items:center}
 .dim-note{background:var(--card);border-left:3px solid var(--accent2);padding:.5rem .8rem;
@@ -698,6 +774,7 @@ def render_assets(data, by_id, featured):
               "multi_dimension_tags": data.get("multi_dimension_tags", []),
               "tags": data["tags"],
               "entry_tags": {e["id"]: {"tags": e["tags"], "primary": e["primary"],
+                                       "grades": e.get("grades") or {},
                                        "kind": e["kind"], "chars": e["chars"],
                                        "dims": e["dims"],
                                        "layer": layer_of(e, data["tags"])}
@@ -718,8 +795,36 @@ def render_assets(data, by_id, featured):
     return n
 
 
+def prune_stale(keep_under):
+    """删除 docs/ 下已不再生成的 .html（分类改名/删除后会留下过期页面）。
+
+    只处理 keep_under 里的 .html；assets/ 等其它文件不动。
+    返回删除数量。
+    """
+    removed = 0
+    for sub in keep_under:
+        d = os.path.join(DOCS, sub) if sub else DOCS
+        if not os.path.isdir(d):
+            continue
+        for root, dirs, files in os.walk(d):
+            for f in files:
+                if not f.endswith(".html"):
+                    continue
+                p = os.path.join(root, f)
+                rel = os.path.relpath(p, DOCS).replace("\\", "/")
+                if rel not in KEEP_FILES:
+                    os.remove(p)
+                    removed += 1
+    return removed
+
+
+KEEP_FILES = set()
+
+
 def write_if_changed(path, content):
     """内容相同则不重写（保住 mtime，增量构建友好）。返回写入数。"""
+    rel = os.path.relpath(path, DOCS).replace("\\", "/")
+    KEEP_FILES.add(rel)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     data = content.encode("utf-8")
     if os.path.exists(path):
@@ -763,8 +868,10 @@ def main():
     n += catmod.render_pages(cat_index, data, site, page, write_if_changed)
     n += write_if_changed(os.path.join(DOCS, "index.html"),
                           render_index(data, by_id, site, featured, subcats, cat_index))
+    stale = prune_stale(("entry", "tag", "cat", ""))
     print(json.dumps({"written": n, "entries": data["entry_count"],
                       "tags": data["tag_count"], "categories": len(cat_index),
+                      "pruned_stale_pages": stale,
                       "featured_auto": featured.get("auto", False),
                       "subcategorised_dims": sorted(subcats)}, ensure_ascii=False))
 

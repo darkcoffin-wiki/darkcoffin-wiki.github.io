@@ -77,6 +77,22 @@ align-items:baseline}
 .subcat[open]>summary::before{content:"▾"}
 .sub-link{color:var(--accent2);font-size:.78em;font-weight:400;margin-left:auto}
 .chip-cat{border-left:3px solid var(--accent2)}
+/* 标签↔文章 相关性等级（乙方案：确定性公式）：红 > 橙 > 蓝 */
+:root{--g-red:#c8553d;--g-orange:#d98b2b;--g-blue:#5b7f95}
+.chip.g-red{border-color:var(--g-red)}
+.chip.g-orange{border-color:var(--g-orange)}
+.chip.g-blue{border-color:var(--g-blue);opacity:.92}
+.grade-dot{display:inline-block;width:.5em;height:.5em;border-radius:50%;
+margin-left:.3em;vertical-align:middle;background:var(--muted)}
+.grade-dot.g-red{background:var(--g-red)}
+.grade-dot.g-orange{background:var(--g-orange)}
+.grade-dot.g-blue{background:var(--g-blue)}
+.grade-legend{display:flex;gap:.9rem 1.2rem;flex-wrap:wrap;align-items:center;
+background:var(--card);border:1px solid var(--line);border-radius:10px;
+padding:.55rem .85rem;margin:.9rem 0;font-size:.85rem;color:var(--muted)}
+.grade-legend b{color:var(--fg);font-weight:600}
+.grade-legend i{display:inline-block;width:.6em;height:.6em;border-radius:50%;
+margin-right:.32em;vertical-align:middle}
 .cats{margin:.5rem 0 0;font-size:.88rem;color:var(--muted);display:flex;gap:.4rem;
 flex-wrap:wrap;align-items:center}
 .dim-note{background:var(--card);border-left:3px solid var(--accent2);padding:.5rem .8rem;

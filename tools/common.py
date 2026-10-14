@@ -187,3 +187,18 @@ def write_json(path, obj):
 if __name__ == "__main__":
     for t in ["叶心与红樱的谈话", "蚀血教来袭？这是什么", "hx-001"]:
         print(t, "->", slugify(t))
+
+_SPEAKER_RE = re.compile(r"(?:^|\n)[ \t]*(?:\*\*)?([\u4e00-\u9fffA-Za-z0-9\u00b7]{1,12})(?:\*\*)?[ \t]*[：:]")
+
+
+def speaker_counts(body):
+    """一次扫描统计所有「对白发言人」出现次数（名字：）。
+
+    比逐个标签跑正则快得多：210 篇 × 175 个人物标签 × 全文扫描会非常慢。
+    返回 dict: 名字 → 次数。
+    """
+    import collections
+    c = collections.Counter()
+    for m in _SPEAKER_RE.finditer(body or ""):
+        c[m.group(1)] += 1
+    return c

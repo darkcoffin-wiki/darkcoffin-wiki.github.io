@@ -34,6 +34,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common  # noqa: E402
+import grading as grading_mod  # noqa: E402
 
 W = common.W
 DATA = common.DATA
@@ -551,6 +552,21 @@ def main():
             # dims: 标签 → 维度**列表**（多维度标签会出现多个）
             "dims": {t[0]: t[1] for t in ordered},
         }
+        # ── 实体类标签的「标签↔文章」相关性等级（红/橙/蓝） ──
+        # 乙方案：确定性公式，见 tools/grading.py。只给实体类算。
+        g_grades = {}
+        _body = rec["body"]
+        _n = max(1, len(_body))
+        _spk = common.speaker_counts(_body)
+        _ents = sorted(((t, rec_out["weights"].get(t, 1)) for t in rec_out["tags"]
+                        if grading_mod.is_entity(rec_out["dims"].get(t))),
+                       key=lambda x: -x[1])
+        _rank = {t: i + 1 for i, (t, _w) in enumerate(_ents)}
+        for _t, _w in _ents:
+            _ratio = _w / _n * 1000.0
+            _sp = _spk.get(_t, 0) if "人物" in (rec_out["dims"].get(_t) or []) else 0
+            g_grades[_t] = grading_mod.grade_of(_w, _ratio, _rank[_t], _sp)
+        rec_out["grades"] = g_grades
         entry_tags.append(rec_out)
         for t in rec_out["tags"]:
             tag_index[t].append(eid)
@@ -609,6 +625,9 @@ def main():
         "tag_order": [d for d in dim_order if d in present] +
                      sorted(present - set(dim_order)),
         "multi_dimension_tags": multi_tags,
+        "grade_rule": "tools/grading.py（乙方案：频次+占比+篇内排名+发言次数）",
+        "grade_dist": dict(collections.Counter(
+            g for e in entry_tags for g in (e.get("grades") or {}).values())),
         "tags": tag_meta,
         "entries": entry_tags,
         "tag_index": {t: sorted(v) for t, v in sorted(tag_index.items())},

@@ -43,7 +43,11 @@ def build_index(tags_data, sc):
             for t in members:
                 for eid in idx[t]:
                     weight[eid] += by_id[eid]["weights"].get(t, 1)
-            entries = sorted(weight, key=lambda e: (-weight[e], -by_id[e]["chars"]))
+            # 相关性降序（乙方案）：取本组内各标签在本篇权重的**最大值**，
+            # 而不是累计——否则「顺带提及的标签多」会盖过「真的围绕一个标签展开」
+            peak = {eid: max((by_id[eid]["weights"].get(t, 0) for t in members),
+                             default=0) for eid in weight}
+            entries = sorted(weight, key=lambda e: (-peak[e], -by_id[e]["chars"]))
             slug = "%s-%s" % (common.slugify(dim), common.slugify(g["name"]))
             out.append({
                 "dim": dim, "name": g["name"], "slug": slug,
@@ -89,6 +93,17 @@ def render_pages(cat_index, tags_data, site, page_fn, write_fn, rel="../", min_d
     meta = tags_data["tags"]
     idx = tags_data["tag_index"]
     by_id = {e["id"]: e for e in tags_data["entries"]}
+    _e_grades = {e["id"]: (e.get("grades") or {}) for e in tags_data["entries"]}
+    _ord = {"红": 0, "橙": 1, "蓝": 2}
+    # 每个标签在全集的「典型等级」：出现最多的档，平手取更高的档
+    tag_grade = {}
+    for _t in meta:
+        _cnt = collections.Counter(
+            _e_grades[_e["id"]][_t] for _e in tags_data["entries"]
+            if _t in _e_grades[_e["id"]])
+        if _cnt:
+            tag_grade[_t] = sorted(_cnt.items(),
+                                   key=lambda kv: (-kv[1], _ord[kv[0]]))[0][0]
     n = 0
     for c in cat_index:
         rows = []
@@ -97,17 +112,31 @@ def render_pages(cat_index, tags_data, site, page_fn, write_fn, rel="../", min_d
             dims = e["dims"]
             layer = next((t for t in e["tags"]
                           if "叙事层级" in (dims.get(t) or [])), "")
+            _g = _e_grades.get(eid) or {}
+            _best = min((_g[t] for t in c["member_tags"] if _g.get(t)),
+                        key=lambda x: _ord[x], default=None)
+            _dot = (' <span class="grade-dot g-%s" title="%s"></span>'
+                    % ({"红": "red", "橙": "orange", "蓝": "blue"}[_best], _best)
+                    ) if _best else ""
             rows.append('<li data-id="%s" data-kind="%s" data-layer="%s">'
                         '<a href="../entry/%s-%s.html">%s</a>'
-                        '<span class="muted">%s · %d 字 · %s</span></li>'
+                        '<span class="muted">%s · %d 字 · %s%s</span></li>'
                         % (eid, e["kind"], layer, eid, common.slugify(e["title"]),
-                           e["title"], e["kind"], e["chars"], eid))
+                           e["title"], e["kind"], e["chars"], eid, _dot))
         tag_chips = "".join(
-            '<a class="chip chip-%s%s" href="../tag/%s.html">%s<b>%d</b>%s</a>'
-            % (tag_color(meta, t), " chip-multi" if len(meta[t].get("dimensions") or []) > 1 else "",
-               meta[t]["slug"], t, len(idx[t]),
+            '<a class="chip chip-%s%s%s" href="../tag/%s.html" title="%s">%s<b>%d</b>%s%s</a>'
+            % (tag_color(meta, t),
+               " chip-multi" if len(meta[t].get("dimensions") or []) > 1 else "",
+               (" g-" + {"红": "red", "橙": "orange", "蓝": "blue"}[tag_grade[t]]) if t in tag_grade else "",
+               meta[t]["slug"],
+               "、".join(meta[t].get("dimensions") or [])
+               + (("（%s）" % {"红": "高相关", "橙": "中相关", "蓝": "低相关"}[tag_grade[t]])
+                  if t in tag_grade else ""),
+               t, len(idx[t]),
                '<span class="multi-mark">⋈</span>'
-               if len(meta[t].get("dimensions") or []) > 1 else "")
+               if len(meta[t].get("dimensions") or []) > 1 else "",
+               ('<span class="grade-dot g-%s"></span>' % {"红": "red", "橙": "orange", "蓝": "blue"}[tag_grade[t]])
+               if t in tag_grade else "")
             for t in c["member_tags"])
         body = """<section class="cat-page">
 <header class="tag-head">
