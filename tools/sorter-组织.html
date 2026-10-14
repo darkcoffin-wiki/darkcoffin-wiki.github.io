@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>石头扔袋子 · 组织 分类器</title>
+<style>
+:root{--bg:#14161a;--fg:#e8e6e3;--muted:#9aa0a6;--line:#2a2e35;--card:#1b1f25;
+--accent:#c8553d;--ok:#4f9d69;--hi:#7ea8c4}
+@media (prefers-color-scheme:light){:root{--bg:#faf9f7;--fg:#1e1f22;--muted:#666;
+--line:#e2ded8;--card:#fff;--accent:#a83b25;--ok:#2f7a4d;--hi:#3f6f92}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:15px/1.6 -apple-system,"Segoe UI","Noto Sans SC","Microsoft YaHei",sans-serif}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);
+padding:.6rem 1rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+h1{font-size:1rem;margin:0}
+.bar{flex:1;min-width:6rem;height:.5rem;background:var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--ok);transition:width .2s}
+.stat{color:var(--muted);font-size:.85rem;white-space:nowrap}
+button{cursor:pointer;background:var(--bg);color:var(--fg);border:1px solid var(--line);
+border-radius:8px;padding:.3rem .6rem;font-size:.85rem}
+button:hover{border-color:var(--hi)}
+button.primary{border-color:var(--ok);color:var(--ok)}
+main{display:grid;grid-template-columns:minmax(12rem,19rem) 1fr;gap:1rem;padding:1rem;align-items:start}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.pool{position:sticky;top:5rem;background:var(--card);border:1px solid var(--line);
+border-radius:12px;padding:.7rem;max-height:74vh;overflow:auto}
+.pool h2{font-size:.9rem;margin:.2rem 0 .5rem;color:var(--muted);font-weight:600}
+.stone{display:inline-flex;align-items:center;gap:.35rem;margin:.18rem;padding:.2rem .6rem;
+background:var(--bg);border:1px solid var(--line);border-radius:99px;cursor:grab;
+user-select:none;font-size:.88rem}
+.stone:active{cursor:grabbing}
+.stone.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.stone b{color:var(--muted);font-weight:500;font-size:.85em}
+.stone.fresh{border-style:dashed;border-color:var(--ok)}
+.stone.flash{animation:pop .35s ease}
+.stone .cp{color:var(--hi);font-size:.85em;opacity:.75}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.16)}100%{transform:scale(1)}}
+.bags{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.7rem}
+.bag{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:.6rem .7rem;
+min-height:5.5rem}
+.bag.hover{border-color:var(--ok);border-style:solid;background:var(--bg)}
+.bag h3{margin:.1rem 0 .35rem;font-size:.9rem;display:flex;gap:.4rem;align-items:baseline}
+.bag h3 .num{color:var(--muted);font-weight:400;font-size:.8em}
+.bag h3 .nm{cursor:text;border-bottom:1px dotted transparent}
+.bag h3 .nm:hover{border-bottom-color:var(--hi)}
+.bag h3 .cnt{color:var(--muted);font-weight:400;font-size:.8em;margin-left:auto}
+.bag h3 .del{color:var(--muted);font-size:.8em;cursor:pointer;border:0;background:none;padding:0 .2rem}
+.bag h3 .del:hover{color:var(--accent)}
+.bag .hint{color:var(--muted);font-size:.75rem;margin:.1rem 0 .4rem}
+.bag .drop{display:flex;flex-wrap:wrap;gap:.2rem;min-height:1.8rem}
+.bag .stone{cursor:pointer}
+.newbag{border:2px dashed var(--ok);border-radius:12px;min-height:5.5rem;display:flex;
+align-items:center;justify-content:center;color:var(--ok);font-size:.9rem;text-align:center;
+padding:.6rem;background:transparent}
+.newbag.hover{background:var(--card)}
+#trash{position:fixed;left:50%;bottom:1.6rem;transform:translateX(-50%);z-index:30;
+background:var(--card);border:2px dashed var(--line);border-radius:12px;padding:.6rem 1.2rem;
+font-size:.88rem;color:var(--muted);opacity:0;transition:opacity .15s,transform .15s;
+pointer-events:none}
+#trash.show{opacity:1}
+#trash.hot{border-color:var(--accent);color:var(--accent);transform:translateX(-50%) scale(1.06)}
+.toast{position:fixed;left:50%;bottom:5.6rem;transform:translateX(-50%);z-index:40;
+background:var(--card);border:1px solid var(--line);border-radius:99px;padding:.4rem 1rem;
+font-size:.85rem;color:var(--muted);opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.help{color:var(--muted);font-size:.78rem;padding:0 1rem}
+.help kbd{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 .3rem}
+textarea{width:100%;height:9rem;background:var(--bg);color:var(--fg);
+border:1px solid var(--line);border-radius:8px;padding:.5rem;
+font-family:ui-monospace,Consolas,monospace;font-size:.8rem}
+details{margin:1rem;background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.6rem .8rem}
+summary{cursor:pointer;font-size:.9rem}
+.foot{color:var(--muted);font-size:.8rem;padding:0 1rem 1.4rem;text-align:center}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--fg);
+padding:1rem 1.2rem;max-width:26rem}
+dialog::backdrop{background:#0008}
+dialog input{width:100%;padding:.4rem .6rem;background:var(--bg);color:var(--fg);
+border:1px solid var(--line);border-radius:8px;font-size:.95rem;margin:.4rem 0 .8rem}
+dialog .row{display:flex;gap:.5rem;justify-content:flex-end}
+dialog .tip{color:var(--muted);font-size:.78rem;margin:.1rem 0 .2rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>石头扔袋子 · <span id="dim"></span></h1>
+  <div class="bar"><i id="prog"></i></div>
+  <span class="stat" id="stat"></span>
+  <span class="stat" id="streak"></span>
+  <button id="btn-newstone" class="primary">+ 新建石头</button>
+  <button id="btn-new" class="primary">+ 新建袋子</button>
+  <button id="btn-undo">撤销 (Ctrl+Z)</button>
+  <button id="btn-reset">重置</button>
+  <button id="btn-export">导出/复制结果</button>
+</header>
+
+<p class="help">
+  拖石头进袋子（<b>拖到屏幕上下边缘会自动滚屏</b>）｜ 先点石头再点袋子 ｜
+  点石头后按 <kbd>1</kbd>…<kbd>9</kbd> 扔进对应袋子 ｜
+  <b>Ctrl/Alt + 拖 = 复制</b>（一个标签进多个袋子）｜
+  点袋子里的石头 = 拿出来 ｜ 拖到底部 <b>🗑</b> = 从所有袋子拿出 ｜ 点袋子名 = 改名
+</p>
+
+<main>
+  <section class="pool">
+    <h2>还没归类的石头 <span id="poolcount"></span></h2>
+    <div class="hint" style="color:var(--muted);font-size:.75rem">
+      石头上的小数字＝关联篇数。虚线边框的是你新加的石头（篇数 0）。
+      拖到右侧「新袋子」上可以直接建一个。
+    </div>
+    <div id="pool"></div>
+  </section>
+  <section class="bags" id="bags"></section>
+</main>
+
+<details>
+  <summary>导出 / 导入（把结果发给我，或自己跑脚本应用）</summary>
+  <p style="color:var(--muted);font-size:.78rem">
+    自动存在浏览器本地，关掉再打开会继续。导出内容**包含袋子名、新建的袋子、以及你新建的石头**。
+  </p>
+  <textarea id="io" spellcheck="false"></textarea>
+  <p>
+    <button id="btn-copy">复制 JSON</button>
+    <button id="btn-download">下载 JSON</button>
+    <button id="btn-load">从文本框导入</button>
+  </p>
+</details>
+
+<div id="trash">🗑 丢这里 = 从所有袋子拿出</div>
+<div class="toast" id="toast"></div>
+<div class="foot" id="foot"></div>
+
+<dialog id="dlg">
+  <form method="dialog">
+    <label id="dlg-label" style="font-size:.9rem">名称</label>
+    <p class="tip" id="dlg-tip"></p>
+    <input id="dlg-input" autocomplete="off">
+    <div class="row">
+      <button value="cancel">取消</button>
+      <button id="dlg-ok" value="ok" class="primary">确定</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const D = {"dim": "组织", "bags": [{"name": "政党", "source": "", "tags": ["希共", "进盟", "民主党", "启示录教团国", "人民阵线", "复兴党"]}, {"name": "政府机构", "source": "", "tags": ["戡乱政府", "异常事务委员会", "希共中央", "国民大会", "青都科学院", "内务部", "宣传部", "科技部", "党务部", "特别事务委员会", "政治局", "经济部", "人类基因测序部", "外务委员会"]}, {"name": "军队与准军事组织", "source": "", "tags": ["宪兵队", "纠察队", "复国军", "国际纵队", "巡林队", "学生军", "深黑军团", "红军", "党卫队", "赤卫队", "亲卫队", "区防务第一大队", "督战队"]}, {"name": "企业", "source": "", "tags": ["天天集团", "富贵集团", "天策", "光胜集团", "小父集团", "天堂物流", "大禾集团"]}, {"name": "宗教团体", "source": "", "tags": ["启示录教团", "蚀血教", "天空教", "圣照会", "承罪学社", "虚无会"]}, {"name": "帮派", "source": "", "tags": ["通雷帮", "铁狼帮", "韩帮"]}, {"name": "家族", "source": "", "tags": ["斯卡雷特家族", "月见家", "时崎家", "高家", "鸣家", "柳生家"]}, {"name": "媒体与文艺", "source": "", "tags": ["文艺救国队", "THEM报社"]}, {"name": "非政党组织", "source": "（本次新建）", "tags": ["蚀血教", "帝国号角", "黑旗", "承罪学社"]}], "stones": [{"tag": "希共", "n": 102, "dims": ["组织"]}, {"tag": "进盟", "n": 71, "dims": ["组织"]}, {"tag": "宪兵队", "n": 57, "dims": ["组织"]}, {"tag": "民主党", "n": 54, "dims": ["组织"]}, {"tag": "戡乱政府", "n": 36, "dims": ["组织"]}, {"tag": "启示录教团国", "n": 35, "dims": ["组织"]}, {"tag": "天天集团", "n": 33, "dims": ["组织"]}, {"tag": "启示录教团", "n": 32, "dims": ["组织"]}, {"tag": "富贵集团", "n": 29, "dims": ["组织", "剧情线"]}, {"tag": "纠察队", "n": 24, "dims": ["组织"]}, {"tag": "天策", "n": 21, "dims": ["组织"]}, {"tag": "斯卡雷特家族", "n": 21, "dims": ["组织"]}, {"tag": "复国军", "n": 20, "dims": ["组织"]}, {"tag": "异常事务委员会", "n": 18, "dims": ["组织"]}, {"tag": "希共中央", "n": 17, "dims": ["组织"]}, {"tag": "人民阵线", "n": 16, "dims": ["组织"]}, {"tag": "光胜集团", "n": 14, "dims": ["组织", "剧情线"]}, {"tag": "国际纵队", "n": 13, "dims": ["组织"]}, {"tag": "国民大会", "n": 12, "dims": ["组织"]}, {"tag": "复兴党", "n": 12, "dims": ["组织"]}, {"tag": "月见家", "n": 12, "dims": ["组织"]}, {"tag": "蚀血教", "n": 12, "dims": ["组织"]}, {"tag": "通雷帮", "n": 12, "dims": ["组织"]}, {"tag": "青都科学院", "n": 12, "dims": ["组织"]}, {"tag": "小父集团", "n": 11, "dims": ["组织"]}, {"tag": "帝国号角", "n": 11, "dims": ["组织"]}, {"tag": "巡林队", "n": 10, "dims": ["组织"]}, {"tag": "黑旗", "n": 10, "dims": ["组织"]}, {"tag": "内务部", "n": 9, "dims": ["组织"]}, {"tag": "宣传部", "n": 9, "dims": ["组织"]}, {"tag": "铁狼帮", "n": 9, "dims": ["组织"]}, {"tag": "学生军", "n": 8, "dims": ["组织"]}, {"tag": "深黑军团", "n": 8, "dims": ["组织"]}, {"tag": "科技部", "n": 8, "dims": ["组织"]}, {"tag": "天空教", "n": 7, "dims": ["组织"]}, {"tag": "红军", "n": 7, "dims": ["组织"]}, {"tag": "党务部", "n": 6, "dims": ["组织"]}, {"tag": "文艺救国队", "n": 6, "dims": ["组织"]}, {"tag": "韩帮", "n": 6, "dims": ["组织"]}, {"tag": "党卫队", "n": 5, "dims": ["组织"]}, {"tag": "圣照会", "n": 5, "dims": ["组织"]}, {"tag": "天堂物流", "n": 5, "dims": ["组织"]}, {"tag": "时崎家", "n": 5, "dims": ["组织"]}, {"tag": "赤卫队", "n": 5, "dims": ["组织"]}, {"tag": "高家", "n": 5, "dims": ["组织"]}, {"tag": "THEM报社", "n": 4, "dims": ["组织"]}, {"tag": "大禾集团", "n": 4, "dims": ["组织"]}, {"tag": "特别事务委员会", "n": 4, "dims": ["组织"]}, {"tag": "鸣家", "n": 4, "dims": ["组织"]}, {"tag": "亲卫队", "n": 3, "dims": ["组织"]}, {"tag": "承罪学社", "n": 3, "dims": ["组织"]}, {"tag": "区防务第一大队", "n": 2, "dims": ["组织"]}, {"tag": "政治局", "n": 2, "dims": ["组织"]}, {"tag": "柳生家", "n": 2, "dims": ["组织"]}, {"tag": "经济部", "n": 2, "dims": ["组织"]}, {"tag": "人类基因测序部", "n": 1, "dims": ["组织"]}, {"tag": "外务委员会", "n": 1, "dims": ["组织"]}, {"tag": "督战队", "n": 1, "dims": ["组织"]}, {"tag": "虚无会", "n": 1, "dims": ["组织"]}], "generatedBy": "tools/make_sorter.py"};
+const LS = "heijiu-sorter-v3-" + D.dim;
+
+let state = {
+  bags: D.bags.map(b => ({name: b.name, source: b.source || ""})),
+  members: D.bags.map(b => (b.tags || []).slice()),
+  stones: D.stones.map(s => s.tag),      // 允许新建石头
+  fresh: {}                              // tag -> true（新建的石头）
+};
+try {
+  const raw = localStorage.getItem(LS);
+  if (raw) { const j = JSON.parse(raw);
+    if (j && j.bags && j.members && j.stones) state = j; }
+} catch (e) {}
+
+const nOf = t => (D.stones.find(s => s.tag === t) || {}).n ?? 0;
+const el = id => document.getElementById(id);
+el("dim").textContent = D.dim;
+
+let history = [], selected = null, streak = 0, lastT = Date.now();
+
+function snapshot(){ return JSON.parse(JSON.stringify(state)); }
+function pushHistory(){ history.push(snapshot()); if (history.length > 80) history.shift(); }
+function save(){ try { localStorage.setItem(LS, JSON.stringify(state)); } catch(e){} }
+function toast(m){ const t = el("toast"); t.textContent = m; t.classList.add("on");
+  clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove("on"), 1600); }
+function whereIs(tag){ const r=[]; state.members.forEach((m,i)=>{ if(m.includes(tag)) r.push(i); }); return r; }
+function unassigned(){ return state.stones.filter(t => whereIs(t).length === 0); }
+
+/* ---------- 拖拽时自动滚屏（解决「屏幕外的袋子够不着」） ---------- */
+let dragY = null, scrollV = 0, ticking = false;
+function step(){
+  if (dragY === null) { ticking = false; return; }
+  if (scrollV) {
+    const before = window.scrollY;
+    window.scrollBy(0, scrollV);
+    const pool = document.querySelector('.pool');
+    if (pool && pool.scrollHeight > pool.clientHeight) pool.scrollBy(0, scrollV);
+    if (window.scrollY === before && (!pool || pool.scrollTop === 0 || pool.scrollTop === pool.scrollHeight - pool.clientHeight)) {
+      // 到底了，停下
+    }
+  }
+  requestAnimationFrame(step);
+}
+document.addEventListener("dragover", e => {
+  dragY = e.clientY;
+  const zone = 130;                     // 边缘触发带宽度
+  const h = window.innerHeight;
+  if (dragY < zone) scrollV = -Math.ceil((zone - dragY) / 6);
+  else if (dragY > h - zone) scrollV = Math.ceil((dragY - (h - zone)) / 6);
+  else scrollV = 0;
+  if (!ticking) { ticking = true; requestAnimationFrame(step); }
+});
+document.addEventListener("dragend", () => { dragY = null; scrollV = 0; el("trash").classList.remove("show"); });
+document.addEventListener("dragleave", e => { if (!e.relatedTarget) { dragY = null; scrollV = 0; } });
+
+/* ---------- 弹窗 ---------- */
+function ask(label, value, tip){
+  return new Promise(res => {
+    el("dlg-label").textContent = label;
+    el("dlg-tip").textContent = tip || "";
+    el("dlg-input").value = value || "";
+    const dlg = el("dlg");
+    const done = () => { dlg.removeEventListener("close", done);
+      res(dlg.returnValue === "ok" ? el("dlg-input").value.trim() : null); };
+    dlg.addEventListener("close", done);
+    dlg.showModal(); el("dlg-input").focus(); el("dlg-input").select();
+  });
+}
+
+async function renameBag(i){
+  const v = await ask("改袋子名（回车确定）", state.bags[i].name);
+  if (v === null || v === "" || v === state.bags[i].name) return;
+  pushHistory(); state.bags[i].name = v; save(); render(); toast("已改名为 " + v);
+}
+async function newBag(){
+  const v = await ask("新袋子叫什么？", "");
+  if (v === null || v === "") return;
+  pushHistory();
+  state.bags.push({name: v, source: "（本次新建）"});
+  state.members.push([]);
+  save(); render(); toast("已新建袋子「" + v + "」，编号 " + state.bags.length);
+}
+function deleteBag(i){
+  if (!confirm("删除袋子「" + state.bags[i].name + "」？里面的石头会回到池子（它们在别的袋子里的归属不受影响）")) return;
+  pushHistory(); state.bags.splice(i,1); state.members.splice(i,1); save(); render(); toast("已删除袋子");
+}
+async function newStone(){
+  const v = await ask("新石头（标签）叫什么？", "",
+    "用于还没出现在花絮里的名字。它的篇数会是 0，导出后会被写进词表并标注「待确认」。");
+  if (v === null || v === "") return;
+  if (state.stones.includes(v)) { toast("已经有这块石头了"); return; }
+  pushHistory(); state.stones.push(v); state.fresh[v] = true;
+  save(); render(); toast("已新建石头「" + v + "」");
+}
+function dropTrash(tag){
+  if (!tag || !state.stones.includes(tag)) return;
+  const had = whereIs(tag);
+  pushHistory();
+  state.members.forEach(m => { const k = m.indexOf(tag); if (k >= 0) m.splice(k,1); });
+  save(); render();
+  toast(had.length ? ("已从 " + had.length + " 个袋子拿出「" + tag + "」") : ("「" + tag + "」本来就没归类"));
+}
+
+/* ---------- 归类 ---------- */
+function put(tag, bag, copy){
+  if (!tag || bag === undefined || bag === null || bag < 0) return;
+  pushHistory();
+  if (!copy) state.members.forEach(m => { const k = m.indexOf(tag); if (k >= 0) m.splice(k,1); });
+  const m = state.members[bag];
+  if (!m.includes(tag)) m.push(tag);
+  const now = Date.now();
+  streak = (now - lastT < 4000) ? streak + 1 : 1; lastT = now;
+  save();
+  const node = document.querySelector('#pool .stone[data-tag="' + CSS.escape(tag) + '"]');
+  if (node && !copy) { node.classList.add("flash"); setTimeout(render, 170); } else render();
+  selected = null;
+  if (copy) toast("已复制到「" + state.bags[bag].name + "」");
+  else if (streak === 5) toast("连击 5！手感不错");
+  if (unassigned().length === 0) toast("所有石头都归好了，记得导出 🎉");
+}
+
+/* ---------- 渲染 ---------- */
+function stoneEl(tag, inBag, bagIndex){
+  const d = document.createElement("div");
+  d.className = "stone" + (state.fresh[tag] ? " fresh" : "");
+  d.draggable = true; d.dataset.tag = tag;
+  const multi = whereIs(tag).length > 1;
+  d.innerHTML = tag + (nOf(tag) ? "<b>" + nOf(tag) + "</b>" : "")
+              + (state.fresh[tag] ? '<b title="新建的石头，还没有篇目">新</b>' : "")
+              + (multi ? '<span class="cp" title="属于多个袋子">⧉</span>' : "");
+  d.addEventListener("dragstart", e => {
+    e.dataTransfer.setData("text/plain", tag);
+    e.dataTransfer.setData("application/x-copy", (e.ctrlKey||e.altKey) ? "1" : "0");
+    if (inBag) el("trash").classList.add("show");
+  });
+  if (inBag) {
+    d.title = "点一下从这个袋子拿出来；Ctrl/Alt + 拖 = 复制到别的袋子；拖到底部 🗑 = 全部拿出";
+    d.addEventListener("click", ev => {
+      if (ev.ctrlKey || ev.altKey || ev.metaKey) return;
+      pushHistory();
+      state.members[bagIndex] = state.members[bagIndex].filter(x => x !== tag);
+      save(); render(); toast("已拿出「" + tag + "」");
+    });
+  } else {
+    d.addEventListener("click", () => {
+      selected = tag;
+      document.querySelectorAll("#pool .stone").forEach(n => n.classList.remove("sel"));
+      d.classList.add("sel");
+    });
+    d.title = state.fresh[tag] ? "新建的石头（篇数 0）" : ("关联 " + nOf(tag) + " 篇");
+  }
+  return d;
+}
+
+function render(){
+  const pool = el("pool"); pool.innerHTML = "";
+  const rest = unassigned();
+  rest.forEach(t => pool.appendChild(stoneEl(t, false, -1)));
+  el("poolcount").textContent = "(" + rest.length + ")";
+
+  const bags = el("bags"); bags.innerHTML = "";
+  state.bags.forEach((b, i) => {
+    const box = document.createElement("div");
+    box.className = "bag"; box.dataset.bag = i;
+    const h3 = document.createElement("h3");
+    h3.innerHTML = '<span class="num">' + (i+1) + '.</span>'
+      + '<span class="nm" title="点一下改名">' + b.name + '</span>'
+      + '<span class="cnt">' + (state.members[i]||[]).length + ' 个</span>'
+      + '<button class="del" title="删除这个袋子">✕</button>';
+    h3.querySelector(".nm").addEventListener("click", () => renameBag(i));
+    h3.querySelector(".del").addEventListener("click", ev => { ev.stopPropagation(); deleteBag(i); });
+    box.appendChild(h3);
+    if (b.source) { const p = document.createElement("div"); p.className = "hint";
+      p.textContent = b.source; box.appendChild(p); }
+    const drop = document.createElement("div"); drop.className = "drop";
+    (state.members[i]||[]).forEach(t => drop.appendChild(stoneEl(t, true, i)));
+    box.appendChild(drop);
+    box.addEventListener("dragover", e => { e.preventDefault(); box.classList.add("hover"); });
+    box.addEventListener("dragleave", () => box.classList.remove("hover"));
+    box.addEventListener("drop", e => {
+      e.preventDefault(); box.classList.remove("hover");
+      put(e.dataTransfer.getData("text/plain"), i,
+          e.dataTransfer.getData("application/x-copy") === "1");
+    });
+    box.addEventListener("click", e => {
+      if (e.target.closest(".stone") || e.target.closest(".del") || e.target.closest(".nm")) return;
+      if (selected) put(selected, i, false); else toast("先点一块石头，再点袋子");
+    });
+    bags.appendChild(box);
+  });
+
+  // 「拖到这里新建袋子」
+  const nb = document.createElement("div");
+  nb.className = "newbag";
+  nb.innerHTML = "拖一块石头到这里<br>＝新建一个袋子并放进去";
+  nb.addEventListener("dragover", e => { e.preventDefault(); nb.classList.add("hover"); });
+  nb.addEventListener("dragleave", () => nb.classList.remove("hover"));
+  nb.addEventListener("drop", async e => {
+    e.preventDefault(); nb.classList.remove("hover");
+    const tag = e.dataTransfer.getData("text/plain");
+    const v = await ask("新袋子叫什么？（会把「" + tag + "」放进去）", "");
+    if (v === null || v === "") return;
+    pushHistory();
+    state.bags.push({name: v, source: "（本次新建）"});
+    state.members.push([tag]);
+    state.members.slice(0, -1).forEach(m => { const k = m.indexOf(tag); if (k >= 0) m.splice(k,1); });
+    save(); render(); toast("已新建袋子「" + v + "」并把「" + tag + "」放进去");
+  });
+  nb.addEventListener("click", newBag);
+  bags.appendChild(nb);
+
+  const total = state.stones.length, left = rest.length;
+  el("prog").style.width = (total ? ((total-left)/total*100).toFixed(1) : 0) + "%";
+  el("stat").textContent = "已归 " + (total-left) + " / " + total;
+  el("streak").textContent = streak >= 3 ? ("连续 " + streak + " ✓") : "";
+  el("foot").textContent = "石头 " + total + " 块（新建 "
+    + Object.keys(state.fresh).length + "） · 袋子 " + state.bags.length
+    + " 个 · 离线可用 · 数据只在你浏览器里";
+}
+
+/* ---------- 垃圾桶 ---------- */
+const trash = el("trash");
+trash.addEventListener("dragover", e => { e.preventDefault(); trash.classList.add("hot"); });
+trash.addEventListener("dragleave", () => trash.classList.remove("hot"));
+trash.addEventListener("drop", e => {
+  e.preventDefault(); trash.classList.remove("hot"); trash.classList.remove("show");
+  dropTrash(e.dataTransfer.getData("text/plain"));
+});
+
+/* ---------- 按钮 ---------- */
+el("btn-newstone").addEventListener("click", newStone);
+el("btn-new").addEventListener("click", newBag);
+el("btn-undo").addEventListener("click", () => {
+  if (!history.length) return toast("没有可撤销的了");
+  state = history.pop(); save(); render(); toast("撤销一步");
+});
+el("btn-reset").addEventListener("click", () => {
+  if (!confirm("恢复成最初的分类？（改名、新建袋子/石头都会没）")) return;
+  pushHistory();
+  state = {bags: D.bags.map(b => ({name:b.name, source:b.source||""})),
+           members: D.bags.map(b => (b.tags||[]).slice()),
+           stones: D.stones.map(s => s.tag), fresh: {}};
+  save(); render(); toast("已恢复初始状态");
+});
+el("btn-export").addEventListener("click", () => {
+  el("io").value = JSON.stringify({
+    format: "sorter-v2",
+    dim: D.dim,
+    bags: state.bags.map((b,i) => ({name: b.name, source: b.source||"",
+                                    tags: (state.members[i]||[]).slice()})),
+    newStones: Object.keys(state.fresh)
+  }, null, 1);
+  el("io").parentElement.open = true; el("io").scrollIntoView({behavior:"smooth"});
+  toast("结果已生成");
+});
+el("btn-copy").addEventListener("click", async () => {
+  if (!el("io").value) el("btn-export").click();
+  try { await navigator.clipboard.writeText(el("io").value); toast("已复制到剪贴板"); }
+  catch(e){ el("io").select(); toast("已选中，按 Ctrl+C 复制"); }
+});
+el("btn-download").addEventListener("click", () => {
+  if (!el("io").value) el("btn-export").click();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([el("io").value], {type:"application/json"}));
+  a.download = D.dim + "-分类结果.json"; a.click(); toast("已下载");
+});
+el("btn-load").addEventListener("click", () => {
+  try {
+    const j = JSON.parse(el("io").value);
+    if (!j.bags) throw 0;
+    pushHistory();
+    state.bags = j.bags.map(b => ({name: b.name, source: b.source||""}));
+    state.members = j.bags.map(b => (b.tags||[]).slice());
+    const all = new Set(j.bags.flatMap(b => b.tags||[]));
+    state.stones = Array.from(new Set(D.stones.map(s=>s.tag).concat(Array.from(all))));
+    state.fresh = {}; (j.newStones||[]).forEach(t => state.fresh[t] = true);
+    save(); render(); toast("已导入");
+  } catch(e){ toast("文本不是合法的结果 JSON"); }
+});
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "TEXTAREA" || e.target.tagName === "INPUT") return;
+  if (e.ctrlKey && e.key.toLowerCase() === "z") { el("btn-undo").click(); e.preventDefault(); return; }
+  if (/^[1-9]$/.test(e.key) && selected) {
+    const i = parseInt(e.key, 10) - 1;
+    if (i < state.bags.length) { put(selected, i, false); e.preventDefault(); }
+  }
+});
+render();
+</script>
+</body>
+</html>
