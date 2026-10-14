@@ -1,0 +1,11 @@
+{
+ "title": "黑柩花絮 Wiki",
+ "subtitle": "《黑柩》花絮、楔子与画外音的整理站",
+ "description": "把《黑柩》的花絮按人物、组织、地理、主题与剧情线整理成可浏览的 wiki。",
+ "base_url": "https://darkcoffin-wiki.hubingsf.cn/",
+ "domain": "darkcoffin-wiki.hubingsf.cn",
+ "disclaimer": "本网站由 AI 生成，内容准确性无法完全保证。",
+ "repo": "darkcoffin-wiki/darkcoffin-wiki.github.io",
+ "publish": "GitHub Pages · 用户主页仓库，main 分支根目录（推送即发布）",
+ "default_url": "https://darkcoffin-wiki.github.io/"
+}

@@ -1,0 +1,2022 @@
+{
+ "note": "按 210 篇重抽；标准写法 + 覆盖证据 ｜ 2026-10-14 已由作者确认的一批：见 taxonomy_overrides.json 的作者裁定记录。",
+ "people": [
+  {
+   "tag": "叶心",
+   "entries": 124,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "叶心姐",
+    "叶主席"
+   ],
+   "evidence": "“和叶心同志反映真的有用——刚刚电工的电话直接打我这来了！"
+  },
+  {
+   "tag": "高冒",
+   "entries": 86,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "高统领",
+    "骷髅先生"
+   ],
+   "evidence": "希望你能够组织一批靠得住的人，去扒扒希共和高冒的黑料。",
+   "note": "作者 2026-10-14：「骷髅先生」也是他（黑柩里的一个小秘密，故仅作写法收录，不在标签名上写明）。"
+  },
+  {
+   "tag": "陆柩",
+   "entries": 71,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "心意识到她所需要的也许不再是陆柩的能力——她已经无法离开陆柩了，而陆柩的眼里也已"
+  },
+  {
+   "tag": "原星",
+   "entries": 58,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "以下是原星的日记。"
+  },
+  {
+   "tag": "路絮",
+   "entries": 50,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "路絮同志",
+    "路队长"
+   ],
+   "evidence": "面对路絮的发问，叶心语气平和，“她刚刚在车上睡觉。"
+  },
+  {
+   "tag": "红樱",
+   "entries": 45,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "红缨"
+   ],
+   "evidence": "面对红樱的提问，叶心只是微笑，保持正坐。"
+  },
+  {
+   "tag": "风薰",
+   "entries": 43,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "风熏"
+   ],
+   "evidence": "李伊：荡得最远的是风薰姐，后来这个纪录被客人打破了。"
+  },
+  {
+   "tag": "高领",
+   "entries": 40,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "本来担心军事独裁在北沙还将继续下去的民众开始对高领的看法好转。"
+  },
+  {
+   "tag": "齐藤优子",
+   "entries": 30,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "齐藤"
+   ],
+   "evidence": "由希联统一党总裁委员会，授予齐藤优子女士总裁勋章。"
+  },
+  {
+   "tag": "余烬",
+   "entries": 28,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "余老板",
+    "老余"
+   ],
+   "evidence": "原来是余烬的诡计啊。"
+  },
+  {
+   "tag": "叶暝",
+   "entries": 26,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "以下是叶暝的日记。"
+  },
+  {
+   "tag": "西娜·陈",
+   "entries": 26,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "西娜",
+    "西娜上校"
+   ],
+   "evidence": "其实大家都觉得她应该算校花了……啊，好像雕塑系有个叫西娜·陈的长得也不错。"
+  },
+  {
+   "tag": "李伊",
+   "entries": 25,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "（原星看向李伊的眼睛——他双眼无神，很是落寞。"
+  },
+  {
+   "tag": "原绘",
+   "entries": 24,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "红樱：现在最重要的事应该还是北沙问题和原绘的问题吧？"
+  },
+  {
+   "tag": "月见灯",
+   "entries": 23,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "阿灯"
+   ],
+   "evidence": "镜缘忘记注意的是月见灯的神情。"
+  },
+  {
+   "tag": "镜缘",
+   "entries": 23,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "举行会议的地方，也是大当家镜缘女士的住所。"
+  },
+  {
+   "tag": "千分",
+   "entries": 17,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "千分先生",
+    "千分董事长"
+   ],
+   "evidence": "蓝冷泉先生还是千分董事长，都不会允许她这么做事的。"
+  },
+  {
+   "tag": "川崎罗",
+   "entries": 16,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "川崎先生"
+   ],
+   "evidence": "川崎罗：（掩面笑）这就说得太客气了，齐藤小姐。"
+  },
+  {
+   "tag": "左刃",
+   "entries": 15,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "我已经和左刃先生和夜瞳小姐都聊过了。"
+  },
+  {
+   "tag": "亚顿",
+   "entries": 14,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "陆柩：你去跟亚顿说去吧。"
+  },
+  {
+   "tag": "朗格",
+   "entries": 13,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "朗格：“（三人会议）你们贪污吗？"
+  },
+  {
+   "tag": "鸣十二",
+   "entries": 13,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "十二娘"
+   ],
+   "evidence": "→鸣十二：大当家，其实……最近市面上出现了一种叫虚拟货币的东西，可以用显卡算出来"
+  },
+  {
+   "tag": "文志远",
+   "entries": 11,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "A把她和文志远的合照重重地摔到地上，一脚狠狠地踩碎了两人的笑容，又往上面吐了口痰"
+  },
+  {
+   "tag": "原朗",
+   "entries": 10,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "原朗：我觉得红樱同志上面的回复说得很对，而且应该继续延伸——我们的党应该更加集中"
+  },
+  {
+   "tag": "苍鬼",
+   "entries": 10,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "苍爷"
+   ],
+   "evidence": "以下是光胜集团董事长私人秘书唐晖，与天堂物流店主苍鬼的谈话。"
+  },
+  {
+   "tag": "伊寓",
+   "entries": 9,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "伊寓：“老公（看向寂风），你看电视。"
+  },
+  {
+   "tag": "原知",
+   "entries": 9,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "“我们先前在原星和原知的处理上已经出过一次洋相了。"
+  },
+  {
+   "tag": "夜瞳",
+   "entries": 9,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "我手上有个叫夜瞳的，之前我捉弄了她一下，虽然也是想着让她做点正事，但是看她"
+  },
+  {
+   "tag": "机皇",
+   "entries": 9,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "但俾斯麦依然对机皇的更新产生了恐慌的情绪，尤其在那天晚上她向机皇详"
+  },
+  {
+   "tag": "鸣十三",
+   "entries": 9,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "鸣十二和鸣十三的爷爷辈来到了这里定居。"
+  },
+  {
+   "tag": "唐晖",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "但这样的话又可能暴露公司机密……也许自己和唐晖的交流还不太充分。"
+  },
+  {
+   "tag": "文不迁",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "要不是因为我是文不迁的儿子，那会儿我应该就在大牢里了。"
+  },
+  {
+   "tag": "时崎信子",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "信子"
+   ],
+   "evidence": "时崎信子：（轻声）纯一，最近伤口还会溃烂的话记得联系我。"
+  },
+  {
+   "tag": "月见力",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "阿力"
+   ],
+   "evidence": "我觉得我不用说多少和阿力的其他事情——我们就像亲兄弟一样，我爸妈都这么觉得。"
+  },
+  {
+   "tag": "海老名双叶",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "双叶"
+   ],
+   "evidence": "海老名双叶：（笑）就是啊姐姐，我们还是在这里待着吧。"
+  },
+  {
+   "tag": "渡边镰川",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "镰川",
+    "渡边"
+   ],
+   "evidence": "名叫渡边镰川的魁梧男子点了根烟。"
+  },
+  {
+   "tag": "王富贵",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "富贵先生"
+   ],
+   "evidence": "无论是王富贵先生，蓝冷泉先生还是千分董事长，都不会允许她这么做事的。"
+  },
+  {
+   "tag": "蓝冷泉",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "…大人，我只是蓝冷泉先生的助手，他从未将重要情报透露给我。"
+  },
+  {
+   "tag": "赫炎",
+   "entries": 8,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "赫炎：“希共……希望希共还能再看看我……”"
+  },
+  {
+   "tag": "林好",
+   "entries": 7,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "（给鸣）林好：“该给鸣先生准备新年好礼了——有了，就用苹果刻个马年小马吧。"
+  },
+  {
+   "tag": "魏工",
+   "entries": 7,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "她看向魏工的方向——"
+  },
+  {
+   "tag": "1号",
+   "entries": 6,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "曼陀罗",
+    "曼陀罗小姐"
+   ],
+   "evidence": "这是1号的惩罚记录，由2号执行。"
+  },
+  {
+   "tag": "和头",
+   "entries": 6,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "和头：“妈的，希共竟然占了青都。"
+  },
+  {
+   "tag": "寂风",
+   "entries": 6,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "睡在寂风的身边，她却做了噩梦。"
+  },
+  {
+   "tag": "智波",
+   "entries": 6,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "智先生",
+    "小智先生"
+   ],
+   "evidence": "智波先生——如果他们攻过来了，我优先保护你。"
+  },
+  {
+   "tag": "海老名惠子",
+   "entries": 6,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "惠子"
+   ],
+   "evidence": "海老名惠子：（斟酒）各位客人，今天的事情我们尊重大家的意见，妾身还需要招待其他客"
+  },
+  {
+   "tag": "渊",
+   "entries": 6,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "原绘再次打量起这个叫渊的少女。"
+  },
+  {
+   "tag": "王霜风",
+   "entries": 6,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "“还有王霜风女士……莫名其妙地失踪……太可怕了……”"
+  },
+  {
+   "tag": "俾斯麦",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "俾斯麦：你们可以叫我俾斯麦。"
+  },
+  {
+   "tag": "千禾",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "以下是通雷帮的干部——嘉云、镇山和千禾的对话。"
+  },
+  {
+   "tag": "原平",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "原叔"
+   ],
+   "evidence": "原平：（扑在书桌上，满身酒气）还好还好……你这是……（抬头）找我有事……？"
+  },
+  {
+   "tag": "嘉云",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "嘉云：帮主不在，但他很快就会回来。"
+  },
+  {
+   "tag": "时崎宗望",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "时崎信子，时崎家主时崎宗望的女儿。"
+  },
+  {
+   "tag": "月见武",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "月见武：哎呀，时崎小姐，好久不见！"
+  },
+  {
+   "tag": "杜丁",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "陆柩：这位苏小青小姐和杜丁小姐，为什么来我们这里一起聊天？"
+  },
+  {
+   "tag": "柳生纯一",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "纯一"
+   ],
+   "evidence": "那难道是柳生家的柳生纯一哥哥？"
+  },
+  {
+   "tag": "苍穹",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "苍穹：“原平哥哥，原平叔叔！"
+  },
+  {
+   "tag": "蛛眼",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "他艰难地抬起头，和蛛眼的眼睛迎面相对。"
+  },
+  {
+   "tag": "赫震",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "赫震：（握手）我是北沙警察局刑警队长，日本街银行爆炸案特案组组长赫震，请多关照。"
+  },
+  {
+   "tag": "镇山",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "镇山：我想，这是不是也包括让帮主成为富贵集团董事长？"
+  },
+  {
+   "tag": "青朗",
+   "entries": 5,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "青朗：我觉得党内持各种各样观点的人，与其和别人争来争去展示存在感，不如在党内明确"
+  },
+  {
+   "tag": "2号",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "2号：1号，我去教学楼，你去电击室。"
+  },
+  {
+   "tag": "4号",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "4号：（愤怒）1号，3号，你们知不知道那个什么年度员工是怎么回事？"
+  },
+  {
+   "tag": "叶惠",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "就是前总统——第八科学院副院长、第八科学院大爆炸的幸存者之一，叶惠女士。"
+  },
+  {
+   "tag": "天子棠",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "天子棠：“欢乐世界放弃了就放弃了吧，老弟。"
+  },
+  {
+   "tag": "定民",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "是出于良心；而给董事会服务，是只图利益——这是定民的原则。"
+  },
+  {
+   "tag": "悬月",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "在秋墨和悬月的陪同下上了楼。"
+  },
+  {
+   "tag": "文慧",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "文慧：我们情报组找青都艺术学院的学长打听了，齐藤的爸妈在战前是贪污犯，可以用她爸"
+  },
+  {
+   "tag": "木金水",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "金水"
+   ],
+   "evidence": "木金水：（挤到众人面前）月见姐姐，今天你可逃不掉啦！"
+  },
+  {
+   "tag": "洪黎",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "洪先生"
+   ],
+   "evidence": "洪黎：两位好，（笑）相信我旁边这位陈部长两位已经认识了，我就介绍我自己吧——我是"
+  },
+  {
+   "tag": "燃堂猛",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "阿猛"
+   ],
+   "evidence": "燃堂猛：阿力！"
+  },
+  {
+   "tag": "真锋",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "甚至冷面相对——比如说坐在台边上，冷眼抬头看向魏工和真锋的女生。"
+  },
+  {
+   "tag": "苏小青",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "苏小青：叫我本名干什么，叫我蛛眼。"
+  },
+  {
+   "tag": "郎河",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "郎河：“我做好准备了。"
+  },
+  {
+   "tag": "阳戬",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "看向阳戬的时候，蛛眼的眼前浮现出了阳戬矛盾的心态。"
+  },
+  {
+   "tag": "静莲",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "你说智先生为什么会给静莲小姐那么多钱啊？"
+  },
+  {
+   "tag": "鲍声",
+   "entries": 4,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "鲍声：“不是好消息啊。"
+  },
+  {
+   "tag": "3号",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "3号：（抿茶）您不知道吗？"
+  },
+  {
+   "tag": "三井伊森",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "伊森"
+   ],
+   "evidence": "似乎对伊森的话感到不以为然，“当时，叶惠已经替希联人民做好了【牺牲"
+  },
+  {
+   "tag": "伊西斯",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "薇儿"
+   ],
+   "evidence": "伊西斯：（微笑）我不怕，有大家在我就不怕。"
+  },
+  {
+   "tag": "保罗",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "大主教"
+   ],
+   "evidence": "文志远：（点头）保罗先生，回见——",
+   "note": "作者 2026-10-14：大主教就是他。"
+  },
+  {
+   "tag": "天子棣",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "天子棣：哎呀，尊敬的中分山巡林队长月见大人，能在这里见到您真的是在下毕生荣幸啊！"
+  },
+  {
+   "tag": "容彩",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "”名为容彩的女人，微笑着拿起桌上的梳子，替夜瞳梳起头发，“我一切……都好"
+  },
+  {
+   "tag": "小夫",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "小父集团的小夫先生、光胜集团的鲁光胜先生、大禾集团的李大禾先生——他们睥睨着台下"
+  },
+  {
+   "tag": "木朽",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "木朽：（怪笑）哈哈还真是，应该是我先来呢。"
+  },
+  {
+   "tag": "朴意生",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "朴意生：老子行不更名坐不改姓，朴意生，散居区韩帮三当家，你敢动老子一根手指头，老"
+  },
+  {
+   "tag": "李大禾",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "大禾集团的李大禾先生——他们睥睨着台下的议员们，似乎能把他们的"
+  },
+  {
+   "tag": "洛克",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "洛克一世"
+   ],
+   "evidence": "男受害者：我是洛克先生身边最要紧的人，跟她（指向女）没有关系！"
+  },
+  {
+   "tag": "般利",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "他的朋友——一个名叫般利的、脸上留着络腮胡须的中年男人，和他的主管进行了"
+  },
+  {
+   "tag": "董屋",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "董屋：我是一个科研人员，目前在研究天策中央计算机（AI）向民用领域的转型。"
+  },
+  {
+   "tag": "薇薇安",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "哎呀，又是薇薇安小姐，又是礼先生。"
+  },
+  {
+   "tag": "赫章",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "而此刻她面前的这个墓碑，属于一个叫赫章的中年男人。"
+  },
+  {
+   "tag": "阿罗",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "（招呼）阿罗的三餐是按我定的标准来的吗？"
+  },
+  {
+   "tag": "鲜红超人",
+   "entries": 3,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "这里是鲜红超人的贴身记者小红，每天为大家带来超人先生的威猛身姿！"
+  },
+  {
+   "tag": "5号",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "5号：嘿嘿嘿……（缓缓指向）我身上的，灵魂感应装置，能够模拟，鬼魂的意志……"
+  },
+  {
+   "tag": "一泷",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "人人不分来路，团结一致，建立一个幸福的国度——这是教团许诺给一泷的真言。"
+  },
+  {
+   "tag": "克槌",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "克槌：（悄声）唉，油老总，利刺这人怎么搞得好像他已经当上大当家了一样，在那主持起"
+  },
+  {
+   "tag": "准锋",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "准锋：“（与部下的会议）总部去民主党那边了——留我们在这里受罪。"
+  },
+  {
+   "tag": "喜春",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "喜春：（哭）那毕竟是我怀了十个月的孩子。"
+  },
+  {
+   "tag": "明森",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "明森女士，不要把话说得那么直。"
+  },
+  {
+   "tag": "朴道地",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "”这是朴道地的原话。"
+  },
+  {
+   "tag": "林杉",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "林杉：“听说了吗？"
+  },
+  {
+   "tag": "水荇",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "水荇：“全店听令。"
+  },
+  {
+   "tag": "汉格",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "汉格的拳头紧握，再也说不出话了。"
+  },
+  {
+   "tag": "油舍",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "油老总"
+   ],
+   "evidence": "油舍：大当家，是我是我！"
+  },
+  {
+   "tag": "洪巢",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "洪巢：洪黎，听到了吗？"
+  },
+  {
+   "tag": "玉轮",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "帮主和玉轮小姐的关系也同样不错。"
+  },
+  {
+   "tag": "盖尔",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "明森：（皱眉）盖尔先生，你的礼貌很虚假。"
+  },
+  {
+   "tag": "真岛",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "真岛：老大，还有五年。"
+  },
+  {
+   "tag": "秋墨",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "名为秋墨的姑娘走了过来。"
+  },
+  {
+   "tag": "管直",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "管直：（笑）各位朋友，你们讨论好了吗？"
+  },
+  {
+   "tag": "缪斯·辛克",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "缪斯"
+   ],
+   "evidence": "缪斯·辛克：“希共。"
+  },
+  {
+   "tag": "舜",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "名为舜的男教士回到众人当中。"
+  },
+  {
+   "tag": "血兄",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "血兄：两位在聊些什么呢？"
+  },
+  {
+   "tag": "郎溪",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "郎溪：“弟，希共在青都取得优势了。"
+  },
+  {
+   "tag": "郎胜",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "郎胜：是！"
+  },
+  {
+   "tag": "陈光明",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "陈光明：（看向赫炎）赫炎，那个，你去叫一下你舅舅，然后所有人都来会议厅。"
+  },
+  {
+   "tag": "青昭",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "明森：总统大人，青昭女士的话我们都理解了，我们之前确实存在误会。"
+  },
+  {
+   "tag": "鸣七",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "—正当她转头的时候，她看到鸣嶷拿着沾血的匕首捅向鸣七的胸膛。"
+  },
+  {
+   "tag": "鸣嶷",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "鸣嶷：（叹气）我明白。"
+  },
+  {
+   "tag": "2077",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "比如2077、泡泡、王路玲、乙醇。"
+  },
+  {
+   "tag": "丁健",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "丁健：好的同务，同志！"
+  },
+  {
+   "tag": "利刺",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "利刺：各位好，很感谢各位来到今天的寨会。"
+  },
+  {
+   "tag": "南方枝",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "南方枝：（整理文件，在桌上敲了敲）我建议你们考虑辞职。"
+  },
+  {
+   "tag": "卫国赵",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "卫国赵：（握手）叶主席，（严肃）很高兴看到您身体康复。"
+  },
+  {
+   "tag": "原末",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "原末：禀报大公，风薰可能逃往了我国南部。"
+  },
+  {
+   "tag": "原草",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "原草：“不算全赢，但是他们现在说要让全青都的孩子都有书读！"
+  },
+  {
+   "tag": "合连",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "合连：（礼貌地敲了敲门）总裁，属下来了。"
+  },
+  {
+   "tag": "声风",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "声风：“啧啧。"
+  },
+  {
+   "tag": "夜眉",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "林好：（微笑）夜眉姐你喜欢就好。"
+  },
+  {
+   "tag": "天子辉",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "天子辉：“我不！"
+  },
+  {
+   "tag": "子明未",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "→子明未：下期我想做“革命娱乐化批判：以路絮的推博为例”，您有意见吗？"
+  },
+  {
+   "tag": "安花",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "安花：“原平叔叔，希共赢了！"
+  },
+  {
+   "tag": "宗魁",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "宗魁：这位是在山里走丢路的小女孩。"
+  },
+  {
+   "tag": "定慧",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "定慧：妈妈，爸爸……死了吗？"
+  },
+  {
+   "tag": "容易",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "容易：阿慧，跟爸爸说声再见吧。"
+  },
+  {
+   "tag": "文聪",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "文聪：救，救我……好疼……"
+  },
+  {
+   "tag": "昭",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "昭：我认为不能和原绘合作。"
+  },
+  {
+   "tag": "望风",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "望风：“鲍兄说的是。"
+  },
+  {
+   "tag": "木有为",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "木金水：宪兵队的木朽是我木金水的叔叔，是木有为的弟弟！"
+  },
+  {
+   "tag": "李兴元",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "李兴元：老大，我们都很难过。"
+  },
+  {
+   "tag": "林登万",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "我翻翻我这边的记录……叫鲨月狗、林登万、莎乐美、路登和薛婕。"
+  },
+  {
+   "tag": "查莉",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "查莉：“希望希共对游戏的观念足够开明。"
+  },
+  {
+   "tag": "柳生敬",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "柳生敬：（行礼，递上）家主，在下送您一把宝刀，愿时崎家繁荣昌盛、武运昌隆。"
+  },
+  {
+   "tag": "比利",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "比利：“今天希联发生了什么……啊，内战？"
+  },
+  {
+   "tag": "泡泡",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "我记得是泡泡，秘密谋杀了王富贵，也就是富贵集团的董事长，这导"
+  },
+  {
+   "tag": "洗尘",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "洗尘：“（通雷帮监狱中）胜记。"
+  },
+  {
+   "tag": "海老名雄介",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "雄介"
+   ],
+   "evidence": "海老名雄介：（笑，提着一袋金币）家主！"
+  },
+  {
+   "tag": "潘陶",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "伊森：潘陶同志，你有意见的话可以向大家反映。"
+  },
+  {
+   "tag": "特零",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "特零：这些不重要。"
+  },
+  {
+   "tag": "王路玲",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "叶心：我本来是想保泡泡和王路玲的，毕竟他们都是穿越者……可惜高冒插手了这件事，把"
+  },
+  {
+   "tag": "璇姐",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 0,
+   "variants": [
+    "漩姐"
+   ],
+   "evidence": "“璇姐，你说——大伙真的在乎虚无会的理想吗？”",
+   "note": "hx-018 虚无会前辈；同篇又作「漩姐」。绰号，正式名待作者定。"
+  },
+  {
+   "tag": "白娅",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "光人"
+   ],
+   "evidence": "当时她正在和这群人合作，一起对付异能者“光人”白娅。"
+  },
+  {
+   "tag": "老许",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "老许：小高，下来干活！"
+  },
+  {
+   "tag": "胜记",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "胜记：“（通雷帮监狱中）是啊。"
+  },
+  {
+   "tag": "艾米丽",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "艾米丽：姐姐，我是本周的爱神之子！"
+  },
+  {
+   "tag": "莎乐美",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "我翻翻我这边的记录……叫鲨月狗、林登万、莎乐美、路登和薛婕。"
+  },
+  {
+   "tag": "莫德",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "伊森皱了皱眉，抬起手指向莫德的眉心。"
+  },
+  {
+   "tag": "董山",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "董山：“报告。"
+  },
+  {
+   "tag": "蔡小静",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "蔡小静：……高先生，小麦已经长出来了，今天组织让我来教你开收割机。"
+  },
+  {
+   "tag": "薛婕",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "我翻翻我这边的记录……叫鲨月狗、林登万、莎乐美、路登和薛婕。"
+  },
+  {
+   "tag": "蠊",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "喽啰：是蠊哥。"
+  },
+  {
+   "tag": "谢尔盖",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "”谢尔盖说道，“我的妻儿就是被大进化者国特遣队杀死的。"
+  },
+  {
+   "tag": "路登",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "我翻翻我这边的记录……叫鲨月狗、林登万、莎乐美、路登和薛婕。"
+  },
+  {
+   "tag": "辛普森",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "还有个叫辛普森的我记得……"
+  },
+  {
+   "tag": "远辰",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "远辰：“再见了，我在青都的家。"
+  },
+  {
+   "tag": "金尚早",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "金尚早：查明了，达令。"
+  },
+  {
+   "tag": "铃木",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "铃木：呃，好的伊森同志！"
+  },
+  {
+   "tag": "锆哥",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 0,
+   "variants": [
+    "锆子"
+   ],
+   "evidence": "“锆哥，那群卖粉的应该就快回来了，你去那边路上蹲他们。”",
+   "note": "hx-018 虚无会新人；同篇又作「锆子」。绰号，正式名待作者定。"
+  },
+  {
+   "tag": "镜虚",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "镜虚：（嬉笑）参见陛下。"
+  },
+  {
+   "tag": "阿列克谢",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "他的朋友——阿列克谢躺在病床上",
+   "note": "hx-097 谢尔盖的精英友人；作者 2026-10-14：没有别的名字，就这么写。"
+  },
+  {
+   "tag": "阿慧",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "阿慧：（点头，走向坟墓）爸爸，我和妈妈会照顾好自己的。"
+  },
+  {
+   "tag": "阿舜",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "阿舜：师父，徒儿明白。"
+  },
+  {
+   "tag": "阿闵",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "阿闵：“希共赢了。"
+  },
+  {
+   "tag": "阿霆",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "阿霆：“大概就是——不准你飙车，不准你拉帮结派，但是允许你参加拉力赛，而且保证你"
+  },
+  {
+   "tag": "青云",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "青云：见过俾斯麦女士。"
+  },
+  {
+   "tag": "鲁光胜",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "光胜集团的鲁光胜先生、大禾集团的李大禾先生——他们睥睨着台下的"
+  },
+  {
+   "tag": "鲨月狗",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "我翻翻我这边的记录……叫鲨月狗、林登万、莎乐美、路登和薛婕。"
+  },
+  {
+   "tag": "鸣二",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "鸣二：好了，爸，有什么事情我们一起面对，没必要瞒着。"
+  },
+  {
+   "tag": "鸣采菱",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "鸣采菱：对，对不起，我给大家道歉……"
+  },
+  {
+   "tag": "龙涟",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "陆柩：我在教团国的时候还见过一个叫龙涟的，是个有异能的穿越者。"
+  }
+ ],
+ "noise_removed": [
+  "大家",
+  "人们",
+  "声音",
+  "人员",
+  "人类",
+  "宪兵",
+  "两人",
+  "宪兵队",
+  "民众",
+  "女人",
+  "天使",
+  "斯卡雷特",
+  "姐姐",
+  "众人",
+  "尸体",
+  "富贵",
+  "男人",
+  "天天",
+  "皇帝",
+  "人群",
+  "家人",
+  "统领",
+  "老板",
+  "员工",
+  "董事长",
+  "富贵集团",
+  "警察",
+  "党员",
+  "爸妈",
+  "女儿",
+  "平民",
+  "屏幕",
+  "队长",
+  "少年",
+  "纠察队",
+  "国民",
+  "大公",
+  "女孩",
+  "客人",
+  "总裁",
+  "部下",
+  "同志们",
+  "安保",
+  "居民",
+  "总统",
+  "斯卡雷特家族",
+  "群众",
+  "士兵",
+  "复国军",
+  "哥哥",
+  "大当家",
+  "工作人员",
+  "爸爸",
+  "姐妹",
+  "异常事务委员会",
+  "武士",
+  "父母",
+  "老大",
+  "血族",
+  "记者",
+  "部长",
+  "青年",
+  "军官",
+  "同事",
+  "同学",
+  "家主",
+  "人民阵线",
+  "妹妹",
+  "负责人",
+  "高层",
+  "卫队",
+  "孩子们",
+  "异能者",
+  "总经理",
+  "诸位",
+  "光胜集团",
+  "回复",
+  "贵族",
+  "队员",
+  "国际纵队",
+  "工人们",
+  "弟弟",
+  "儿子",
+  "医生",
+  "夜都",
+  "天使们",
+  "恶魔",
+  "月见家",
+  "通雷帮",
+  "高官",
+  "农民",
+  "叔叔",
+  "天寨",
+  "家属",
+  "将军",
+  "小父",
+  "帝国号角",
+  "无线电",
+  "玩家",
+  "罪人",
+  "老婆",
+  "蚀血教",
+  "观众",
+  "保安",
+  "市民",
+  "战犯",
+  "特务",
+  "议员",
+  "贫民",
+  "难民",
+  "仆人",
+  "公民",
+  "司令",
+  "守卫",
+  "教徒",
+  "教皇",
+  "村民",
+  "铁狼帮",
+  "主教",
+  "叛徒",
+  "大禾",
+  "学生军",
+  "师傅",
+  "民兵",
+  "深黑军团",
+  "男生",
+  "下属",
+  "克隆人",
+  "吸血鬼",
+  "喽啰",
+  "妻子",
+  "学者",
+  "导师",
+  "小女孩",
+  "干部",
+  "幸存者",
+  "机器人",
+  "游击队",
+  "精英们",
+  "红军",
+  "老公",
+  "首相",
+  "亲戚",
+  "劳动者",
+  "喇叭",
+  "奶奶",
+  "权贵",
+  "爷爷",
+  "男孩",
+  "路人",
+  "长老",
+  "间谍",
+  "韩帮",
+  "主持人",
+  "俘虏",
+  "元老",
+  "党卫队",
+  "受害者们",
+  "大主教",
+  "宪兵们",
+  "小父集团",
+  "帮主",
+  "广播",
+  "强者",
+  "时崎家",
+  "服务员",
+  "犯人",
+  "病人",
+  "管家",
+  "苏维埃",
+  "赤卫队",
+  "队员们",
+  "高家",
+  "高氏政权",
+  "THEM报社",
+  "伊甸园",
+  "元首",
+  "司机",
+  "员工们",
+  "大禾集团",
+  "客户",
+  "局长",
+  "带头的",
+  "情报人员",
+  "护卫",
+  "教士",
+  "标题",
+  "游客",
+  "组员",
+  "警员",
+  "记者们",
+  "鸣家",
+  "丈夫",
+  "保安们",
+  "信徒",
+  "刁民",
+  "可爱的曼巴",
+  "商人",
+  "囚犯",
+  "团长",
+  "圣女",
+  "处长",
+  "天策公司",
+  "宪兵甲",
+  "小男孩",
+  "巨兽科技",
+  "应援会",
+  "康米",
+  "战神",
+  "教主",
+  "教众",
+  "正文",
+  "牧师",
+  "神秘人",
+  "老兵",
+  "议员们",
+  "议长",
+  "读者",
+  "贫民们",
+  "长老们",
+  "队员A",
+  "队员B",
+  "阿姨",
+  "黑旗组织",
+  "中分山工程集团",
+  "亲卫队",
+  "亲爱的路絮",
+  "保民矿业",
+  "修女",
+  "前情提要",
+  "华族",
+  "博主",
+  "叙事者",
+  "可爱的曼波",
+  "叶家军",
+  "同务",
+  "国母",
+  "圣子",
+  "外公",
+  "天家",
+  "安那其",
+  "室友",
+  "宪兵乙",
+  "尊敬的镜缘女士",
+  "川崎家",
+  "工人代表",
+  "店主",
+  "教徒A",
+  "教母",
+  "新知高仿号",
+  "机械师",
+  "柳生家",
+  "歌手",
+  "清洁工",
+  "演员",
+  "灾民",
+  "玩网大手子",
+  "画像",
+  "瘦军官",
+  "管家小红",
+  "纠察队员",
+  "编辑",
+  "网友",
+  "胖军官",
+  "自由民",
+  "请客吃饭",
+  "路过的好人",
+  "适格者",
+  "长老会",
+  "闺蜜",
+  "UP主",
+  "下属乙",
+  "下属甲",
+  "不升职誓不改名",
+  "两脚漂亮羊",
+  "中分山一期居民区",
+  "中分山中学及附属学校",
+  "中分山中心医院",
+  "中分山作战中心",
+  "中分山农牧业集团",
+  "中分山商贸街",
+  "中分山地方法院",
+  "中分山天寨博物馆",
+  "中分山寨会中心",
+  "中分山旅游公园",
+  "中分山星级酒店",
+  "中分山林业集团",
+  "中分山物流公司",
+  "中分山狂欢山谷",
+  "中分山科技公司",
+  "中分山财务处",
+  "主教A",
+  "主教B",
+  "主教C",
+  "亲爱的全国人民",
+  "亲爱的希联人民",
+  "亲爱的父亲",
+  "亲爱的红樱",
+  "亲爱的红樱同志",
+  "亲爱的路絮同志",
+  "亲爱的风薰",
+  "亲爱的骷髅先生",
+  "企业家A",
+  "企业家B",
+  "企业家C",
+  "作家",
+  "俘虏丁",
+  "俘虏丙",
+  "俘虏乙",
+  "俘虏甲",
+  "保安A",
+  "保安B",
+  "保安C",
+  "军人乙",
+  "军人甲",
+  "利刺营",
+  "剧情回顾",
+  "南星都唱片行老板",
+  "卫兵",
+  "友人A",
+  "双亲",
+  "受审者",
+  "受洗教士",
+  "叶卫队",
+  "叶铲党",
+  "各位同务",
+  "同事A",
+  "同事B",
+  "同学甲",
+  "吸血鬼殿下的绝世妃子",
+  "员工A",
+  "员工B",
+  "哨兵A",
+  "哨兵B",
+  "哨兵C",
+  "哨兵们",
+  "唐培里",
+  "唯爱",
+  "嘉宾",
+  "囚犯丙",
+  "囚犯乙",
+  "囚犯甲",
+  "夜访吸血鬼",
+  "大厅喇叭",
+  "天堂物流店主",
+  "女人A",
+  "女人B",
+  "女受害者",
+  "女学者",
+  "女生A",
+  "女生B",
+  "女生C",
+  "女生D",
+  "室友A",
+  "室友们",
+  "宪兵长官",
+  "对反动派专用叶家枪",
+  "尊敬的叶心女士",
+  "小卖部大妈",
+  "小弟A",
+  "小弟们",
+  "工人A",
+  "工人B",
+  "工人G",
+  "工人乙",
+  "工人甲",
+  "师长",
+  "平安喜乐",
+  "平安是福",
+  "年轻的囚徒",
+  "当代贞德",
+  "思星天文馆",
+  "悔罪之星",
+  "我推的叶心",
+  "房间里的声音",
+  "打倒一切牛鬼蛇神",
+  "护卫A",
+  "护卫B",
+  "护卫C",
+  "护士",
+  "排长",
+  "接生婆",
+  "控制中心",
+  "推博标题",
+  "改造人",
+  "政府的喇叭",
+  "教士A",
+  "教士B",
+  "教徒B",
+  "教徒C",
+  "教徒D",
+  "敬爱的叶心主席",
+  "旁观者",
+  "明觉宗",
+  "智人TV",
+  "暗卫",
+  "李伊殿下的电子宠物犬",
+  "李学长",
+  "李殿",
+  "某员工",
+  "某股东",
+  "歹徒乙",
+  "歹徒甲",
+  "没父游戏公司",
+  "法官",
+  "灰太狼",
+  "爱神之子",
+  "独断千古帝国皇帝的禁林军",
+  "狱警",
+  "男受害者",
+  "男学者",
+  "男教士",
+  "病人亲属",
+  "病人家属",
+  "短画外音",
+  "示威群众",
+  "禁卫军",
+  "禁林军",
+  "第一基因中心",
+  "第二伊甸园",
+  "精英乙",
+  "精英甲",
+  "自然人",
+  "至高无上帝国皇帝的亲卫队",
+  "舞墨书生",
+  "艺术家",
+  "蕉太狼",
+  "行得正站得直",
+  "衣食住行计划官方",
+  "视频标题",
+  "警员A",
+  "警员B",
+  "计算机专家",
+  "记者乙",
+  "记者小红",
+  "记者甲",
+  "贫民A",
+  "贫民B",
+  "贫民C",
+  "贫民D",
+  "贫民E",
+  "贫民F",
+  "路人乙",
+  "路人甲",
+  "远处的声音",
+  "邻居",
+  "门后的狱警",
+  "队友A",
+  "队友B",
+  "队友C",
+  "队员C",
+  "陈学姐",
+  "青山在",
+  "革命之龙卷八级风",
+  "顾客",
+  "侦探",
+  "军医",
+  "军长",
+  "吧友",
+  "外婆",
+  "家主们",
+  "律师",
+  "房东",
+  "教授",
+  "暴民",
+  "消费者",
+  "神父",
+  "神职人员",
+  "科长",
+  "租客",
+  "纳税人",
+  "群众们",
+  "群友",
+  "营长",
+  "观察者",
+  "警官",
+  "连长"
+ ],
+ "needs_author_review": [
+  "锆哥",
+  "璇姐"
+ ]
+}

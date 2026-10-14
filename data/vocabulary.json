@@ -1,0 +1,1841 @@
+{
+ "note": "受控词表。设定集仅用于规范写法（选项A），不引用其内容。",
+ "people": [
+  {
+   "tag": "陆柩",
+   "slug": null,
+   "lines": 723,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "叶心",
+   "slug": null,
+   "lines": 519,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "原星",
+   "slug": null,
+   "lines": 511,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "叶暝",
+   "slug": null,
+   "lines": 321,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "路絮",
+   "slug": null,
+   "lines": 301,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "高领",
+   "slug": null,
+   "lines": 290,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "蛛眼",
+   "slug": null,
+   "lines": 253,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "风薰",
+   "slug": null,
+   "lines": 252,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "镜缘",
+   "slug": null,
+   "lines": 230,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "红樱",
+   "slug": null,
+   "lines": 218,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "高冒",
+   "slug": null,
+   "lines": 180,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "月见灯",
+   "slug": null,
+   "lines": 174,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "原绘",
+   "slug": null,
+   "lines": 158,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "西娜·陈",
+   "slug": null,
+   "lines": 143,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "齐藤优子",
+   "slug": null,
+   "lines": 131,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "鸣十三",
+   "slug": null,
+   "lines": 131,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "川崎罗",
+   "slug": null,
+   "lines": 119,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "阳戬",
+   "slug": null,
+   "lines": 93,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "李伊",
+   "slug": null,
+   "lines": 88,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "俾斯麦",
+   "slug": null,
+   "lines": 86,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "赫炎",
+   "slug": null,
+   "lines": 83,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "文志远",
+   "slug": null,
+   "lines": 76,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "唐晖",
+   "slug": null,
+   "lines": 75,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "朴道地",
+   "slug": null,
+   "lines": 68,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "时崎信子",
+   "slug": null,
+   "lines": 61,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "洪黎",
+   "slug": null,
+   "lines": 58,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "1号",
+   "slug": null,
+   "lines": 53,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "木金水",
+   "slug": null,
+   "lines": 52,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "余烬",
+   "slug": null,
+   "lines": 51,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "天子棣",
+   "slug": null,
+   "lines": 51,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "斯卡雷特家族",
+   "slug": null,
+   "lines": 48,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "赫震",
+   "slug": null,
+   "lines": 48,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "杜丁",
+   "slug": null,
+   "lines": 46,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "朗格",
+   "slug": null,
+   "lines": 43,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "渡边",
+   "slug": null,
+   "lines": 42,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "鲜红超人",
+   "slug": null,
+   "lines": 41,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "时崎宗望",
+   "slug": null,
+   "lines": 39,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "特零",
+   "slug": null,
+   "lines": 39,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "鸣十二",
+   "slug": null,
+   "lines": 33,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "薇薇安",
+   "slug": null,
+   "lines": 32,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "苍鬼",
+   "slug": null,
+   "lines": 31,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "嘉云",
+   "slug": null,
+   "lines": 31,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "受审者",
+   "slug": null,
+   "lines": 30,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "左刃",
+   "slug": null,
+   "lines": 29,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "文不迁",
+   "slug": null,
+   "lines": 29,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "盖尔",
+   "slug": null,
+   "lines": 28,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "原知",
+   "slug": null,
+   "lines": 26,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "明森",
+   "slug": null,
+   "lines": 25,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "喽啰",
+   "slug": null,
+   "lines": 24,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "洪巢",
+   "slug": null,
+   "lines": 24,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "玩网大手子",
+   "slug": null,
+   "lines": 23,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "保罗",
+   "slug": null,
+   "lines": 21,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "牧师",
+   "slug": null,
+   "lines": 21,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "苏小青",
+   "slug": null,
+   "lines": 21,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "长老",
+   "slug": null,
+   "lines": 21,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "蔡小静",
+   "slug": null,
+   "lines": 21,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "文慧",
+   "slug": null,
+   "lines": 20,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "店主",
+   "slug": null,
+   "lines": 20,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "青昭",
+   "slug": null,
+   "lines": 20,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "天子棠",
+   "slug": null,
+   "lines": 19,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "路过的好人",
+   "slug": null,
+   "lines": 19,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "老板",
+   "slug": null,
+   "lines": 19,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "魏工",
+   "slug": null,
+   "lines": 18,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "千禾",
+   "slug": null,
+   "lines": 18,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "月见武",
+   "slug": null,
+   "lines": 18,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "镜虚",
+   "slug": null,
+   "lines": 17,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "郎河",
+   "slug": null,
+   "lines": 17,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "真锋",
+   "slug": null,
+   "lines": 17,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "喜春",
+   "slug": null,
+   "lines": 16,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "可爱的曼巴",
+   "slug": null,
+   "lines": 16,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "木朽",
+   "slug": null,
+   "lines": 16,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "木有为",
+   "slug": null,
+   "lines": 16,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "林好",
+   "slug": null,
+   "lines": 15,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "不升职誓不改名",
+   "slug": null,
+   "lines": 14,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "叶惠",
+   "slug": null,
+   "lines": 14,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "机皇",
+   "slug": null,
+   "lines": 14,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "3号",
+   "slug": null,
+   "lines": 14,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "海老名双叶",
+   "slug": null,
+   "lines": 13,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "鸣嶷",
+   "slug": null,
+   "lines": 13,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "新知高仿号",
+   "slug": null,
+   "lines": 13,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "合连",
+   "slug": null,
+   "lines": 12,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "队员B",
+   "slug": null,
+   "lines": 12,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "蓝冷泉",
+   "slug": null,
+   "lines": 12,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "青山在",
+   "slug": null,
+   "lines": 11,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "真岛",
+   "slug": null,
+   "lines": 11,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "某员工",
+   "slug": null,
+   "lines": 11,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "2号",
+   "slug": null,
+   "lines": 11,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "女生D",
+   "slug": null,
+   "lines": 11,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "阿舜",
+   "slug": null,
+   "lines": 11,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "陈光明",
+   "slug": null,
+   "lines": 11,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "原末",
+   "slug": null,
+   "lines": 11,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "容易",
+   "slug": null,
+   "lines": 10,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "卫国赵",
+   "slug": null,
+   "lines": 10,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "夜眉",
+   "slug": null,
+   "lines": 10,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "悬月",
+   "slug": null,
+   "lines": 10,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "千分",
+   "slug": null,
+   "lines": 10,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "镰川",
+   "slug": null,
+   "lines": 9,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "金尚早",
+   "slug": null,
+   "lines": 9,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "护卫B",
+   "slug": null,
+   "lines": 9,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "老许",
+   "slug": null,
+   "lines": 9,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "队员A",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "思星天文馆",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "平安喜乐",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "管直",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "郎胜",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "朴意生",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "青云",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "狱警",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "南方枝",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "组员",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "4号",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "洛克",
+   "slug": null,
+   "lines": 8,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "准锋",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "和头",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "工作人员",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "鲍声",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "鸣采菱",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "阿罗",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "工人代表",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "薇儿",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "小夫",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "同事A",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "同事B",
+   "slug": null,
+   "lines": 7,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "伊寓",
+   "slug": null,
+   "lines": 6,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "仆人",
+   "slug": null,
+   "lines": 6,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "路人",
+   "slug": null,
+   "lines": 6,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "男生",
+   "slug": null,
+   "lines": 6,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "机器人",
+   "slug": null,
+   "lines": 6,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "保安A",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "保安C",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "客户",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "队员",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "教徒A",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "同学甲",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "两脚漂亮羊",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "护卫C",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "导师",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "李学长",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "病人",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "大禾",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "机械师",
+   "slug": null,
+   "lines": 5,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "保安B",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "亲卫队",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "宪兵长官",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "安保",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "海老名惠子",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "苍穹",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "宪兵甲",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "小弟们",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "员工A",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "双叶",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "静莲",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "女生B",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "护卫A",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "教徒B",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "教徒C",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "神秘人",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "队员C",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "海老名雄介",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "柳生敬",
+   "slug": null,
+   "lines": 4,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "阿慧",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "胖军官",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "瘦军官",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "油舍",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "某股东",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "警员A",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "应援会",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "闺蜜",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "员工B",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "请客吃饭",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "教士B",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "惠子",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "下属甲",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "下属乙",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "工人们",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "小男孩",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "护卫",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "陈学姐",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "病人家属",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "企业家B",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "计算机专家",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "房间里的声音",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "信子",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "屏幕",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "记者小红",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "管家小红",
+   "slug": null,
+   "lines": 3,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "定慧",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "小卖部大妈",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "禁林军",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "贫民A",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "警员B",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "室友",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "军人甲",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "军人乙",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "员工们",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "宪兵乙",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "歹徒甲",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "男学者",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "女学者",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "教士A",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "李兴元",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "暗卫",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "工人甲",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "守卫",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "清洁工",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "企业家A",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "工人A",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "议长",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "柳生纯一",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "纯一",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "5号",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "民众",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "记者乙",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "带头的",
+   "slug": null,
+   "lines": 2,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "亲爱的希联人民",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "亲爱的路絮",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "青朗",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "董屋",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "我推的叶心",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "对反动派专用叶家枪",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "没父游戏公司",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "革命之龙卷八级风",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "南星都唱片行老板",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "行得正站得直",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "夜访吸血鬼",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "年轻的囚徒",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "悔罪之星",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "吸血鬼殿下的绝世妃子",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "THEM报社",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "衣食住行计划官方",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "保安们",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "天使们",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "至高无上帝国皇帝的亲卫队",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "独断千古帝国皇帝的禁林军",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "禁卫军",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "宪兵",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "下属",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "原平",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "贫民B",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "贫民C",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "民兵",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "贫民D",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "贫民E",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "贫民F",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "贫民们",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "渡边镰川",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "燃堂猛",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "队员们",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "工人G",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "镇山",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "室友们",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "室友A",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "主教A",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "主教B",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "主教C",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "俘虏甲",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "俘虏乙",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "俘虏丙",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "俘虏丁",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "宪兵们",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "歹徒乙",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "大厅喇叭",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "小弟A",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "舞墨书生",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "打倒一切牛鬼蛇神",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "平安是福",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "智人TV",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "男教士",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "可爱的曼波",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "囚犯甲",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "囚犯乙",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "女生A",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "女生C",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "罪人",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "病人亲属",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "教徒D",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "红缨",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "企业家C",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "工人B",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "两人",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "自由民",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "人群",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "远处的声音",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "帝国号角",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "深黑军团",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": true
+  },
+  {
+   "tag": "记者甲",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "女受害者",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "男受害者",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  },
+  {
+   "tag": "受害者们",
+   "slug": null,
+   "lines": 1,
+   "attested_in_setting": false
+  }
+ ],
+ "taxonomy": {
+  "文类": [
+   "花絮",
+   "楔子",
+   "画外音",
+   "剧情花絮",
+   "特别环节",
+   "四格漫画",
+   "玩家之声"
+  ],
+  "叙事层级": [
+   "已发生",
+   "未来可能",
+   "平行世界线"
+  ],
+  "主题": [
+   "政治",
+   "思想",
+   "经济",
+   "军事",
+   "神秘学",
+   "法律",
+   "教育",
+   "媒体",
+   "宗教",
+   "劳动",
+   "科技",
+   "外交"
+  ],
+  "事件类型": [
+   "战争",
+   "政变",
+   "屠杀",
+   "暗杀",
+   "公审",
+   "谈判",
+   "起义",
+   "会议",
+   "典礼",
+   "选举",
+   "清洗",
+   "起义失败"
+  ],
+  "关系": [
+   "师徒",
+   "恋人",
+   "亲族",
+   "政敌",
+   "同盟",
+   "背叛",
+   "上下级"
+  ],
+  "主题词": [
+   "忠诚",
+   "背叛",
+   "牺牲",
+   "复仇",
+   "宽恕",
+   "救赎",
+   "腐败",
+   "理想",
+   "自由",
+   "暴力",
+   "绝望",
+   "希望"
+  ],
+  "时间": [
+   "战前",
+   "战后3年",
+   "战后5年",
+   "战后6年",
+   "战时"
+  ],
+  "剧情线": [
+   "北沙篇",
+   "青都篇",
+   "星都篇",
+   "日本街",
+   "中分山",
+   "帝国线",
+   "教团国线",
+   "走廊区",
+   "第一特区",
+   "富贵集团",
+   "光胜集团"
+  ]
+ },
+ "variant_map": {
+  "风熏": "风薰",
+  "西娜": "西娜·陈",
+  "齐藤": "齐藤优子",
+  "斯卡雷特": "斯卡雷特家族",
+  "鸣": "鸣十二",
+  "安安": "柳生安安",
+  "薇薇安": "薇薇安",
+  "曼陀罗": "1号（曼陀罗）"
+ },
+ "stats": {
+  "speaker_labels_raw": 325,
+  "people_kept": 289,
+  "attested": 83
+ }
+}
