@@ -1,0 +1,71 @@
+/* 黑柩设定集Wiki · 专有样式（共享变量见 ../assets/style.css） */
+.nav-sep{width:1px;height:1.1em;background:var(--line);display:inline-block}
+.nav-other{color:var(--accent)}
+.hero{padding:1.5rem 0 .7rem}
+.hero h1{font-size:1.7rem;margin:0 0 .3rem}
+.hero .sub{color:var(--muted);margin:0 0 .6rem}
+.warns{margin:1rem 0}
+.warn{background:var(--card);border:1px solid var(--line);border-radius:10px;
+padding:.55rem .85rem;margin:.45rem 0;font-size:.92rem}
+.warn.spoiler{border-left:3px solid #d98b2b}
+.warn.eating{border-left:3px solid var(--accent)}
+.warn.version{border-left:3px solid var(--accent2);color:var(--muted)}
+.preface-entry a{display:block;background:var(--card);border:1px solid var(--accent2);
+border-radius:12px;padding:.75rem 1rem;margin:.8rem 0}
+.preface-entry a:hover{text-decoration:none;border-color:var(--accent)}
+.preface-entry b{display:block;font-size:1.05rem;margin-bottom:.15rem}
+/* 卷区块 + 可折叠的节（作者 2026-10-14 要求：不用卡片） */
+.vol-block{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.7rem .9rem;margin:.7rem 0}
+.vol-block>h3{margin:0 0 .5rem;font-size:1.05rem;display:flex;gap:.6rem;
+align-items:baseline;flex-wrap:wrap}
+.vol-block>h3 .muted{font-weight:400;font-size:.85rem}
+details.sec-fold{border-top:1px solid var(--line);padding:.35rem 0}
+details.sec-fold>summary{cursor:pointer;font-weight:600;font-size:.95rem;
+display:flex;gap:.6rem;align-items:baseline}
+details.sec-fold>summary .muted{font-weight:400;font-size:.82rem}
+ul.fold-list{list-style:none;padding:0;margin:.4rem 0 .2rem;columns:2;column-gap:1.4rem}
+@media(max-width:700px){ul.fold-list{columns:1}}
+ul.fold-list li{margin:.12rem 0;font-size:.9rem;break-inside:avoid}
+ul.fold-list li a{margin-right:.4rem}
+.fold-more{margin:.2rem 0 0;font-size:.82rem}
+ul.direct-list{margin:.4rem 0 .2rem;padding-left:0;list-style:none}
+ul.sec-list,ul.entry-list{list-style:none;padding:0;margin:.5rem 0}
+ul.sec-list li{border-bottom:1px solid var(--line);padding:.4rem 0}
+ul.sec-list li a{font-weight:600;margin-right:.5rem}
+ul.entry-list li{border-bottom:1px solid var(--line);padding:.45rem 0}
+ul.entry-list li a{margin-right:.5rem}
+.lead-sm{display:block;color:var(--muted);font-size:.85rem;margin-top:.15rem}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.6rem .9rem;margin:.9rem 0}
+.toc h2{margin:.1rem 0 .35rem;font-size:.95rem}
+.toc ol{margin:0;padding-left:1.2rem;font-size:.9rem}
+.blk{margin:1.3rem 0;scroll-margin-top:1rem}
+.blk h2{font-size:1.08rem;border-bottom:1px solid var(--line);
+padding-bottom:.25rem;margin-bottom:.5rem}
+.blk.alt{border-left:3px solid #d98b2b;padding-left:.9rem}
+.entry .lead{background:var(--card);border-left:3px solid var(--accent2);
+border-radius:0 10px 10px 0;padding:.6rem .9rem;margin:1rem 0;font-size:1.02rem}
+.seealso{background:var(--card);border-left:3px solid var(--accent2);
+border-radius:0 10px 10px 0;padding:.5rem .85rem;margin:.8rem 0;font-size:.92rem}
+details.meta,details.notes{background:var(--card);border:1px solid var(--line);
+border-radius:10px;padding:.45rem .8rem;margin:.5rem 0}
+details.meta>summary,details.notes>summary{cursor:pointer;color:var(--muted);
+font-size:.88rem}
+details.notes{margin-top:1.6rem}
+details.notes h3{font-size:.95rem;margin:.7rem 0 .3rem}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+table th,table td{border:1px solid var(--line);padding:.35rem .5rem;text-align:left;
+vertical-align:top}
+table th{background:var(--bg);color:var(--muted)}
+.prefaces .blk,.preface .blk{margin:1.2rem 0}
+.howto,.gaps{padding-left:1.2rem}
+.howto li,.gaps li{margin:.25rem 0}
+.back{font-size:.85rem;margin:1.2rem 0}
+.to-top{position:fixed;right:1.1rem;bottom:1.1rem;z-index:30;
+background:var(--card);border:1px solid var(--line);border-radius:99px;
+padding:.45rem .9rem;font-size:.85rem;color:var(--fg);opacity:0;pointer-events:none;
+transition:opacity .2s,transform .15s;box-shadow:0 4px 18px #0003}
+.to-top.show{opacity:.96;pointer-events:auto}
+.to-top:hover{border-color:var(--accent2);text-decoration:none;transform:translateY(-2px)}

@@ -1,0 +1,93 @@
+/* 黑柩跑团 Wiki · 专有样式（共享样式见 ../assets/style.css） */
+.nav-sep{width:1px;height:1.1em;background:var(--line);display:inline-block}
+.nav-other{color:var(--accent)}
+.hero{padding:1.6rem 0 .8rem}
+.hero h1{font-size:1.7rem;margin:0 0 .3rem}
+.hero .sub{color:var(--muted);margin:0 0 .6rem}
+.hero .stats{margin:0 0 .3rem}
+.disc{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+border-radius:0 10px 10px 0;padding:.7rem .9rem;margin:1rem 0;font-size:.92rem}
+.season-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));gap:.8rem}
+.season-card{display:block;background:var(--card);border:1px solid var(--line);
+border-radius:12px;padding:.8rem .9rem;color:var(--fg)}
+.season-card:hover{border-color:var(--accent2);text-decoration:none}
+.season-card.warn{border-left:3px solid #d98b2b}
+.season-card h3{margin:0 0 .35rem;font-size:1.02rem}
+.season-card p{margin:.15rem 0}
+.season-card .comp{color:var(--muted);font-size:.82rem;
+display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.season-card .mono{font-size:.82rem;color:var(--muted)}
+.howto,.gaps{padding-left:1.2rem}
+.howto li,.gaps li{margin:.25rem 0}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.7rem 1rem;margin:1rem 0}
+.toc h2{margin:.1rem 0 .4rem;font-size:.95rem}
+.toc ol{list-style:none;padding-left:0;margin:0;columns:2;column-gap:1.6rem}
+@media(max-width:700px){.toc ol{columns:1}}
+.toc li{margin:.1rem 0;font-size:.88rem}
+.toc li.l2{padding-left:1.1rem;color:var(--muted)}
+.sec,.field{margin:1.4rem 0;scroll-margin-top:3.8rem}
+.sec h2,.field h2{font-size:1.1rem;border-bottom:1px solid var(--line);
+padding-bottom:.25rem;margin-bottom:.5rem}
+h2.plain{border:0;font-size:1rem}
+.back{font-size:.8rem;margin:.4rem 0 0}
+.back a{color:var(--muted)}
+details.sub{background:var(--card);border:1px solid var(--line);border-radius:10px;
+padding:.45rem .7rem;margin:.4rem 0}
+details.sub>summary{cursor:pointer;font-weight:600;font-size:.94rem}
+details.sub[open]>summary{margin-bottom:.4rem}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+table th,table td{border:1px solid var(--line);padding:.35rem .5rem;text-align:left;
+vertical-align:top}
+table.kv th{width:8.5rem;color:var(--muted);font-weight:600;background:var(--bg)}
+table.idx th{background:var(--bg);color:var(--muted)}
+table.dice td:first-child{color:var(--muted)}
+table.dice tr.ok td:last-child{color:#4f9d69}
+table.dice tr.bad td:last-child{color:#c8553d}
+.sess-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));
+gap:.5rem;margin-top:.6rem}
+.sess-card{display:flex;flex-direction:column;gap:.15rem;background:var(--card);
+border:1px solid var(--line);border-radius:10px;padding:.5rem .6rem;color:var(--fg);
+font-size:.88rem}
+.sess-card:hover{border-color:var(--accent2);text-decoration:none}
+.sess-card .mono{font-size:.78rem;color:var(--muted)}
+.sess-card .muted{font-size:.76rem}
+ol.dec,ul.hooks{padding-left:1.3rem}
+ol.dec li,ul.hooks li{margin:.25rem 0}
+.pn-nav{display:flex;justify-content:space-between;gap:.6rem;margin:1.6rem 0;
+flex-wrap:wrap}
+.pn{background:var(--card);border:1px solid var(--line);border-radius:10px;
+padding:.5rem .8rem;font-size:.9rem}
+.pn:hover{border-color:var(--accent2);text-decoration:none}
+.season-nav{margin:2rem 0;padding-top:.8rem;border-top:1px solid var(--line)}
+.season-nav h3{font-size:.95rem;color:var(--muted);margin:.2rem 0 .5rem}
+.season-nav a{display:inline-block;margin:.15rem .3rem .15rem 0;padding:.2rem .6rem;
+border:1px solid var(--line);border-radius:99px;font-size:.85rem}
+.season-nav a.cur{border-color:var(--accent);color:var(--accent)}
+.tl-season{margin:1.4rem 0}
+.tl-season h2{font-size:1.05rem}
+ul.timeline{list-style:none;padding:0;margin:.4rem 0}
+li.tl-item{display:flex;gap:.7rem;align-items:baseline;padding:.3rem 0;
+border-bottom:1px dashed var(--line);flex-wrap:wrap}
+li.tl-item a{min-width:5.5rem}
+.tl-time{flex:1;min-width:14rem}
+.wl{font-size:.75rem;padding:.05rem .45rem;border-radius:99px;border:1px solid var(--line);
+color:var(--muted)}
+.wl-main{border-color:#4f9d69;color:#4f9d69}
+.wl-multi{border-color:#7ea8c4;color:#7ea8c4}
+.wl-unk{border-color:#d98b2b;color:#d98b2b}
+.filters{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0 1rem}
+.filters button{cursor:pointer;background:var(--card);color:var(--fg);
+border:1px solid var(--line);border-radius:99px;padding:.25rem .7rem;font-size:.85rem}
+.filters button:hover{border-color:var(--accent2)}
+a.xlink{border-bottom:1px dotted var(--accent2)}
+/* 回到顶部：随滚动淡入（浏览器原生支持 href="#" 回顶，无需 JS） */
+.to-top{position:fixed;right:1.1rem;bottom:1.1rem;z-index:30;
+background:var(--card);border:1px solid var(--line);border-radius:99px;
+padding:.45rem .9rem;font-size:.85rem;color:var(--fg);
+opacity:0;pointer-events:none;transition:opacity .2s,transform .15s;
+box-shadow:0 4px 18px #0003}
+.to-top.show{opacity:.96;pointer-events:auto}
+.to-top:hover{border-color:var(--accent2);text-decoration:none;transform:translateY(-2px)}
+li.tl-item.hide{display:none}

@@ -35,7 +35,11 @@ import categories as catmod  # noqa: E402
 
 W = common.W
 DATA = common.DATA
-DOCS = os.path.join(W, "docs")
+# 花絮站挂在 /huaxu/ 下（作者 2026-10-14 决定：一个站点两个区）
+# 用环境变量 DSH_SITE_PREFIX 可以让同一套代码输出到别的子目录（跑团站复用）
+PREFIX = os.environ.get("DSH_SITE_PREFIX", "huaxu").strip("/")
+SITE_ROOT = os.path.join(W, "docs")
+DOCS = os.path.join(SITE_ROOT, PREFIX)
 SITE = os.path.join(DATA, "site.json")
 
 DEFAULT_SITE = {
@@ -64,14 +68,18 @@ def page(title, body, rel, site, extra_head="", body_class=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)} · {html.escape(site['title'])}</title>
 <meta name="description" content="{html.escape(site['description'])}">
-{extra_head}<link rel="stylesheet" href="{rel}assets/style.css">
+{extra_head}<link rel="stylesheet" href="{rel}../assets/style.css">
 </head>
 <body class="{body_class}">
 <header class="site-head">
   <a class="brand" href="{rel}index.html">{html.escape(site['title'])}</a>
   <nav class="site-nav">
-    <a href="{rel}index.html">首页</a>
+    <a href="{rel}index.html">本站首页</a>
     <a href="{rel}index.html#tags">全部标签</a>
+    <span class="nav-sep"></span>
+    <a class="nav-other" href="{rel}../trpg/index.html" title="切换到跑团站">跑团站 →</a>
+    <a class="nav-other" href="{rel}../lore/index.html" title="切换到设定站">设定站 →</a>
+    <a class="nav-other" href="{rel}../index.html" title="三站入口">联合首页</a>
   </nav>
   <div class="search-wrap">
     <input id="q" type="search" placeholder="搜索标题或标签…" autocomplete="off" aria-label="搜索">
@@ -86,8 +94,9 @@ def page(title, body, rel, site, extra_head="", body_class=""):
   <p>本站为《黑柩》花絮的整理与索引，内容版权归原作者所有。</p>
   <p class="muted">静态站 · 由 <code>tools/build_site.py</code> 生成</p>
 </footer>
+<a class="to-top" href="#" id="to-top" title="回到顶部" aria-label="回到顶部">↑ 顶部</a>
 <script>window.SITE_REL = {json.dumps(rel)};</script>
-<script src="{rel}assets/app.js" defer></script>
+<script src="{rel}../assets/app.js" defer></script>
 </body>
 </html>
 """
@@ -693,13 +702,15 @@ background:var(--card);border-radius:0 8px 8px 0;color:var(--muted);font-size:.8
 APP_JS = """/* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，这里只做筛选/搜索） */
 (function () {
   var rel = window.SITE_REL || "";
+  // 列表页所在目录：花絮站是 entry/，跑团站是 session/（两站共用本脚本）
+  var list = window.SITE_LIST || "entry/";
   var q = document.getElementById("q");
   var box = document.getElementById("q-results");
   var index = null;
 
   function loadIndex() {
     if (index) return Promise.resolve(index);
-    return fetch(rel + "assets/search.json")
+    return fetch(rel + "../assets/search.json")
       .then(function (r) { return r.ok ? r.json() : { entries: [] }; })
       .then(function (d) { index = d; return d; });
   }
@@ -707,7 +718,7 @@ APP_JS = """/* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，�
   function render(list) {
     if (!list.length) { box.hidden = true; return; }
     box.innerHTML = list.slice(0, 20).map(function (e) {
-      return '<a href="' + rel + 'entry/' + e.id + "-" + e.slug + '.html">' +
+      return '<a href="' + rel + list + e.id + "-" + e.slug + '.html">' +
         e.title + '<br><span class="muted">' + e.kind + " · " +
         (e.tags || []).slice(0, 5).join("、") + "</span></a>";
     }).join("");
@@ -728,6 +739,16 @@ APP_JS = """/* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，�
     document.addEventListener("click", function (ev) {
       if (box && !box.contains(ev.target) && ev.target !== q) box.hidden = true;
     });
+  }
+
+  // 回到顶部：滚动超过一屏后淡入（href="#" 由浏览器原生处理）
+  var top = document.getElementById("to-top");
+  if (top) {
+    var onScroll = function () {
+      top.classList.toggle("show", window.scrollY > 600);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
   }
 
   // 标签页筛选
@@ -766,7 +787,7 @@ def render_assets(data, by_id, featured):
                            "slug": common.slugify(e["title"]),
                            "kind": e["kind"], "chars": e["chars"],
                            "tags": e["tags"]} for e in data["entries"]]}
-    n = write_if_changed(os.path.join(DOCS, "assets", "search.json"),
+    n = write_if_changed(os.path.join(SITE_ROOT, "assets", "search.json"),
                          json.dumps(search, ensure_ascii=False, separators=(",", ":")))
     # 客户端聚合：entry→tags 与 tag→entries
     client = {"entry_count": data["entry_count"], "tag_count": data["tag_count"],
@@ -780,26 +801,28 @@ def render_assets(data, by_id, featured):
                                        "layer": layer_of(e, data["tags"])}
                              for e in data["entries"]},
               "tag_index": data["tag_index"]}
-    n += write_if_changed(os.path.join(DOCS, "assets", "tags.json"),
+    n += write_if_changed(os.path.join(SITE_ROOT, "assets", "tags.json"),
                           json.dumps(client, ensure_ascii=False, separators=(",", ":")))
     # 按维度拆分的轻量分片：只想拿某个维度标签的客户端可以按需取用
     by_dim = {}
     for t, m in data["tags"].items():
         for d in (m.get("dimensions") or [m.get("dimension")]):
             by_dim.setdefault(d, {})[t] = m["slug"]
-    n += write_if_changed(os.path.join(DOCS, "assets", "tags-by-dimension.json"),
+    n += write_if_changed(os.path.join(SITE_ROOT, "assets", "tags-by-dimension.json"),
                           json.dumps(by_dim, ensure_ascii=False, separators=(",", ":")))
     if featured:
-        n += write_if_changed(os.path.join(DOCS, "assets", "featured.json"),
+        n += write_if_changed(os.path.join(SITE_ROOT, "assets", "featured.json"),
                               json.dumps(featured, ensure_ascii=False, indent=1))
     return n
 
 
 def prune_stale(keep_under):
-    """删除 docs/ 下已不再生成的 .html（分类改名/删除后会留下过期页面）。
+    """删除 docs/ 下的过期 .html。
 
-    只处理 keep_under 里的 .html；assets/ 等其它文件不动。
-    返回删除数量。
+    两件事：
+    1. 删掉**本前缀目录内**不再生成的 .html（分类改名/删除后会留下过期页面）
+    2. 删掉**站点根下**遗留的 .html 与旧目录（如平移前的 docs/cat、docs/entry），
+       否则它们会以 /cat/xxx.html 的形式被访问到
     """
     removed = 0
     for sub in keep_under:
@@ -815,6 +838,14 @@ def prune_stale(keep_under):
                 if rel not in KEEP_FILES:
                     os.remove(p)
                     removed += 1
+    # 站点根：清掉旧的内容目录（平移前遗留的 entry/ tag/ cat/），
+    # 但**不要动 index.html** —— 那是 tools/build_all.py 生成的联合首页
+    siteroot = os.path.join(W, "docs")
+    for name in ("entry", "tag", "cat"):
+        d = os.path.join(siteroot, name)
+        if os.path.isdir(d):
+            shutil.rmtree(d)
+            removed += 1
     return removed
 
 
@@ -856,12 +887,17 @@ def main():
     cat_index = catmod.build_index(data, {"dimensions": subcats} if subcats else {})
     tag_to_cat = catmod.tag_to_categories(cat_index)
     n = 0
-    n += write_if_changed(os.path.join(DOCS, "assets", "style.css"), CSS)
-    n += write_if_changed(os.path.join(DOCS, "assets", "app.js"), APP_JS)
-    # 自定义域名：写进 docs/CNAME，并在描述里带上正式网址
+    # 共享资源写到站点根 assets/（两站共用：花絮站引用 ../assets/，跑团站同）
+    n += write_if_changed(os.path.join(SITE_ROOT, "assets", "style.css"), CSS)
+    n += write_if_changed(os.path.join(SITE_ROOT, "assets", "app.js"), APP_JS)
+    # 自定义域名与 .nojekyll **必须放在站点根**（docs/），不能放在 /huaxu/ 里，
+    # 否则 GitHub Pages 不认自定义域名
+    root = os.path.join(W, "docs")
+    os.makedirs(root, exist_ok=True)
     domain = (site.get("domain") or "").strip()
-    n += write_if_changed(os.path.join(DOCS, "CNAME"), (domain + "\n") if domain else "")
-    n += write_if_changed(os.path.join(DOCS, ".nojekyll"), "")
+    n += write_if_changed(os.path.join(root, "CNAME"),
+                          (domain + "\n") if domain else "")
+    n += write_if_changed(os.path.join(root, ".nojekyll"), "")
     n += render_assets(data, by_id, featured)
     n += render_entries(data, by_id, site, tag_to_cat)
     n += render_tags(data, by_id, site)

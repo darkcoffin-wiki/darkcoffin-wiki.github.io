@@ -1,0 +1,31 @@
+/* 联合首页 */
+body.joint{display:block}
+body.joint main{max-width:56rem;margin:0 auto;padding:2rem 1.2rem 3rem}
+.joint-hero{text-align:center;padding:1.5rem 0 1rem}
+.joint-hero h1{font-size:2rem;margin:0 0 .3rem}
+.joint-hero .sub{color:var(--muted);margin:0}
+.station-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));
+gap:1rem;margin:1.4rem 0}
+.station-card{display:block;background:var(--card);border:1px solid var(--line);
+border-radius:14px;padding:1.1rem 1.2rem;color:var(--fg);transition:border-color .15s}
+.station-card:hover{border-color:var(--accent);text-decoration:none}
+.station-card h2{margin:0 0 .4rem;font-size:1.25rem}
+.station-card .sum{margin:0 0 .7rem;color:var(--muted);font-size:.92rem}
+.station-card .nums{list-style:none;display:flex;gap:1rem;padding:0;margin:0 0 .8rem;
+flex-wrap:wrap;font-size:.88rem;color:var(--muted)}
+.station-card .nums b{color:var(--fg);font-size:1.05rem}
+.station-card .enter{color:var(--accent);font-size:.92rem}
+.joint-note{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.9rem 1.1rem;margin:1.2rem 0}
+.joint-note h2{font-size:1rem;margin:.1rem 0 .5rem}
+.joint-note ul{margin:0;padding-left:1.2rem}
+.joint-note li{margin:.3rem 0;font-size:.92rem;color:var(--muted)}
+.joint-note strong{color:var(--fg)}
+.station-card .card-warn{display:block;margin-top:.5rem;font-size:.8rem;
+color:#d98b2b;border-top:1px dashed var(--line);padding-top:.4rem}
+.joint-warns{margin:1.2rem 0}
+.joint-warns .warn{background:var(--card);border:1px solid var(--line);
+border-radius:10px;padding:.55rem .9rem;margin:.45rem 0;font-size:.9rem;color:var(--muted)}
+.joint-warns .warn.spoiler{border-left:3px solid #d98b2b}
+.joint-warns .warn.eating{border-left:3px solid var(--accent)}
+.joint-warns strong{color:var(--fg)}

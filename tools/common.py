@@ -202,3 +202,18 @@ def speaker_counts(body):
     for m in _SPEAKER_RE.finditer(body or ""):
         c[m.group(1)] += 1
     return c
+
+PREFIX = os.environ.get("DSH_SITE_PREFIX", "huaxu").strip("/")
+
+
+def site_dir(*parts):
+    """站点输出目录（前缀感知）：默认 docs/huaxu，可用 DSH_SITE_PREFIX 改。
+
+    用法：site_dir()、site_dir("cat")、site_dir("tag", "x.html")
+    """
+    return os.path.join(W, "docs", PREFIX, *parts)
+
+
+def site_root(*parts):
+    """站点根（docs/）：CNAME、.nojekyll 这类必须放这里。"""
+    return os.path.join(W, "docs", *parts)

@@ -1,14 +1,86 @@
-# 黑柩花絮 Wiki
+# 黑柩 Wiki（一个站点 · 两个区）
 
-《黑柩》花絮、楔子与画外音的整理站。**纯静态**，发布目录是 `docs/`，可直接托管在 GitHub Pages。
+《黑柩》的两套整理，**同一个站点、两套独立导航**。纯静态，发布目录是 `docs/`，
+可直接托管在 GitHub Pages。
+
+```
+docs/
+├─ index.html      联合首页：两站入口
+├─ assets/         共享样式与脚本（style.css / app.js / joint.css）
+├─ huaxu/          花絮站：作品侧整理（210 篇 / 346 标签 / 57 分类页）
+├─ trpg/           跑团站：记录侧整理（12 季 / 113 场次卡 / 时间轴）
+└─ lore/           设定站：辞书侧整理（12 卷 / 70 节 / 568 词条）
+```
+
+两站页面顶部都有跨站菜单（`跑团站 →` / `花絮站 →` / `联合首页`），
+**各自保留自己的首页**。两站**标签体系互相独立**——跑团含平行世界与 if 线，同名不一定是同一实体。
+
+## 花絮站（`/huaxu/`）
 
 * **210 篇**（站点 193 + docx 17），约 67.6 万字
-* **一套受控标签体系**（12 个维度），共 **338 个标签**，其中 **7 个是跨维度标签**（⋈）
-* 每篇一页（`docs/entry/<id>-<slug>.html`）；每个标签一页（`docs/tag/<slug>.html`）；
-  **每个子分类也有一页**（`docs/cat/<维度>-<分类>.html`）
-* 首页：**12 个栏目** + 按维度分组的全部标签（人物/组织/地理/设施已按子分类折叠）
-  + 分类浏览 + 标题与标签的轻量搜索
+* **一套受控标签体系**（12 个维度），共 **346 个标签**，其中若干是跨维度标签（⋈）
+* 每篇一页（`huaxu/entry/<id>-<slug>.html`）；每个标签一页（`huaxu/tag/<slug>.html`）；
+  **每个子分类也有一页**（`huaxu/cat/<维度>-<分类>.html`）
+* 首页：**12 个栏目** + 按维度分组的全部标签（人物/组织/地理/设施已按子分类折叠，
+  **所有子分类默认展开**）+ 分类浏览 + 标题与标签的轻量搜索
+* **标签↔文章 相关性分级**（红/橙/蓝，见下文）
 * **画外音**（平行世界线）与**楔子**（未来可能／为未来铺垫）在页面顶部有显著提示条
+
+## 设定站（`/lore/`）
+
+* **12 卷 / 70 节 / 568 个词条**，60.6 万汉字（源：`黑柩设定集·第一版·DSH版.docx`）
+* 页面：设定站首页、前言与编纂说明、12 个卷页、70 个节页、**568 个词条页**
+* **词条页分三层**：【概述】一句话定义 →【详述】正文 →【异说】与正文不一致的说法
+  （125 个词条有异说）；【源】与【收录范围】收在页尾折叠区
+* **每卷页末尾**有「编纂备注」独立折叠区（过程记录，非设定内容）
+* **警告只在站首页**：剧透警告 + 吃书警告 + 版本警告（子页面不重复）
+* **暂不与花絮站/跑团站互链**（设定集仍在演进），但保留回联合首页的入口
+
+### 设定站的文件与命令
+
+| 路径 | 作用 |
+|---|---|
+| `E:\黑柩\黑柩小说花絮\黑柩设定集·第一版·DSH版.docx` | **内容源**（不随仓库分发） |
+| `lore-data/` | 解析产物（**不进 git**） |
+| `tools/parse_lore.py` | docx → JSON（样式映射、页码剥离、slug 唯一化） |
+| `tools/lore_report.py` | 结构校验报告（目录 vs 样式交叉校验） |
+| `tools/build_lore.py` | 生成设定站 |
+
+```bash
+python tools/parse_lore.py      # 解析（需先有源 docx）
+python tools/lore_report.py     # 结构校验报告
+python tools/build_lore.py      # 生成设定站
+```
+
+## 跑团站（`/trpg/`）
+
+* **12 季 / 113 场**，季志 36.2 万 + 场次志 52.7 万汉字
+* 页面：跑团首页、**12 个季志页**、**113 张场次卡**、时间轴
+* **所有标题带分层序号**：`一、本季概览` / `（一）开局：…`（编号由数据生成，原文不改）
+* 每页有 **sticky 目录 + 回目录链接**；季摘要按小节折叠（最大的一节 5.7 万字）
+* 时间轴按**现实时间**排列，可按世界层（主世界／多层／未明）筛选
+* **跨站互链**：结构化名单字段（在场／地点／登场人物／场次索引）里的名词
+  链到花絮站对应标签页；**剧情摘要正文一律不链**
+
+### 跑团站的文件与命令
+
+| 路径 | 作用 |
+|---|---|
+| `E:\黑柩\黑柩跑团剧情志\` | **内容源**（不随仓库分发） |
+| `trpg-data/` | 解析产物（**不进 git**，随时可重建） |
+| `tools/parse_trpg.py` | 25 个 md → JSON（含分层序号、字段校验） |
+| `tools/build_trpg.py` | 生成跑团站（季志/场次卡/时间轴/首页） |
+| `tools/numbering.py` | 分层序号（`一、` / `（一）` / `1.` / `(1)`）的唯一来源 |
+| `tools/probe_crosslinks.py` | 探测跑团文本里出现多少花絮站标签（评估互链） |
+| `tools/review_tags.py` | 生成**待过目标签清单** `trpg-data/review_tags.md` |
+| `tools/make_link_whitelist.py` | 按复核结果生成 `trpg-data/link_whitelist.json` |
+
+```bash
+python tools/parse_trpg.py               # 解析（需先有源目录）
+python tools/review_tags.py              # 需要新标签复核时才跑
+python tools/make_link_whitelist.py      # 复核后生成白名单
+python tools/build_trpg.py               # 生成跑团站
+```
 
 ### 叙事层级的定义（作者 2026-10-14 定稿）
 
@@ -32,19 +104,25 @@
 
 | 路径 | 作用 |
 |---|---|
-| `source/` | 210 个 md，一篇一文件（**唯一的内容源**） |
+| `source/` | 210 个 md，一篇一文件（**花絮站的唯一内容源**） |
 | `data/` | 元数据与词表（见下） |
 | `tools/` | 全部脚本（打标、建站、增量、自检） |
 | `docs/` | **生成物**，GitHub Pages 发布目录（可随时删除重建） |
-| `_site_raw/`、`_site_text/` | 站点 HTML 快照与解析后的全文（切分阶段的中间物，保留备查） |
+| `trpg-data/` | 跑团解析产物（中间物，**不进 git**） |
 
-## 三个命令
+## 常用命令
 
 ```bash
-python tools/tag_entries.py      # 210 篇 → data/tags.json、data/slugs.json、data/tag_report.md
-python tools/build_site.py       # → docs/（幂等：内容没变就不重写，保住 mtime）
-python tools/check_site.py       # 自检：页面齐全、无死链、客户端聚合一致
-python tools/tag_audit.py        # 打标自检：挑出「可能漏标」的篇目 → data/tag_audit.md
+# 全站一键构建（推荐）
+python tools/build_all.py            # 花絮站 + 跑团站 + 联合首页
+python tools/build_all.py --clean    # 先清空 docs/
+python tools/check_all.py            # 全站自检（1394 页 / 跨站链接 / 幂等）
+
+# 花絮站单独
+python tools/tag_entries.py          # 210 篇 → data/tags.json（含相关性分级）
+python tools/build_site.py           # → docs/huaxu/（幂等：内容没变就不重写，保住 mtime）
+python tools/check_site.py           # 花絮站自检：页面齐全、无死链、客户端聚合一致
+python tools/tag_audit.py            # 打标自检：挑出「可能漏标」的篇目 → data/tag_audit.md
 python tools/check_subcategories.py  # 子分类校验：错名/跨维度错放（错误）、漏项/多分类（提示）
 ```
 
@@ -52,6 +130,9 @@ python tools/check_subcategories.py  # 子分类校验：错名/跨维度错放�
 
 ```bash
 python -m http.server 8000 --directory docs
+# 然后打开 http://localhost:8000/        联合首页
+#                  http://localhost:8000/huaxu/
+#                  http://localhost:8000/trpg/
 ```
 
 ## 增量更新
@@ -133,6 +214,9 @@ python tools/update.py           # 登记（延续编号）+ 只对新增条目�
 原先词表里的别名 `进化者同盟 → 进盟` 已解除，否则全名会永远生不出地理标签。
 
 ### 分类器（石头扔袋子）
+
+**用法与设计说明见 [`石头扔袋子-说明.md`](石头扔袋子-说明.md)**——那份文档是写给「以后的 AI 对话」看的，
+用来在别的场景复用这套「把枯燥的手工分类变成小游戏」的做法。
 
 四个维度各有一份，双击用浏览器打开即可（离线）：
 

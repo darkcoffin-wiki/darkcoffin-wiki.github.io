@@ -159,7 +159,7 @@ def render_pages(cat_index, tags_data, site, page_fn, write_fn, rel="../", min_d
 </section>""" % (c["dim"], c["name"], len(c["entries"]), len(c["member_tags"]),
                  ('<p class="dim-note">分组依据：%s</p>' % c["source"]) if c.get("source") else "",
                  "".join(rows), len(c["member_tags"]), tag_chips)
-        n += write_fn(os.path.join(common.W, "docs", c["url"]),
+        n += write_fn(common.site_dir(c["url"]),
                       page_fn(c["name"], body, rel, site, body_class="cat-detail"))
     return n
 

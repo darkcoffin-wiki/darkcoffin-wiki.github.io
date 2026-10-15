@@ -25,7 +25,8 @@ import common  # noqa: E402
 
 W = common.W
 DATA = common.DATA
-DOCS = os.path.join(W, "docs")
+PREFIX = os.environ.get("DSH_SITE_PREFIX", "huaxu").strip("/")
+DOCS = os.path.join(W, "docs", PREFIX)
 
 HREF = re.compile(r'href="([^"#]+)"')
 

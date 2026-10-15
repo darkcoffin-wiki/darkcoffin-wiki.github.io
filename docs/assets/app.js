@@ -1,13 +1,15 @@
 /* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，这里只做筛选/搜索） */
 (function () {
   var rel = window.SITE_REL || "";
+  // 列表页所在目录：花絮站是 entry/，跑团站是 session/（两站共用本脚本）
+  var list = window.SITE_LIST || "entry/";
   var q = document.getElementById("q");
   var box = document.getElementById("q-results");
   var index = null;
 
   function loadIndex() {
     if (index) return Promise.resolve(index);
-    return fetch(rel + "assets/search.json")
+    return fetch(rel + "../assets/search.json")
       .then(function (r) { return r.ok ? r.json() : { entries: [] }; })
       .then(function (d) { index = d; return d; });
   }
@@ -15,7 +17,7 @@
   function render(list) {
     if (!list.length) { box.hidden = true; return; }
     box.innerHTML = list.slice(0, 20).map(function (e) {
-      return '<a href="' + rel + 'entry/' + e.id + "-" + e.slug + '.html">' +
+      return '<a href="' + rel + list + e.id + "-" + e.slug + '.html">' +
         e.title + '<br><span class="muted">' + e.kind + " · " +
         (e.tags || []).slice(0, 5).join("、") + "</span></a>";
     }).join("");
@@ -36,6 +38,16 @@
     document.addEventListener("click", function (ev) {
       if (box && !box.contains(ev.target) && ev.target !== q) box.hidden = true;
     });
+  }
+
+  // 回到顶部：滚动超过一屏后淡入（href="#" 由浏览器原生处理）
+  var top = document.getElementById("to-top");
+  if (top) {
+    var onScroll = function () {
+      top.classList.toggle("show", window.scrollY > 600);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
   }
 
   // 标签页筛选
