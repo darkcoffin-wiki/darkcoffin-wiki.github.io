@@ -3,6 +3,11 @@
 **日期**：2026-10-14　**上游**：`语料交接.md`（语料切分，已收官）
 **结论**：**站点可直接发布**。剩下的只有你自己要拍的两件事（见最后一节）。
 
+> ⚠️ **本文档是阶段历史记录**：下面第一节的数字是**当时**（只有花絮站）的数字，
+> 后续又陆续加了跑团站、设定站、分析站，并经历多次改版。
+> **当前的结构、数字与命令一律以 [`README.md`](README.md) 为准**；
+> 本文档下面的「决策记录」表仍有参考价值（记着每个决定是在什么背景下做的）。
+
 ---
 
 ## 一、交付物与实测数字
@@ -148,14 +153,17 @@ python tools/check_site.py         # 自检
 
 ## 七、GitHub Pages
 
-已选：**公开仓库 + Pages**。配置在 `.github/workflows/pages.yml`：
+**最终采用的是**：公开仓库 + Pages + **用户主页仓库**（推送即发布）。
 
-1. 推送仓库
-2. Settings → Pages → Source 选 **GitHub Actions**
-3. 之后每次 push 到 `main` 都会自动 打标 → 建站 → 自检 → 发布
+> ⚠️ **纠正**：这里原先写「配置在 `.github/workflows/pages.yml`」——
+> **该文件并不存在，本仓库从未配置过 GitHub Actions**。
+> 现行方式是纯本地构建：`python tools/build_all.py` → 提交 `docs/` → Pages 直接从
+> `main` 分支的 `/docs` 发布。**推送不会触发任何工作流。**
 
-若仓库根目录不是 `wiki/`，改 workflow 里的 `working-directory: wiki` 与 `path: wiki/docs`。
-**另一条更简单的路**：Settings → Pages → Source 选 `Deploy from a branch`，目录选 `/docs`，就不用 Actions。
+原因是仓库用**用户主页仓库** `darkcoffin-wiki.github.io`（名字与账号一致），
+推送即发布，**不需要**去 Settings 里选 Source/Branch，也就用不着 Actions。
+
+完整流程见 [`发布指引.md`](发布指引.md)。
 
 ---
 

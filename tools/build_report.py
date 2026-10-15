@@ -354,7 +354,11 @@ padding:.7rem 1rem .8rem;margin:1rem 0 1.4rem}
 .rp-body h2{font-size:1.35rem;margin:2.4rem 0 .8rem;padding-bottom:.3rem;
 border-bottom:1px solid var(--line);scroll-margin-top:1rem}
 .rp-body h3{font-size:1.12rem;margin:1.9rem 0 .6rem;scroll-margin-top:1rem}
-.rp-body h4{font-size:1rem;margin:1.5rem 0 .5rem;color:var(--fg2,#cfd6e4);scroll-margin-top:1rem}
+/* h4 用 --fg + 透明度做出层级差别。
+   注意：style.css 里**没有** --fg2（那是另一个主题体系的变量名），
+   用 var(--fg2, #cfd6e4) 会在浅色主题下取到浅灰、几乎看不见。 */
+.rp-body h4{font-size:1rem;margin:1.5rem 0 .5rem;
+color:var(--fg);opacity:.86;scroll-margin-top:1rem}
 .rp-body p{margin:.85rem 0}
 .rp-body ul,.rp-body ol{margin:.7rem 0 .9rem;padding-left:1.6rem}
 .rp-body li{margin:.35rem 0}
