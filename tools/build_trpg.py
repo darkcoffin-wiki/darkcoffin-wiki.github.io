@@ -46,6 +46,16 @@ SITE = {
     "disclaimer": "本网站由 AI 生成，内容准确性无法完全保证。",
 }
 
+# 友情链接来自 data/site.json（与花絮站共用一份配置）
+try:
+    _cfg_path = os.path.join(W, "data", "site.json")
+    if os.path.exists(_cfg_path):
+        _cfg = json.load(io.open(_cfg_path, encoding="utf-8"))
+        if _cfg.get("friend_links"):
+            SITE["friend_links"] = _cfg["friend_links"]
+except Exception as _e:
+    print("  （友情链接配置读取失败：%s）" % _e)
+
 # 「剧情摘要」以外的字段才允许做跨站链接
 LINKABLE_KEYS = ("present", "places")
 
@@ -234,6 +244,28 @@ SHORT_TIME_LABEL = "（单条时间戳）"
 # ══════════════════════════════════════════════════════════════
 # 页面骨架（与花絮站同一套视觉，多一个跨站菜单）
 # ══════════════════════════════════════════════════════════════
+def friend_links_html(_cfg=None):
+    """页脚友情链接（配置在 data/site.json 的 friend_links）。
+
+    _cfg 缺省时从模块级 SITE / site 里取（各站命名不一，故做兼容）。
+    """
+    cfg = _cfg
+    if not isinstance(cfg, dict):
+        for _n in ("SITE", "site"):
+            _v = globals().get(_n)
+            if isinstance(_v, dict):
+                cfg = _v
+                break
+    out = []
+    for f in ((cfg or {}).get("friend_links") or []):
+        label = html.escape(f.get("label", ""))
+        note = f.get("note", "")
+        title = ' title="%s"' % html.escape(note) if note else ""
+        out.append('<a href="%s"%s target="_blank" rel="noopener">%s</a>'
+                   % (html.escape(f.get("url", "#")), title, label))
+    return "".join(out) or "—"
+
+
 def page(title, body, rel, extra_head="", body_class=""):
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -255,6 +287,7 @@ def page(title, body, rel, extra_head="", body_class=""):
     <span class="nav-sep"></span>
     <a class="nav-other" href="{rel}../huaxu/index.html" title="切换到花絮站">花絮站 →</a>
     <a class="nav-other" href="{rel}../lore/index.html" title="切换到设定站">设定站 →</a>
+    <a class="nav-other" href="{rel}../report/index.html" title="切换到分析站">分析站 →</a>
     <a class="nav-other" href="{rel}../index.html" title="三站入口">联合首页</a>
   </nav>
   <div class="search-wrap">
@@ -270,6 +303,7 @@ def page(title, body, rel, extra_head="", body_class=""):
   <p>《黑柩》跑团剧情志的整理与索引，内容版权归原作者所有。</p>
   <p class="muted">静态站 · 由 <code>tools/build_trpg.py</code> 生成 ·
      数据源：<code>E:\\黑柩\\黑柩跑团剧情志</code></p>
+<p class="friend-links">友情链接：{friend_links_html(SITE)}</p>
 </footer>
 <a class="to-top" href="#" id="to-top" title="回到顶部" aria-label="回到顶部">↑ 顶部</a>
 <script>window.SITE_REL = {json.dumps(rel)};window.SITE_LIST = "session/";</script>

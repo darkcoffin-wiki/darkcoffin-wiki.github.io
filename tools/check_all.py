@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""全站自检：花絮站 + 跑团站 + 联合首页。
+"""全站自检：花絮站 + 跑团站 + 设定站 + 分析站 + 联合首页。
 
 检查项
 ------
 1. 花絮站：每个条目/标签/分类都有页面（沿用 check_site 的逻辑）
-2. 跑团站：12 季志、113 场次卡、时间轴、首页都在
-3. **跨站链接**：所有站内 href 都能解析到实际文件（含 huaxu ↔ trpg 互链）
-4. 联合首页存在，且指向两站首页
+2. 跑团站：16 份季志（12 主季 + 4 短团）、152 场次卡、时间轴、首页都在
+3. **跨站链接**：所有站内 href 都能解析到实际文件（四站互链）
+3b. 分析站：10 份报告页 + 首页都在
+4. 联合首页存在，且指向四站首页
 5. 共享资源在位：docs/assets/{style.css,app.js,joint.css}
 6. 无未替换占位符、无过短页面
 7. 跑团站：分层序号渲染正确（抽样：h2 带 `一、` 等）
@@ -154,7 +155,25 @@ def main():
         if "（一）" not in t:
             warns.append("跑团站第 2 层编号（（一））未见，检查剧情摘要小节")
 
+    # 分析站：10 份报告页 + 首页
+    cat_p = os.path.join(W, "report-data", "catalog.json")
+    if os.path.exists(cat_p):
+        rcat = json.load(io.open(cat_p, encoding="utf-8"))
+        miss_rep = [c["slug"] for c in rcat
+                    if not os.path.exists(os.path.join(DOCS, "report", "entry",
+                                                       c["slug"] + ".html"))]
+        if miss_rep:
+            errs.append("分析站·缺报告页：%d 个（例：%s）"
+                        % (len(miss_rep), "、".join(miss_rep[:3])))
+        if not os.path.exists(os.path.join(DOCS, "report", "index.html")):
+            errs.append("分析站·缺首页 report/index.html")
+    else:
+        warns.append("分析站：未找到 report-data/catalog.json（跳过报告页检查）")
+
+    n_report = len(glob.glob(os.path.join(DOCS, "report", "**", "*.html"),
+                            recursive=True))
     stats = {"总页数": len(pages),
+             "分析站": n_report,
              "花絮站": len(glob.glob(os.path.join(DOCS, "huaxu", "**", "*.html"),
                                     recursive=True)),
              "跑团站": len(glob.glob(os.path.join(DOCS, "trpg", "**", "*.html"),

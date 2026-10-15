@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>黑柩 Wiki</title>
-<meta name="description" content="《黑柩》的两套整理：花絮与跑团剧情志。">
+<meta name="description" content="《黑柩》的四套整理：花絮 · 跑团剧情志 · 设定集 · 分析报告。">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="stylesheet" href="assets/joint.css">
 </head>
@@ -27,9 +27,20 @@
     <span class="enter">进入花絮站 →</span>
   </a>
 
+  <a class="station-card" href="trpg/index.html">
+    <h2>跑团站</h2>
+    <p class="sum">跑团剧情志：场次志与季志，按<strong>主线 / 短团 / 场次 / 现实时间</strong>整理。</p>
+    <ul class="nums">
+      <li><b>16</b> 季</li>
+      <li><b>152</b> 场</li>
+      <li>1,295,453 汉字</li>
+    </ul>
+    <span class="enter">进入跑团站 →</span>
+  </a>
+
   <a class="station-card" href="lore/index.html">
     <h2>设定站</h2>
-    <p class="sum">《黑柩设定集·第一版》：按<strong>卷 / 节 / 词条</strong>整理的设定辞书。</p>
+    <p class="sum">《黑柩设定集·1.1版》：按<strong>卷 / 节 / 词条</strong>整理的设定辞书。</p>
     <ul class="nums">
       <li><b>11</b> 卷</li>
       <li><b>555</b> 词条</li>
@@ -39,15 +50,16 @@
     <span class="card-warn">⚠️ 含剧透：涵盖全书人物、事件与结局</span>
   </a>
 
-  <a class="station-card" href="trpg/index.html">
-    <h2>跑团站</h2>
-    <p class="sum">跑团剧情志：场次志与季志，按<strong>季 / 场次 / 现实时间</strong>整理。</p>
+  <a class="station-card warn" id="station-report" href="report/index.html">
+    <h2>分析站</h2>
+    <p class="sum">基于《黑柩设定集》的<strong>专题研究报告</strong>：制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物。</p>
     <ul class="nums">
-      <li><b>16</b> 季</li>
-      <li><b>152</b> 场</li>
-      <li>1,295,453 汉字</li>
+      <li><b>10</b> 份报告</li>
+      <li><b>126</b> 张表</li>
+      <li>393,063 汉字</li>
     </ul>
-    <span class="enter">进入跑团站 →</span>
+    <span class="enter">进入分析站 →</span>
+    <span class="card-warn">⚠️ 全部报告由 <b>AI 撰写</b>，属读者分析、非作者设定</span>
   </a>
 </div>
 
@@ -57,14 +69,26 @@
 </section>
 
 <section class="joint-note">
-  <h2>两站的关系</h2>
+  <h2>四个站的关系</h2>
+  <p class="muted">四站共用一套视觉与导航，但<strong>内容性质不同</strong>，按「原典 → 实录 → 花絮 → 解读」
+  的顺序逐层展开：</p>
   <ul>
-    <li><strong>花絮站</strong>是作品侧的整理：短篇体裁（花絮／楔子／画外音），强调题材与人物关系。</li>
-    <li><strong>跑团站</strong>是记录侧的整理：真实发生的跑团过程，强调时间线与场次。</li>
-    <li><strong>设定站</strong>是辞书侧的整理：《黑柩设定集·第一版》按卷／节／词条拆解，便于查概念。</li>
-    <li>花絮站与跑团站<strong>互相链接</strong>（跑团站里的名词链到花絮站标签页）。</li>
-    <li>设定站<strong>暂不与两站互链</strong>——设定集仍在演进，等它稳定后再接。</li>
-    <li>三站<strong>各有一套导航与首页</strong>，标签体系互相独立（跑团含平行世界与 if 线，同名不一定是同一实体）。</li>
+    <li><strong>设定站</strong>（<code>/lore/</code>）是<strong>原典</strong>：作者写的《黑柩设定集·1.1版》，
+        按<strong>卷／节／词条</strong>拆解，便于查概念。<strong>要确认设定是什么，以这里为准。</strong></li>
+    <li><strong>跑团站</strong>（<code>/trpg/</code>）是<strong>实录</strong>：真实发生的跑团记录，
+        按<strong>主线 12 季 + 短团 4 个</strong>、共 152 场整理，强调时间线与场次。</li>
+    <li><strong>花絮站</strong>（<code>/huaxu/</code>）是<strong>花絮与画外音</strong>：作者的短篇体裁作品，
+        按人物／组织／地理／主题等维度整理，强调题材与人物关系。</li>
+    <li><strong>分析站</strong>（<code>/report/</code>）是<strong>读者解读</strong>：基于设定集撰写的专题研究报告
+        （制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物）。⚠️ <strong>全部由 AI 撰写，不是作者设定</strong>。</li>
+  </ul>
+  <p class="muted"><strong>互链情况</strong>：</p>
+  <ul>
+    <li>跑团站里的名词会<strong>链到花絮站的标签页</strong>（只链结构化名单字段，剧情摘要正文不链）。</li>
+    <li><strong>设定站暂不外链</strong>——设定集仍在演进，等它稳定后再接；但它本身接受别站链接。</li>
+    <li>分析站的报告<strong>引用设定集</strong>，凡与设定冲突处一律以设定为准。</li>
+    <li>四站<strong>各有导航与首页</strong>，顶部菜单可互相切换；标签体系各自独立
+        （跑团含平行世界与 if 线，同名不一定是同一实体）。</li>
   </ul>
 </section>
 
@@ -73,6 +97,7 @@
   <p>《黑柩》相关内容版权归原作者所有。</p>
   <p class="muted">最近更新：2026-10-16</p>
   <p class="muted">darkcoffin-wiki.hubingsf.cn</p>
+<p class="friend-links">友情链接：<a href="https://darkcoffin.hubingsf.cn" title="原作者的黑柩企划官网" target="_blank" rel="noopener">黑柩创作站</a></p>
 </footer>
 </main>
 </body>

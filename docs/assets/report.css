@@ -1,0 +1,72 @@
+/* ══ 分析站：报告页专用样式（长文阅读优先）══ */
+.rp-body{background:var(--bg);color:var(--fg)}
+.rp-head{margin:1rem 0 1.4rem}
+.rp-series{font-size:.82rem;color:var(--accent2);margin:0 0 .3rem;letter-spacing:.04em}
+.rp-head h1{font-size:1.85rem;line-height:1.35;margin:0 0 .4rem}
+.rp-sub{color:var(--muted);margin:.2rem 0 .5rem;font-size:.98rem}
+.rp-meta{margin:.2rem 0 .7rem}
+.rp-ai{background:var(--card);border-left:3px solid #d98b2b;border-radius:0 10px 10px 0;
+padding:.55rem .9rem;margin:.6rem 0 0;font-size:.9rem;color:var(--fg)}
+
+/* 目录 */
+.rp-toc{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.7rem 1rem .8rem;margin:1rem 0 1.4rem}
+.rp-toc ol{list-style:none;padding:0;margin:.3rem 0 0;columns:2;column-gap:1.6rem}
+@media(max-width:760px){.rp-toc ol{columns:1}}
+.rp-toc li{margin:.14rem 0;font-size:.9rem;break-inside:avoid}
+.rp-toc li.l2{font-weight:600}
+.rp-toc li.l3{padding-left:1rem;color:var(--muted)}
+
+/* 正文：行高与段距调大，长文阅读舒适 */
+.rp-body{line-height:1.95;font-size:1.02rem}
+.rp-body h2{font-size:1.35rem;margin:2.4rem 0 .8rem;padding-bottom:.3rem;
+border-bottom:1px solid var(--line);scroll-margin-top:1rem}
+.rp-body h3{font-size:1.12rem;margin:1.9rem 0 .6rem;scroll-margin-top:1rem}
+.rp-body h4{font-size:1rem;margin:1.5rem 0 .5rem;color:var(--fg2,#cfd6e4);scroll-margin-top:1rem}
+.rp-body p{margin:.85rem 0}
+.rp-body ul,.rp-body ol{margin:.7rem 0 .9rem;padding-left:1.6rem}
+.rp-body li{margin:.35rem 0}
+.rp-body strong{color:var(--fg);font-weight:700}
+.rp-body em{color:var(--muted);font-style:italic}
+
+/* 引文（「…」整段） */
+.rp-body blockquote.quote{margin:.9rem 0;padding:.35rem 0 .35rem 1rem;
+border-left:3px solid var(--line);color:var(--fg);background:transparent}
+
+/* 推断 / 依据块 */
+.rp-body p.infer{background:var(--card);border-left:3px solid var(--accent2);
+border-radius:0 8px 8px 0;padding:.45rem .85rem;margin:.7rem 0;font-size:.97rem}
+
+/* 表格：报告的主要论证骨架 */
+.tw{overflow-x:auto;margin:1.1rem 0}
+table.rp{border-collapse:collapse;width:100%;font-size:.92rem;line-height:1.7;
+background:var(--card)}
+table.rp th,table.rp td{border:1px solid var(--line);padding:.45rem .65rem;
+vertical-align:top;text-align:left}
+table.rp thead th{background:var(--bg2,rgba(255,255,255,.04));font-weight:700;
+white-space:normal}
+table.rp tbody tr:nth-child(even){background:rgba(255,255,255,.02)}
+table.rp td:first-child{white-space:normal;font-weight:600}
+
+/* 首页 */
+.rp-home .hero{text-align:center;margin:1.6rem 0 1.2rem}
+.rp-home .hero h1{font-size:2rem;margin:0 0 .35rem}
+.rp-home .stats{color:var(--muted);font-size:.95rem}
+.rp-warns{margin:1.2rem 0}
+.rp-warn{background:var(--card);border-left:3px solid var(--line);
+border-radius:0 10px 10px 0;padding:.6rem .95rem;margin:.55rem 0;font-size:.93rem}
+.rp-warn.ai{border-left-color:#d98b2b}
+.rp-warn.not_lore{border-left-color:var(--accent)}
+.rp-warn.future{border-left-color:var(--muted)}
+.rp-intro{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.8rem 1rem;margin:1.1rem 0 1.6rem}
+.rp-group{margin:1.8rem 0}
+.rp-group>h2{font-size:1.2rem;margin:0 0 .25rem}
+.rp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));
+gap:.7rem;margin:.8rem 0}
+.rp-card{display:block;background:var(--card);border:1px solid var(--line);
+border-radius:12px;padding:.8rem .95rem;color:var(--fg)}
+.rp-card:hover{border-color:var(--accent2);text-decoration:none}
+.rp-card h3{margin:.15rem 0 .3rem;font-size:1.05rem;line-height:1.4}
+.rp-card .rp-sub{font-size:.88rem;margin:.1rem 0 .4rem}
+.rp-card p{margin:.12rem 0}

@@ -1,0 +1,123 @@
+/* ══ 分析站：报告页专用样式（长文阅读优先）══ */
+.rp-body{background:var(--bg);color:var(--fg)}
+.rp-head{margin:1rem 0 1.4rem}
+.rp-series{font-size:.82rem;color:var(--accent2);margin:0 0 .3rem;letter-spacing:.04em}
+.rp-head h1{font-size:1.85rem;line-height:1.35;margin:0 0 .4rem}
+.rp-sub{color:var(--muted);margin:.2rem 0 .5rem;font-size:.98rem}
+.rp-meta{margin:.2rem 0 .7rem}
+.rp-ai{background:var(--card);border-left:3px solid #d98b2b;border-radius:0 10px 10px 0;
+padding:.55rem .9rem;margin:.6rem 0 0;font-size:.9rem;color:var(--fg)}
+
+/* 目录 */
+.rp-toc{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.7rem 1rem .8rem;margin:1rem 0 1.4rem}
+.rp-toc ol{list-style:none;padding:0;margin:.3rem 0 0;columns:2;column-gap:1.6rem}
+@media(max-width:760px){.rp-toc ol{columns:1}}
+.rp-toc li{margin:.14rem 0;font-size:.9rem;break-inside:avoid}
+.rp-toc li.l2{font-weight:600}
+.rp-toc li.l3{padding-left:1rem;color:var(--muted)}
+
+/* 正文：行高与段距调大，长文阅读舒适 */
+.rp-body{line-height:1.95;font-size:1.02rem}
+.rp-body h2{font-size:1.35rem;margin:2.4rem 0 .8rem;padding-bottom:.3rem;
+border-bottom:1px solid var(--line);scroll-margin-top:1rem}
+.rp-body h3{font-size:1.12rem;margin:1.9rem 0 .6rem;scroll-margin-top:1rem}
+.rp-body h4{font-size:1rem;margin:1.5rem 0 .5rem;color:var(--fg2,#cfd6e4);scroll-margin-top:1rem}
+.rp-body p{margin:.85rem 0}
+.rp-body ul,.rp-body ol{margin:.7rem 0 .9rem;padding-left:1.6rem}
+.rp-body li{margin:.35rem 0}
+.rp-body strong{color:var(--fg);font-weight:700}
+.rp-body em{color:var(--muted);font-style:italic}
+
+/* 引文（「…」整段） */
+.rp-body blockquote.quote{margin:.9rem 0;padding:.35rem 0 .35rem 1rem;
+border-left:3px solid var(--line);color:var(--fg);background:transparent}
+
+/* 推断 / 依据块 */
+.rp-body p.infer{background:var(--card);border-left:3px solid var(--accent2);
+border-radius:0 8px 8px 0;padding:.45rem .85rem;margin:.7rem 0;font-size:.97rem}
+
+/* 表格：报告的主要论证骨架。
+   宽表优化：横向滚动 + **表头行与首列固定**，拖动时行列标题始终可见。 */
+.tw{overflow:auto;max-height:80vh;margin:1.1rem 0;
+border:1px solid var(--line);border-radius:10px;position:relative}
+.tw.is-wide{border-color:var(--accent2)}
+table.rp{border-collapse:separate;border-spacing:0;width:100%;
+font-size:.92rem;line-height:1.7;background:var(--card)}
+table.rp th,table.rp td{border:0;border-right:1px solid var(--line);
+border-bottom:1px solid var(--line);padding:.5rem .7rem;
+vertical-align:top;text-align:left;background:var(--card)}
+
+/* 行分隔线略强一点，保证不靠底色也能分清行 */
+table.rp tbody tr>td{border-bottom-color:var(--line)}
+table.rp tbody tr:hover>td{background:rgba(255,255,255,.035)}
+table.rp tbody tr:hover>td:first-child{background:rgba(255,255,255,.05)}
+table.rp tr>th:last-child,table.rp tr>td:last-child{border-right:0}
+table.rp tbody tr:last-child>td{border-bottom:0}
+
+/* 表头行固定。
+   注意：**不要**用 var(--bg2) —— 该变量在 style.css 里并不存在，
+   会回退成硬编码的 #1b2130，在浅色主题下变成突兀的深色块。
+   改用极淡的白色叠加：暗色主题提亮一点、浅色主题几乎不可见，两主题都不刺眼。 */
+table.rp thead th{position:sticky;top:0;z-index:2;font-weight:700;
+background:rgba(255,255,255,.05);white-space:normal}
+/* 首列固定 */
+table.rp th:first-child,table.rp td:first-child{position:sticky;left:0;z-index:1;
+background:var(--card);font-weight:600;
+box-shadow:1px 0 0 var(--line)}
+/* 左上角单元格：两个方向都固定，层级最高 */
+table.rp thead th:first-child{z-index:3}
+/* 不再用深浅交替：深色行在暗色主题下字看不清。
+   改用「清晰分隔线」区分行 —— 所有行同底色，只靠线分隔。 */
+
+/* 宽表提示 */
+.tw::after{content:"⇄ 可横向拖动，表头与首列固定";position:absolute;top:.35rem;right:.5rem;
+font-size:.72rem;color:var(--muted);pointer-events:none;opacity:0;transition:opacity .2s}
+.tw:hover::after{opacity:1}
+
+/* 回到顶部（与设定站/跑团站同一套；app.js 负责 .show 的切换） */
+.to-top{position:fixed;right:1.1rem;bottom:1.1rem;z-index:30;
+background:var(--card);border:1px solid var(--line);border-radius:99px;
+padding:.45rem .9rem;font-size:.85rem;color:var(--fg);
+opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-decoration:none}
+.to-top.show{opacity:.96;pointer-events:auto}
+.to-top:hover{border-color:var(--accent2);text-decoration:none;transform:translateY(-2px)}
+
+/* 搜索框：与花絮/跑团/设定三站**同一位置**（页头右侧，margin-left:auto 顶开）。
+   .q-results 下拉样式共享 style.css 已有，这里不重复定义。 */
+.search-wrap{position:relative;margin-left:auto}
+.search-wrap input{width:13.5rem;padding:.38rem .7rem;border-radius:99px;
+border:1px solid var(--line);background:var(--bg);color:var(--fg);
+font-size:.88rem;transition:width .18s,border-color .18s}
+.search-wrap input:focus{outline:none;border-color:var(--accent2);width:17rem}
+@media(max-width:760px){.search-wrap input{width:100%}}
+
+/* 浅色主题微调：表头更淡、行 hover 用暗色叠加 */
+@media (prefers-color-scheme:light){
+  table.rp thead th{background:rgba(0,0,0,.035)}
+  table.rp tbody tr:hover>td{background:rgba(0,0,0,.035)}
+  table.rp tbody tr:hover>td:first-child{background:rgba(0,0,0,.05)}
+}
+
+/* 首页 */
+.rp-home .hero{text-align:center;margin:1.6rem 0 1.2rem}
+.rp-home .hero h1{font-size:2rem;margin:0 0 .35rem}
+.rp-home .stats{color:var(--muted);font-size:.95rem}
+.rp-warns{margin:1.2rem 0}
+.rp-warn{background:var(--card);border-left:3px solid var(--line);
+border-radius:0 10px 10px 0;padding:.6rem .95rem;margin:.55rem 0;font-size:.93rem}
+.rp-warn.ai{border-left-color:#d98b2b}
+.rp-warn.not_lore{border-left-color:var(--accent)}
+.rp-warn.future{border-left-color:var(--muted)}
+.rp-intro{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:.8rem 1rem;margin:1.1rem 0 1.6rem}
+.rp-group{margin:1.8rem 0}
+.rp-group>h2{font-size:1.2rem;margin:0 0 .25rem}
+.rp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));
+gap:.7rem;margin:.8rem 0}
+.rp-card{display:block;background:var(--card);border:1px solid var(--line);
+border-radius:12px;padding:.8rem .95rem;color:var(--fg)}
+.rp-card:hover{border-color:var(--accent2);text-decoration:none}
+.rp-card h3{margin:.15rem 0 .3rem;font-size:1.05rem;line-height:1.4}
+.rp-card .rp-sub{font-size:.88rem;margin:.1rem 0 .4rem}
+.rp-card p{margin:.12rem 0}

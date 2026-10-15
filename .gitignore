@@ -12,6 +12,8 @@ __pycache__/
 # 解析中间产物：源文件在本地 E:\黑柩\，仓库只留解析器（谁需要谁重跑）
 trpg-data/
 lore-data/
+report-data/
+trpg-src/
 
 # 一次性联网缓存（build_pinyin.py 可重新拉取；保留可让 CI 离线构建）
 # data/_kMandarin.txt

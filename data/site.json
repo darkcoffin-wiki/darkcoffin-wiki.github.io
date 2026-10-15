@@ -7,5 +7,12 @@
  "disclaimer": "本网站由 AI 生成，内容准确性无法完全保证。",
  "repo": "darkcoffin-wiki/darkcoffin-wiki.github.io",
  "publish": "GitHub Pages · 用户主页仓库，main 分支根目录（推送即发布）",
- "default_url": "https://darkcoffin-wiki.github.io/"
+ "default_url": "https://darkcoffin-wiki.github.io/",
+ "friend_links": [
+  {
+   "label": "黑柩创作站",
+   "url": "https://darkcoffin.hubingsf.cn",
+   "note": "原作者的黑柩企划官网"
+  }
+ ]
 }

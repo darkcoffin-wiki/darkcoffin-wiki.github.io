@@ -7,9 +7,15 @@
   var box = document.getElementById("q-results");
   var index = null;
 
+  // 索引路径：优先用各站自带的 window.SITE_INDEX（相对本站根），
+  // 否则退回共享的 ../assets/search.json（花絮/跑团/设定三站沿用原行为）
+  var idxPath = window.SITE_INDEX
+    ? (rel + window.SITE_INDEX)
+    : (rel + "../assets/search.json");
+
   function loadIndex() {
     if (index) return Promise.resolve(index);
-    return fetch(rel + "../assets/search.json")
+    return fetch(idxPath)
       .then(function (r) { return r.ok ? r.json() : { entries: [] }; })
       .then(function (d) { index = d; return d; });
   }

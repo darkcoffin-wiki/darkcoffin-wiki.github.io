@@ -29,6 +29,7 @@ try:
 except Exception:
     pass
 import common  # noqa: E402
+import html as H  # noqa: E402  页脚/模板转义（模块级，供 friend_links_html 使用）
 
 W = common.W
 DOCS = os.path.join(W, "docs")
@@ -77,9 +78,21 @@ def latest_source_mtime():
     return _dt.datetime.fromtimestamp(t).strftime("%Y-%m-%d")
 
 
+def friend_links_html(site):
+    """页脚友情链接（配置在 data/site.json 的 friend_links）。本文件里 html 的别名是 H。"""
+    out = []
+    for f in (site or {}).get("friend_links") or []:
+        label = H.escape(f.get("label", ""))
+        url = f.get("url", "#")
+        note = f.get("note", "")
+        title = ' title="%s"' % H.escape(note) if note else ""
+        out.append('<a href="%s"%s target="_blank" rel="noopener">%s</a>'
+                   % (H.escape(url), title, label))
+    return "".join(out) or "—"
+
+
 def joint_index():
     """联合首页：两站入口 + 共用统计。"""
-    import html as H
     huaxu = {}
     trpg = {}
     try:
@@ -104,6 +117,16 @@ def joint_index():
                 "hanzi": ld["counts"]["hanzi"]}
     except Exception:
         pass
+    # 分析站统计（来自 report-data/catalog.json）
+    report = {}
+    try:
+        rc = json.load(io.open(os.path.join(W, "report-data", "catalog.json"),
+                               encoding="utf-8"))
+        report = {"reports": len(rc),
+                  "tables": sum(c.get("tables", 0) for c in rc),
+                  "hanzi": sum(c.get("hanzi", 0) for c in rc)}
+    except Exception:
+        pass
     site = {}
     try:
         site = json.load(io.open(os.path.join(W, "data", "site.json"),
@@ -119,7 +142,7 @@ def joint_index():
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>黑柩 Wiki</title>
-<meta name="description" content="《黑柩》的两套整理：花絮与跑团剧情志。">
+<meta name="description" content="《黑柩》的四套整理：花絮 · 跑团剧情志 · 设定集 · 分析报告。">
 <link rel="stylesheet" href="assets/style.css">
 <link rel="stylesheet" href="assets/joint.css">
 </head>
@@ -142,9 +165,20 @@ def joint_index():
     <span class="enter">进入花絮站 →</span>
   </a>
 
+  <a class="station-card" href="trpg/index.html">
+    <h2>跑团站</h2>
+    <p class="sum">跑团剧情志：场次志与季志，按<strong>主线 / 短团 / 场次 / 现实时间</strong>整理。</p>
+    <ul class="nums">
+      <li><b>{trpg.get('seasons', '—')}</b> 季</li>
+      <li><b>{trpg.get('sessions', '—')}</b> 场</li>
+      <li>{format(tot, ',') if tot else '—'} 汉字</li>
+    </ul>
+    <span class="enter">进入跑团站 →</span>
+  </a>
+
   <a class="station-card" href="lore/index.html">
     <h2>设定站</h2>
-    <p class="sum">《黑柩设定集·第一版》：按<strong>卷 / 节 / 词条</strong>整理的设定辞书。</p>
+    <p class="sum">《黑柩设定集·1.1版》：按<strong>卷 / 节 / 词条</strong>整理的设定辞书。</p>
     <ul class="nums">
       <li><b>{lore.get('vols', '—')}</b> 卷</li>
       <li><b>{lore.get('entries', '—')}</b> 词条</li>
@@ -154,15 +188,16 @@ def joint_index():
     <span class="card-warn">⚠️ 含剧透：涵盖全书人物、事件与结局</span>
   </a>
 
-  <a class="station-card" href="trpg/index.html">
-    <h2>跑团站</h2>
-    <p class="sum">跑团剧情志：场次志与季志，按<strong>季 / 场次 / 现实时间</strong>整理。</p>
+  <a class="station-card warn" id="station-report" href="report/index.html">
+    <h2>分析站</h2>
+    <p class="sum">基于《黑柩设定集》的<strong>专题研究报告</strong>：制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物。</p>
     <ul class="nums">
-      <li><b>{trpg.get('seasons', '—')}</b> 季</li>
-      <li><b>{trpg.get('sessions', '—')}</b> 场</li>
-      <li>{format(tot, ',') if tot else '—'} 汉字</li>
+      <li><b>{report.get('reports', '—')}</b> 份报告</li>
+      <li><b>{report.get('tables', '—')}</b> 张表</li>
+      <li>{format(report.get('hanzi', 0), ',') if report.get('hanzi') else '—'} 汉字</li>
     </ul>
-    <span class="enter">进入跑团站 →</span>
+    <span class="enter">进入分析站 →</span>
+    <span class="card-warn">⚠️ 全部报告由 <b>AI 撰写</b>，属读者分析、非作者设定</span>
   </a>
 </div>
 
@@ -172,14 +207,26 @@ def joint_index():
 </section>
 
 <section class="joint-note">
-  <h2>两站的关系</h2>
+  <h2>四个站的关系</h2>
+  <p class="muted">四站共用一套视觉与导航，但<strong>内容性质不同</strong>，按「原典 → 实录 → 花絮 → 解读」
+  的顺序逐层展开：</p>
   <ul>
-    <li><strong>花絮站</strong>是作品侧的整理：短篇体裁（花絮／楔子／画外音），强调题材与人物关系。</li>
-    <li><strong>跑团站</strong>是记录侧的整理：真实发生的跑团过程，强调时间线与场次。</li>
-    <li><strong>设定站</strong>是辞书侧的整理：《黑柩设定集·第一版》按卷／节／词条拆解，便于查概念。</li>
-    <li>花絮站与跑团站<strong>互相链接</strong>（跑团站里的名词链到花絮站标签页）。</li>
-    <li>设定站<strong>暂不与两站互链</strong>——设定集仍在演进，等它稳定后再接。</li>
-    <li>三站<strong>各有一套导航与首页</strong>，标签体系互相独立（跑团含平行世界与 if 线，同名不一定是同一实体）。</li>
+    <li><strong>设定站</strong>（<code>/lore/</code>）是<strong>原典</strong>：作者写的《黑柩设定集·1.1版》，
+        按<strong>卷／节／词条</strong>拆解，便于查概念。<strong>要确认设定是什么，以这里为准。</strong></li>
+    <li><strong>跑团站</strong>（<code>/trpg/</code>）是<strong>实录</strong>：真实发生的跑团记录，
+        按<strong>主线 12 季 + 短团 4 个</strong>、共 152 场整理，强调时间线与场次。</li>
+    <li><strong>花絮站</strong>（<code>/huaxu/</code>）是<strong>花絮与画外音</strong>：作者的短篇体裁作品，
+        按人物／组织／地理／主题等维度整理，强调题材与人物关系。</li>
+    <li><strong>分析站</strong>（<code>/report/</code>）是<strong>读者解读</strong>：基于设定集撰写的专题研究报告
+        （制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物）。⚠️ <strong>全部由 AI 撰写，不是作者设定</strong>。</li>
+  </ul>
+  <p class="muted"><strong>互链情况</strong>：</p>
+  <ul>
+    <li>跑团站里的名词会<strong>链到花絮站的标签页</strong>（只链结构化名单字段，剧情摘要正文不链）。</li>
+    <li><strong>设定站暂不外链</strong>——设定集仍在演进，等它稳定后再接；但它本身接受别站链接。</li>
+    <li>分析站的报告<strong>引用设定集</strong>，凡与设定冲突处一律以设定为准。</li>
+    <li>四站<strong>各有导航与首页</strong>，顶部菜单可互相切换；标签体系各自独立
+        （跑团含平行世界与 if 线，同名不一定是同一实体）。</li>
   </ul>
 </section>
 
@@ -188,6 +235,7 @@ def joint_index():
   <p>《黑柩》相关内容版权归原作者所有。</p>
   <p class="muted">最近更新：{_upd}</p>
   {f'<p class="muted">{domain}</p>' if domain else ''}
+<p class="friend-links">友情链接：{friend_links_html(site)}</p>
 </footer>
 </main>
 </body>
@@ -218,6 +266,8 @@ padding:.9rem 1.1rem;margin:1.2rem 0}
 .joint-note ul{margin:0;padding-left:1.2rem}
 .joint-note li{margin:.3rem 0;font-size:.92rem;color:var(--muted)}
 .joint-note strong{color:var(--fg)}
+.friend-links{margin:.45rem 0 0;font-size:.88rem}
+.friend-links a{color:var(--accent2)}
 .station-card .card-warn{display:block;margin-top:.5rem;font-size:.8rem;
 color:#d98b2b;border-top:1px dashed var(--line);padding-top:.4rem}
 .joint-warns{margin:1.2rem 0}
@@ -240,7 +290,8 @@ def main():
 
     n = 0
     for tool, label in (("build_site.py", "花絮站"), ("build_trpg.py", "跑团站"),
-                        ("build_lore.py", "设定站")):
+                        ("build_lore.py", "设定站"),
+                        ("build_report.py", "分析站")):
         code, out = run(tool)
         print("[%s] %s %s" % ("OK " if code == 0 else "FAIL", label, out[:220]))
 

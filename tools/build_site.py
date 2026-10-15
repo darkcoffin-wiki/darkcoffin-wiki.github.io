@@ -60,6 +60,28 @@ def site_conf():
 
 
 # ------------------------------------------------------------------ 模板
+def friend_links_html(_cfg=None):
+    """页脚友情链接（配置在 data/site.json 的 friend_links）。
+
+    _cfg 缺省时从模块级 SITE / site 里取（各站命名不一，故做兼容）。
+    """
+    cfg = _cfg
+    if not isinstance(cfg, dict):
+        for _n in ("SITE", "site"):
+            _v = globals().get(_n)
+            if isinstance(_v, dict):
+                cfg = _v
+                break
+    out = []
+    for f in ((cfg or {}).get("friend_links") or []):
+        label = html.escape(f.get("label", ""))
+        note = f.get("note", "")
+        title = ' title="%s"' % html.escape(note) if note else ""
+        out.append('<a href="%s"%s target="_blank" rel="noopener">%s</a>'
+                   % (html.escape(f.get("url", "#")), title, label))
+    return "".join(out) or "—"
+
+
 def page(title, body, rel, site, extra_head="", body_class=""):
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -79,6 +101,7 @@ def page(title, body, rel, site, extra_head="", body_class=""):
     <span class="nav-sep"></span>
     <a class="nav-other" href="{rel}../trpg/index.html" title="切换到跑团站">跑团站 →</a>
     <a class="nav-other" href="{rel}../lore/index.html" title="切换到设定站">设定站 →</a>
+    <a class="nav-other" href="{rel}../report/index.html" title="切换到分析站">分析站 →</a>
     <a class="nav-other" href="{rel}../index.html" title="三站入口">联合首页</a>
   </nav>
   <div class="search-wrap">
@@ -93,6 +116,7 @@ def page(title, body, rel, site, extra_head="", body_class=""):
   <p class="disclaimer">{html.escape(site.get('disclaimer', '本网站由 AI 生成，内容准确性无法完全保证。'))}</p>
   <p>本站为《黑柩》花絮的整理与索引，内容版权归原作者所有。</p>
   <p class="muted">静态站 · 由 <code>tools/build_site.py</code> 生成</p>
+<p class="friend-links">友情链接：{friend_links_html(site)}</p>
 </footer>
 <a class="to-top" href="#" id="to-top" title="回到顶部" aria-label="回到顶部">↑ 顶部</a>
 <script>window.SITE_REL = {json.dumps(rel)};</script>
@@ -692,6 +716,8 @@ padding:.7rem 1rem;margin:1rem 0}
 .related{margin-top:2.5rem}
 .site-foot{border-top:1px solid var(--line);padding:1.2rem;text-align:center;color:var(--muted);
 font-size:.85rem}
+.friend-links{margin:.35rem 0 0;font-size:.86rem}
+.friend-links a{color:var(--accent2)}
 .disclaimer{color:var(--accent);font-weight:600;margin:0 0 .4rem}
 .ai-note{margin:.9rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);
 background:var(--card);border-radius:0 8px 8px 0;color:var(--muted);font-size:.88rem}
@@ -708,9 +734,15 @@ APP_JS = """/* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，�
   var box = document.getElementById("q-results");
   var index = null;
 
+  // 索引路径：优先用各站自带的 window.SITE_INDEX（相对本站根），
+  // 否则退回共享的 ../assets/search.json（花絮/跑团/设定三站沿用原行为）
+  var idxPath = window.SITE_INDEX
+    ? (rel + window.SITE_INDEX)
+    : (rel + "../assets/search.json");
+
   function loadIndex() {
     if (index) return Promise.resolve(index);
-    return fetch(rel + "../assets/search.json")
+    return fetch(idxPath)
       .then(function (r) { return r.ok ? r.json() : { entries: [] }; })
       .then(function (d) { index = d; return d; });
   }

@@ -123,6 +123,8 @@ padding:.7rem 1rem;margin:1rem 0}
 .related{margin-top:2.5rem}
 .site-foot{border-top:1px solid var(--line);padding:1.2rem;text-align:center;color:var(--muted);
 font-size:.85rem}
+.friend-links{margin:.35rem 0 0;font-size:.86rem}
+.friend-links a{color:var(--accent2)}
 .disclaimer{color:var(--accent);font-weight:600;margin:0 0 .4rem}
 .ai-note{margin:.9rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);
 background:var(--card);border-radius:0 8px 8px 0;color:var(--muted);font-size:.88rem}
