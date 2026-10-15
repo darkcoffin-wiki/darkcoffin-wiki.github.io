@@ -28,11 +28,12 @@ docs/
 
 ## 设定站（`/lore/`）
 
-* **12 卷 / 70 节 / 568 个词条**，60.6 万汉字（源：`黑柩设定集·第一版·DSH版.docx`）
-* 页面：设定站首页、前言与编纂说明、12 个卷页、70 个节页、**568 个词条页**
-* **词条页分三层**：【概述】一句话定义 →【详述】正文 →【异说】与正文不一致的说法
-  （125 个词条有异说）；【源】与【收录范围】收在页尾折叠区
+* **13 卷 / 81 节 / 555 个词条**，60.2 万汉字（源：`黑柩设定集·1.1版·DSH版.docx`）
+* 页面：设定站首页、前言与编纂说明、13 个卷页、81 个节页、**555 个词条页**
+* **词条页分三层**：【概述】一句话定义 →【详述】正文 →【异说】与正文不一致的说法；
+  【源】与【收录范围】收在页尾折叠区
 * **每卷页末尾**有「编纂备注」独立折叠区（过程记录，非设定内容）
+* **跨卷同名主题**（13 组、28 处）自动加「另见」标注，两处保留、不合并
 * **警告只在站首页**：剧透警告 + 吃书警告 + 版本警告（子页面不重复）
 * **暂不与花絮站/跑团站互链**（设定集仍在演进），但保留回联合首页的入口
 
@@ -40,17 +41,24 @@ docs/
 
 | 路径 | 作用 |
 |---|---|
-| `E:\黑柩\黑柩小说花絮\黑柩设定集·第一版·DSH版.docx` | **内容源**（不随仓库分发） |
+| `E:\黑柩\黑柩小说花絮\黑柩设定集·1.1版·DSH版.docx` | **内容源**（不随仓库分发） |
 | `lore-data/` | 解析产物（**不进 git**） |
-| `tools/parse_lore.py` | docx → JSON（样式映射、页码剥离、slug 唯一化） |
+| `lore-data/versions/` | 版本归档：结构差异报告、旧 overrides |
+| `tools/parse_lore.py` | docx → JSON（样式映射、页码剥离、slug 唯一化、跨卷同名自动标注） |
 | `tools/lore_report.py` | 结构校验报告（目录 vs 样式交叉校验） |
+| `tools/lore_diff_11.py` | **移动感知**的版本结构比对 |
 | `tools/build_lore.py` | 生成设定站 |
 
 ```bash
-python tools/parse_lore.py      # 解析（需先有源 docx）
-python tools/lore_report.py     # 结构校验报告
-python tools/build_lore.py      # 生成设定站
+python tools/parse_lore.py       # 解析（需先有源 docx）
+python tools/lore_report.py      # 结构校验报告
+python tools/lore_diff_11.py     # 与第一版比对结构（换版时用）
+python tools/build_lore.py       # 生成设定站
 ```
+
+> **换版方法**：新版 docx 只要沿用同一套 heading 样式即可直接解析
+> （改 `parse_lore.py` 的 `DEFAULT_SRC` 与 `SOURCE_VERSION`）；
+> 结构改动若已内建在 docx 里，`overrides.json` 保持空指令即可。
 
 ## 跑团站（`/trpg/`）
 

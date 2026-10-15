@@ -58,6 +58,25 @@ SESSION_FIELDS = [
 FIELD_BY_CN = {cn: key for cn, key in SESSION_FIELDS}
 
 # 季志的固定十节
+# 短团：文件名以「短团·」开头，与 12 个主季**分开归类**
+SHORT_PREFIX = "短团·"
+
+
+def is_short(name):
+    return (name or "").startswith(SHORT_PREFIX)
+
+
+# 短团沿用同一套十节结构，但两节的措辞是「本团」而非「本季」
+# （《00-目录与说明》称之为「本团概览」；这里归一到「本季…」以便下游统一处理）
+SECTION_ALIAS = {"本团概览": "本季概览", "本团新增设定": "本季新增设定"}
+
+
+def norm_section(title):
+    """小节名归一化：去分层序号 + 把「本团」别名折回「本季」。"""
+    t = strip_number(title)
+    return SECTION_ALIAS.get(t, t)
+
+
 SEASON_SECTIONS = [
     "本季概览", "场次索引", "季摘要", "登场人物", "势力与组织动态",
     "主要冲突与结局", "骰点统计", "本季新增设定", "未收伏笔汇总", "完整度与存疑",
@@ -191,17 +210,18 @@ def parse_season(name, text, issues):
     secs = split_sections(text)
     found = [s for s, _ in secs]
     rec["section_order"] = found
+    # 用归一化名比对（短团写「本团概览」，主季写「本季概览」，语义相同）
     missing = [s for s in SEASON_SECTIONS
-               if not any(strip_number(f) == s for f in found)]
+               if not any(norm_section(f) == s for f in found)]
     if missing:
         issues.append(("季志·缺小节", name, "、".join(missing)))
     extra = [s for s in found
-             if strip_number(s) not in SEASON_SECTIONS and s != name]
+             if norm_section(s) not in SEASON_SECTIONS and s != name]
     if extra:
         rec["extra_sections"] = extra
 
     for title, body in secs:
-        key = strip_number(title)
+        key = norm_section(title)
         rec["sections"][key] = body
         if key == "本季概览":
             for line in body.splitlines():
@@ -425,7 +445,9 @@ def main():
     for fn in sorted(os.listdir(sdir)):
         if fn.endswith(".md"):
             nm = norm_name(fn)
-            seasons.append(parse_season(nm, read(os.path.join(sdir, fn)), issues))
+            rec = parse_season(nm, read(os.path.join(sdir, fn)), issues)
+            rec["kind"] = "short" if is_short(nm) else "main"
+            seasons.append(rec)
 
     # 场次志
     sessions, declared = [], {}
@@ -436,6 +458,10 @@ def main():
             ss, decl = parse_sessions(nm, read(os.path.join(xdir, fn)), issues)
             declared[nm] = decl
             sessions.extend(ss)
+
+    # 短团与主季分开统计
+    n_short = sum(1 for x in seasons if x.get("kind") == "short")
+    print("  季志：主季 %d ｜ 短团 %d" % (len(seasons) - n_short, n_short))
 
     # 季志与场次志配对检查
     snames = {s["name"] for s in seasons}

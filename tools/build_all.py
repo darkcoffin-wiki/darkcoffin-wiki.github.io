@@ -56,6 +56,27 @@ def write_if_changed(path, content):
     return 1
 
 
+def latest_source_mtime():
+    """站点「最近更新」＝内容源的最新修改时间。
+
+    **不用构建时刻**：那会让每次构建的时间戳都变，破坏幂等（written 永远不为 0）。
+    数据源变化才会变，正是「最近更新」的语义。
+    """
+    import glob as _glob
+    cands = []
+    for pat in (os.path.join(W, "source", "*.md"),
+                os.path.join(W, "data", "*.json"),
+                os.path.join(W, "trpg-data", "*.json"),
+                os.path.join(W, "lore-data", "*.json"),
+                os.path.join(W, "tools", "*.py")):
+        cands += _glob.glob(pat)
+    if not cands:
+        return ""
+    t = max(os.path.getmtime(p) for p in cands)
+    import datetime as _dt
+    return _dt.datetime.fromtimestamp(t).strftime("%Y-%m-%d")
+
+
 def joint_index():
     """联合首页：两站入口 + 共用统计。"""
     import html as H
@@ -90,6 +111,7 @@ def joint_index():
     except Exception:
         pass
     disc = H.escape(site.get("disclaimer", "本网站由 AI 生成，内容准确性无法完全保证。"))
+    _upd = latest_source_mtime() or "—"
     domain = H.escape(site.get("domain", ""))
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -105,7 +127,7 @@ def joint_index():
 <main>
 <header class="joint-hero">
   <h1>黑柩 Wiki</h1>
-  <p class="sub">同一个故事宇宙的两套记录</p>
+  <p class="sub">后启示录的彷徨世界</p>
 </header>
 
 <div class="station-grid">
@@ -164,6 +186,7 @@ def joint_index():
 <footer class="site-foot">
   <p class="disclaimer">{disc}</p>
   <p>《黑柩》相关内容版权归原作者所有。</p>
+  <p class="muted">最近更新：{_upd}</p>
   {f'<p class="muted">{domain}</p>' if domain else ''}
 </footer>
 </main>

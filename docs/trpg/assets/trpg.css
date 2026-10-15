@@ -60,6 +60,12 @@ flex-wrap:wrap}
 .pn{background:var(--card);border:1px solid var(--line);border-radius:10px;
 padding:.5rem .8rem;font-size:.9rem}
 .pn:hover{border-color:var(--accent2);text-decoration:none}
+.season-grid.short-grid .season-card{border-left:3px solid var(--accent2)}
+.tl-group{margin:1.4rem 0}
+.tl-group .group-h{font-size:1.15rem;margin:.2rem 0 .6rem;padding-bottom:.3rem;
+border-bottom:2px solid var(--line)}
+.tl-group.tl-short .group-h{border-bottom-color:var(--accent2)}
+.tl-group.tl-short{margin-top:2.2rem;padding-top:1rem;border-top:2px dashed var(--line)}
 .season-nav{margin:2rem 0;padding-top:.8rem;border-top:1px solid var(--line)}
 .season-nav h3{font-size:.95rem;color:var(--muted);margin:.2rem 0 .5rem}
 .season-nav a{display:inline-block;margin:.15rem .3rem .15rem 0;padding:.2rem .6rem;

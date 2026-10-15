@@ -64,6 +64,28 @@ def season_key(name):
     return (_ORDER_IDX.get(name, 999), name)
 
 
+# ── 短团（作者 2026-10-14：与主线分开归类，首页与时间轴单列）──
+SHORT_PREFIX = "短团·"
+SHORT_ORDER = [
+    "短团·重置版·星都陨落", "短团·西沙", "短团·食龙则肥", "短团·竖棺",
+]
+_SHORT_IDX = {n: i for i, n in enumerate(SHORT_ORDER)}
+
+
+def is_short(name):
+    return (name or "").startswith(SHORT_PREFIX)
+
+
+def short_key(name):
+    """短团按现实时间先后排；表里没列到的排最后（按名字）。"""
+    return (_SHORT_IDX.get(name, 999), name)
+
+
+def group_label(name):
+    """展示名：短团去掉「短团·」前缀。"""
+    return name[len(SHORT_PREFIX):] if is_short(name) else name
+
+
 def clean_time(rt):
     """时间轴用：只保留时间起止，去掉「时长」与「依据」。
 
@@ -353,12 +375,18 @@ def render_season(s, sess_of_season, all_sess):
     meta_rows = "".join('<tr><th>%s</th><td>%s</td></tr>'
                         % (html.escape(k), md(v).replace("<p>", "").replace("</p>", ""))
                         for k, v in ov.items())
+    # 短团用「团」的措辞（作者 2026-10-14：短团与主线分开归类）
+    _short = is_short(s["name"])
+    _sh = group_label(s["name"]) if _short else s["name"]
+    _zhi = "团志" if _short else "季志"
+    _anchor = "shorts" if _short else "seasons"
+    _ov = "本团概览" if _short else "本季概览"
     body = f"""<article class="season-page">
-<nav class="crumbs"><a href="../index.html">跑团首页</a> · <a href="../index.html#seasons">季志</a> · {html.escape(s['name'])}</nav>
-<h1>{html.escape(s['name'])} <span class="muted">季志</span></h1>
+<nav class="crumbs"><a href="../index.html">跑团首页</a> · <a href="../index.html#{_anchor}">{_zhi}</a> · {html.escape(_sh)}</nav>
+<h1>{html.escape(_sh)} <span class="muted">{_zhi}</span></h1>
 <p class="muted">{len(sess_of_season)} 场 · {sum(x['hanzi'] for x in sess_of_season):,} 汉字 ·
    本页 {sum(len(x['text']) for x in s['sections_numbered']):,} 字符</p>
-<section class="card"><h2 class="plain">本季概览</h2><div class="tw"><table class="kv">{meta_rows}</table></div></section>
+<section class="card"><h2 class="plain">{_ov}</h2><div class="tw"><table class="kv">{meta_rows}</table></div></section>
 <nav class="toc" id="toc"><h2 class="plain">目录</h2><ol>{toc}</ol></nav>
 {''.join(parts)}
 {nav_season_all(all_sess, s['name'])}
@@ -367,12 +395,20 @@ def render_season(s, sess_of_season, all_sess):
 
 
 def nav_season_all(all_sess, cur):
-    names = [s["name"] for s in sorted(all_sess, key=lambda x: season_key(x["name"]))]
-    links = "".join(
-        '<a class="%s" href="%s.html">%s</a>'
-        % ("cur" if n == cur else "", season_slug(n), html.escape(n))
-        for n in names)
-    return '<nav class="season-nav"><h3>各季</h3>%s</nav>' % links
+    """季导航：主线与短团分两组列出（短团展示名不带前缀）。"""
+    def link(n):
+        return ('<a class="%s" href="%s.html">%s</a>'
+                % ("cur" if n == cur else "", season_slug(n),
+                   html.escape(group_label(n))))
+
+    mains = [x["name"] for x in sorted(all_sess, key=lambda x: season_key(x["name"]))
+             if not is_short(x["name"])]
+    shorts = [x["name"] for x in sorted(all_sess, key=lambda x: short_key(x["name"]))
+              if is_short(x["name"])]
+    html_ = '<nav class="season-nav"><h3>主线</h3>%s' % "".join(link(n) for n in mains)
+    if shorts:
+        html_ += '<h3>短团</h3>%s' % "".join(link(n) for n in shorts)
+    return html_ + "</nav>"
 
 
 def render_session(s, i, sess, seasons_by_name):
@@ -436,9 +472,9 @@ def render_session(s, i, sess, seasons_by_name):
     badge = ("本季完整度：" + ov.get("完整度", "—")[:60]) if ov else ""
     return f"""<article class="sess-page">
 <nav class="crumbs"><a href="../index.html">跑团首页</a> ·
-  <a href="../season/{season_slug(s['season'])}.html">{html.escape(s['season'])}</a> ·
+  <a href="../season/{season_slug(s['season'])}.html">{html.escape(group_label(s['season']))}</a> ·
   第 {s['no']} 场</nav>
-<h1>{html.escape(s['season'])} · 第 {s['no']} 场</h1>
+<h1>{html.escape(group_label(s['season']))} · 第 {s['no']} 场</h1>
 <p class="muted">{s['hanzi']:,} 汉字 · 决策点 {s['n_decisions']} 条 · 骰点 {s['n_dice']} 条
    {('· ' + html.escape(badge)) if badge else ''}</p>
 <nav class="toc" id="toc"><h2 class="plain">目录</h2><ol>{toc}</ol></nav>
@@ -449,37 +485,59 @@ def render_session(s, i, sess, seasons_by_name):
 
 
 def render_timeline(sess, seasons):
-    """按季分组列出现实时间；世界层用标记显示。"""
+    """按季分组列出现实时间；世界层用标记显示。
+
+    作者 2026-10-14：分「主线」与「短团」两组，短团单列在时间轴末尾。
+    """
     by_season = {}
     for s in sorted(sess, key=lambda x: (season_key(x["season"]), x["no"])):
         by_season.setdefault(s["season"], []).append(s)
+
+    def build_group(sel, keyf):
+        out = []
+        for s in sorted([x for x in seasons if sel(x["name"])],
+                        key=lambda x: keyf(x["name"])):
+            items = by_season.get(s["name"], [])
+            if not items:
+                continue
+            rows = ""
+            for x in items:
+                rt = clean_time(x["fields"].get("realtime", ""))
+                wl = x["fields"].get("world_layer", "")
+                tier = ("主世界" if wl.startswith("主世界") else
+                        ("未明" if wl.startswith("未明") else "多层/其他"))
+                key = ("main" if tier == "主世界"
+                       else ("unk" if tier == "未明" else "multi"))
+                rows += ('<li class="tl-item" data-wl="%s">'
+                         '<a href="session/%s.html">第 %d 场</a>'
+                         '<span class="tl-time mono">%s</span>'
+                         '<span class="wl wl-%s">%s</span></li>'
+                         % (key, session_slug(x), x["no"], html.escape(rt),
+                            key, tier))
+            out.append('<section class="tl-season"><h2>%s '
+                       '<span class="muted">%d 场</span> '
+                       '<span class="muted mono">%s</span></h2>'
+                       '<ul class="timeline">%s</ul></section>'
+                       % (html.escape(group_label(s["name"])), len(items),
+                          html.escape((s.get("overview") or {}).get("现实时间", "")[:44]),
+                          rows))
+        return out
+
     blocks = []
-    for s in sorted(seasons, key=lambda x: season_key(x["name"])):
-        items = by_season.get(s["name"], [])
-        if not items:
-            continue
-        rows = ""
-        for x in items:
-            rt = clean_time(x["fields"].get("realtime", ""))
-            wl = x["fields"].get("world_layer", "")
-            tier = ("主世界" if wl.startswith("主世界") else
-                    ("未明" if wl.startswith("未明") else "多层/其他"))
-            key = ("main" if tier == "主世界"
-                   else ("unk" if tier == "未明" else "multi"))
-            rows += ('<li class="tl-item" data-wl="%s">'
-                     '<a href="session/%s.html">第 %d 场</a>'
-                     '<span class="tl-time mono">%s</span>'
-                     '<span class="wl wl-%s">%s</span></li>'
-                     % (key, session_slug(x), x["no"], html.escape(rt),
-                        key, tier))
-        blocks.append('<section class="tl-season"><h2>%s <span class="muted">%d 场</span></h2>'
-                      '<ul class="timeline">%s</ul></section>' % (html.escape(s["name"]),
-                                                                  len(items), rows))
+    main_blocks = build_group(lambda n: not is_short(n), season_key)
+    if main_blocks:
+        blocks.append('<section class="tl-group"><h2 class="group-h">主线</h2>%s</section>'
+                      % "".join(main_blocks))
+    short_blocks = build_group(is_short, short_key)
+    if short_blocks:
+        blocks.append('<section class="tl-group tl-short"><h2 class="group-h">短团</h2>'
+                      '<p class="muted">与主线分开的短团，现实时间靠后、与主季不重叠。</p>'
+                      '%s</section>' % "".join(short_blocks))
     return """<article class="timeline-page">
 <nav class="crumbs"><a href="index.html">跑团首页</a> · 时间轴</nav>
 <h1>时间轴</h1>
 <p class="muted">按**现实时间**（跑团实际发生的时刻）排列，来自记录时间戳。
-游戏内时间在原作里有意模糊，故此处不作为主轴。</p>
+游戏内时间在原作里有意模糊，故此处不作为主轴。短团另列一组，见页面末尾。</p>
 <div class="filters">
   <button data-filter="wl" data-value="">全部</button>
   <button data-filter="wl" data-value="main">主世界</button>
@@ -492,30 +550,49 @@ def render_timeline(sess, seasons):
 
 
 def render_index(sess, seasons, whitelist_note):
-    cards = []
-    for s in sorted(seasons, key=lambda x: season_key(x["name"])):
+    def card(s):
         items = [x for x in sess if x["season"] == s["name"]]
         ov = s.get("overview") or {}
         comp = ov.get("完整度", "")
         warn = "" if comp.startswith("**完整**") or comp.startswith("完整") else " warn"
-        cards.append(
-            '<a class="season-card%s" href="season/%s.html">'
-            '<h3>%s</h3>'
-            '<p class="mono">%s</p>'
-            '<p class="muted">%d 场 · %s 汉字 · 伏笔 %d 条</p>'
-            '<p class="comp">%s</p></a>'
-            % (warn, season_slug(s["name"]), html.escape(s["name"]),
-               html.escape(ov.get("现实时间", "—")[:46]),
-               len(items), format(sum(x["hanzi"] for x in items), ","),
-               sum(len(x["hooks"]) for x in items),
-               md(comp[:150]).replace("<p>", "").replace("</p>", "") if comp else "—"))
+        return ('<a class="season-card%s" href="season/%s.html">'
+                '<h3>%s</h3>'
+                '<p class="mono">%s</p>'
+                '<p class="muted">%d 场 · %s 汉字 · 伏笔 %d 条</p>'
+                '<p class="comp">%s</p></a>'
+                % (warn, season_slug(s["name"]),
+                   html.escape(group_label(s["name"])),
+                   html.escape(ov.get("现实时间", "—")[:46]),
+                   len(items), format(sum(x["hanzi"] for x in items), ","),
+                   sum(len(x["hooks"]) for x in items),
+                   md(comp[:150]).replace("<p>", "").replace("</p>", "") if comp else "—"))
+
+    # 主线 12 季（作者指定顺序）
+    main_cards = [card(s) for s in sorted(
+        [x for x in seasons if not is_short(x["name"])],
+        key=lambda x: season_key(x["name"]))]
+    # 短团（作者 2026-10-14：单独归类，首页单列一块）
+    short_ss = sorted([x for x in seasons if is_short(x["name"])],
+                      key=lambda x: short_key(x["name"]))
+    short_cards = [card(s) for s in short_ss]
+    n_main_sess = sum(1 for x in sess if not is_short(x["season"]))
+    n_short_sess = sum(1 for x in sess if is_short(x["season"]))
+    short_block = ""
+    if short_cards:
+        short_block = (
+            '<section id="shorts"><h2>短团</h2>'
+            '<p class="muted">与主线<b>分开归类</b>的短团：现实时间靠后、与主季不重叠，'
+            '每个短团同样有季志与场次卡。</p>'
+            '<div class="season-grid short-grid">%s</div></section>'
+            % "".join(short_cards))
     tot_h = sum(x["hanzi"] for x in sess)
     return f"""<article class="trpg-home">
 <header class="hero">
   <h1>黑柩跑团Wiki</h1>
   <p class="sub">{html.escape(SITE['subtitle'])}</p>
-  <p class="stats">共 <strong>{len(seasons)}</strong> 季 ·
-     <strong>{len(sess)}</strong> 场 ·
+  <p class="stats">主线 <strong>{len([x for x in seasons if not is_short(x['name'])])}</strong> 季
+     + 短团 <strong>{len(short_ss)}</strong> 个 ·
+     <strong>{len(sess)}</strong> 场（主线 {n_main_sess} / 短团 {n_short_sess}） ·
      <strong>{format(tot_h, ',')}</strong> 汉字 ·
      决策点 {sum(x['n_decisions'] for x in sess)} 条 ·
      骰点 {sum(x['n_dice'] for x in sess)} 条</p>
@@ -525,7 +602,8 @@ def render_index(sess, seasons, whitelist_note):
   <p>{html.escape(SITE['disclaimer'])}　另：本站整理自跑团记录，
   <strong>未经作者逐条核对</strong>；原作设定冲突（作者自称「吃书」）一律照录，不代为圆说。</p>
 </section>
-<section id="seasons"><h2>各季</h2><div class="season-grid">{''.join(cards)}</div></section>
+<section id="seasons"><h2>主线</h2><div class="season-grid">{''.join(main_cards)}</div></section>
+{short_block}
 <section><h2>怎么读</h2>
 <ol class="howto">
   <li>先看 <strong>季志</strong>——本季概览、场次索引、季摘要、登场人物、势力动态、骰点统计、伏笔汇总。</li>
@@ -672,6 +750,12 @@ flex-wrap:wrap}
 .pn{background:var(--card);border:1px solid var(--line);border-radius:10px;
 padding:.5rem .8rem;font-size:.9rem}
 .pn:hover{border-color:var(--accent2);text-decoration:none}
+.season-grid.short-grid .season-card{border-left:3px solid var(--accent2)}
+.tl-group{margin:1.4rem 0}
+.tl-group .group-h{font-size:1.15rem;margin:.2rem 0 .6rem;padding-bottom:.3rem;
+border-bottom:2px solid var(--line)}
+.tl-group.tl-short .group-h{border-bottom-color:var(--accent2)}
+.tl-group.tl-short{margin-top:2.2rem;padding-top:1rem;border-top:2px dashed var(--line)}
 .season-nav{margin:2rem 0;padding-top:.8rem;border-top:1px solid var(--line)}
 .season-nav h3{font-size:.95rem;color:var(--muted);margin:.2rem 0 .5rem}
 .season-nav a{display:inline-block;margin:.15rem .3rem .15rem 0;padding:.2rem .6rem;
