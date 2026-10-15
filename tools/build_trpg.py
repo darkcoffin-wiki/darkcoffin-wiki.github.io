@@ -41,7 +41,7 @@ OUT = os.path.join(W, "docs", "trpg")
 
 SITE = {
     "title": "黑柩跑团Wiki",
-    "subtitle": "《黑柩》跑团剧情志 · 113 场、12 季",
+    "subtitle": "《黑柩》跑团剧情志 · 主线 12 季 + 短团 4 个 · 152 场",
     "description": "把《黑柩》跑团的场次志与季志整理成可浏览、可跳转的 wiki。",
     "disclaimer": "本网站由 AI 生成，内容准确性无法完全保证。",
 }
@@ -274,7 +274,9 @@ def page(title, body, rel, extra_head="", body_class=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)} · {html.escape(SITE['title'])}</title>
 <meta name="description" content="{html.escape(SITE['description'])}">
-{extra_head}<link rel="stylesheet" href="{rel}../assets/style.css">
+{extra_head}<link rel="icon" type="image/png" href="{rel}../assets/icon.png">
+<link rel="apple-touch-icon" href="{rel}../assets/icon.png">
+<link rel="stylesheet" href="{rel}../assets/style.css">
 <link rel="stylesheet" href="{rel}assets/trpg.css">
 </head>
 <body class="{body_class}">

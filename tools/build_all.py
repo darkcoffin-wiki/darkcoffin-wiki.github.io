@@ -144,6 +144,8 @@ def joint_index():
 <title>黑柩 Wiki</title>
 <meta name="description" content="《黑柩》的四套整理：花絮 · 跑团剧情志 · 设定集 · 分析报告。">
 <link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
 <link rel="stylesheet" href="assets/joint.css">
 </head>
 <body class="joint">

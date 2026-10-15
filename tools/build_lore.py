@@ -48,7 +48,7 @@ SHARED = os.path.join(W, "docs", "assets")
 
 SITE = {
     "title": "黑柩设定集Wiki",
-    "subtitle": "《黑柩设定集·第一版》的整理站",
+    "subtitle": "《黑柩设定集·1.1版》· 卷 / 节 / 词条",
     "description": "把《黑柩设定集》按卷、节、词条整理成可浏览、可跳转的 wiki。",
     "disclaimer": "本网站由 AI 生成，内容准确性无法完全保证。",
 }
@@ -66,7 +66,7 @@ except Exception as _e:
 WARN_SPOILER = "本站内容**包含剧透**。设定集涵盖全书人物、事件与结局，点入即视为接受剧透风险。"
 WARN_EATING = ("**吃书警告**：原作设定前后不一致（作者自称「吃书」）之处，"
                "本站**一律照录、不代为圆说**；确有分歧的条目会以【异说】单列。")
-WARN_VERSION = "本站整理自《黑柩设定集·**第一版**》，内容仍在演进中，**以最新版设定集为准**。"
+WARN_VERSION = "本站整理自《黑柩设定集·**1.1版**》，内容仍在演进中，**以最新版设定集为准**。"
 
 # 【】块名 → 渲染角色
 BLOCK_META = {
@@ -209,7 +209,9 @@ def page(title, body, rel, extra_head="", body_class=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)} · {html.escape(SITE['title'])}</title>
 <meta name="description" content="{html.escape(SITE['description'])}">
-{extra_head}<link rel="stylesheet" href="{rel}../assets/style.css">
+{extra_head}<link rel="icon" type="image/png" href="{rel}../assets/icon.png">
+<link rel="apple-touch-icon" href="{rel}../assets/icon.png">
+<link rel="stylesheet" href="{rel}../assets/style.css">
 <link rel="stylesheet" href="{rel}../assets/lore.css">
 </head>
 <body class="{body_class}">
@@ -235,7 +237,7 @@ def page(title, body, rel, extra_head="", body_class=""):
 </main>
 <footer class="site-foot">
   <p class="disclaimer">{html.escape(SITE['disclaimer'])}</p>
-  <p>《黑柩设定集·第一版》的整理与索引，内容版权归原作者所有。</p>
+  <p>《黑柩设定集·1.1版》的整理与索引，内容版权归原作者所有。</p>
   <p class="muted">静态站 · 由 <code>tools/build_lore.py</code> 生成</p>
 <p class="friend-links">友情链接：{friend_links_html(SITE)}</p>
 </footer>
@@ -482,7 +484,7 @@ def render_index(vols, sess_stats):
 </ol></section>
 <section><h2>本书的已知情况</h2>
 <ul class="gaps">
-  <li>本集为<b>第一版</b>，内容仍在演进；后续修订以最新版为准。</li>
+  <li>本集为<b>1.1 版</b>，内容仍在演进；后续修订以最新版为准。</li>
   <li>编纂者遵循「<b>零事实损失、不擅自补齐</b>」原则：无法判定的矛盾集中在附录备查。</li>
   <li>原始文件中有三份在打包时损坏，其内容未进入本集。</li>
   <li>合集中有两处「只有提问、没有回答」，故本集无法收录（详见附录）。</li>

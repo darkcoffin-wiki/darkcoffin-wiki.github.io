@@ -204,6 +204,8 @@ def page(title, body, self_rel="", up="../", extra_head="", show_search=True):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
+<link rel="icon" type="image/png" href="{self_rel}assets/icon.png">
+<link rel="apple-touch-icon" href="{self_rel}assets/icon.png">
 <link rel="stylesheet" href="{self_rel}assets/style.css">
 <link rel="stylesheet" href="{self_rel}assets/report.css">
 {extra_head}
@@ -471,11 +473,21 @@ def main():
     # （分析站自带副本 → 路径不依赖共享目录，跨目录相对路径不会算错）
     OWN = os.path.join(OUT, "assets")
     n += write_if_changed(os.path.join(OWN, "report.css"), CSS.strip() + "\n")
-    for src_name in ("style.css", "app.js"):
+    for src_name in ("style.css", "app.js", "icon.png"):
         src = os.path.join(ASSETS, src_name)
-        if os.path.exists(src):
+        if not os.path.exists(src):
+            continue
+        dst = os.path.join(OWN, src_name)
+        # 文本与二进制分开读（icon.png 是二进制，用 utf-8 读会炸）
+        if src_name.endswith(".png"):
+            data = open(src, "rb").read()
+            os.makedirs(OWN, exist_ok=True)
+            if not os.path.exists(dst) or open(dst, "rb").read() != data:
+                open(dst, "wb").write(data)
+                n += 1
+        else:
             data = io.open(src, encoding="utf-8").read()
-            n += write_if_changed(os.path.join(OWN, src_name), data)
+            n += write_if_changed(dst, data)
 
     # 报告页
     order = [s for g in cfg["groups"] for s in g["reports"]]

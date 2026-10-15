@@ -88,9 +88,11 @@ def page(title, body, rel, site, extra_head="", body_class=""):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{html.escape(title)} · {html.escape(site['title'])}</title>
+<title>{html.escape(title) if title != site['title'] else ''}{' · ' if title != site['title'] else ''}{html.escape(site['title'])}</title>
 <meta name="description" content="{html.escape(site['description'])}">
-{extra_head}<link rel="stylesheet" href="{rel}../assets/style.css">
+{extra_head}<link rel="icon" type="image/png" href="{rel}../assets/icon.png">
+<link rel="apple-touch-icon" href="{rel}../assets/icon.png">
+<link rel="stylesheet" href="{rel}../assets/style.css">
 </head>
 <body class="{body_class}">
 <header class="site-head">
