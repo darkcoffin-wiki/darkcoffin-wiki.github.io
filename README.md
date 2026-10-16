@@ -58,6 +58,7 @@ docs/
 | `E:\黑柩\黑柩小说花絮\黑柩设定集·1.1版·DSH版.docx` | **内容源**（不随仓库分发） |
 | `lore-data/` | 解析产物（**不进 git**） |
 | `lore-data/versions/` | 版本归档：结构差异报告、旧 overrides |
+| `lore-data/overrides.json` | **声明式更正值**：`text_replace`（笔误更正，源头 docx 不改） |
 | `tools/parse_lore.py` | docx → JSON（样式映射、页码剥离、slug 唯一化、跨卷同名自动标注） |
 | `tools/lore_report.py` | 结构校验报告（目录 vs 样式交叉校验） |
 | `tools/lore_diff_11.py` | **移动感知**的版本结构比对 |

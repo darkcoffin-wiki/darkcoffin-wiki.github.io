@@ -395,6 +395,31 @@ def build_structure(paras, issues):
                             "others": lst}
             applied["seealso"] += 1
 
+    # ── 文本更正（作者/用户指出的笔误；源头 docx 不改，在解析层更正）──
+    n_fix = 0
+    if os.path.exists(ov_path):
+        _ov = json.load(io.open(ov_path, encoding="utf-8"))
+        rules = _ov.get("text_replace") or []
+        if rules:
+            def _fix(t):
+                nonlocal n_fix
+                for r in rules:
+                    if r.get("from") and r["from"] in t:
+                        n_fix += t.count(r["from"])
+                        t = t.replace(r["from"], r.get("to", ""))
+                return t
+
+            for v in vols:
+                v["body"] = [_fix(x) for x in (v.get("body") or [])]
+                for sec in v["sections"]:
+                    sec["body"] = [_fix(x) for x in (sec.get("body") or [])]
+                    for e in sec["entries"]:
+                        if isinstance(e.get("body"), list):
+                            e["body"] = [_fix(x) for x in e["body"]]
+                        if isinstance(e.get("text"), str):
+                            e["text"] = _fix(e["text"])
+            print("  文本更正：应用 %d 条规则，命中 %d 处" % (len(rules), n_fix))
+
     # ── 「编纂备注」永远排在每卷最后（作者要求：单列在卷末）──
     # 必须在 ① 分节之后执行，否则新建的节会把备注顶回前面
     for v in vols:
