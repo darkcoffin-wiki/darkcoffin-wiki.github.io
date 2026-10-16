@@ -308,7 +308,7 @@ def page(title, body, rel, extra_head="", body_class=""):
 <p class="friend-links">友情链接：{friend_links_html(SITE)}</p>
 </footer>
 <a class="to-top" href="#" id="to-top" title="回到顶部" aria-label="回到顶部">↑ 顶部</a>
-<script>window.SITE_REL = {json.dumps(rel)};window.SITE_LIST = "session/";</script>
+<script>window.SITE_REL = {json.dumps(rel)};window.SITE_LIST = "session/";window.SITE_INDEX="assets/search.json";</script>
 <script src="{rel}../assets/app.js" defer></script>
 </body>
 </html>
@@ -705,14 +705,63 @@ def main():
     n += write_if_changed(os.path.join(OUT, "index.html"),
                           page("跑团首页", render_index(sess, seasons, note), rel=""))
 
-    # 搜索索引（复用花絮站的 app.js：需要 id/slug/title/kind/tags）
-    search = {"entries": ([{"id": session_slug(s), "slug": "",
-                            "title": "%s 第%d场" % (s["season"], s["no"]),
-                            "kind": "场次",
-                            "tags": [s["season"]]} for s in sess]
-                          + [{"id": season_slug(s["name"]), "slug": "",
-                              "title": s["name"] + " · 季志", "kind": "季志",
-                              "tags": []} for s in seasons])}
+    # ── 搜索索引 ──
+    # 字段名（中）→ 页面锚点 id（渲染时是 f-<key>，见 render_session）
+    # 只索引**能一眼命名**的字段；整段型字段（收场状态/伏笔/世界层等）不单独建条目，
+    # 它们的内容仍会被「场次」条目带到（点进页面即可见），避免索引膨胀。
+    FIELD_LABEL = {"places": "地点", "present": "在场"}
+    # title 的长度上限：搜索结果里只显示一行，长了没意义还占体积
+    T_MAX = 48
+    SPLIT_RE = re.compile(r"[、,，;；]")
+
+    entries = []
+    for s in sess:
+        base_id = "session/" + session_slug(s)
+        sess_title = "%s 第%d场" % (s["season"], s["no"])
+        # 紧凑：用 season + n 代替冗长的 tags/sub，客户端自己拼「所属行」
+        base = {"id": base_id, "season": s["season"], "n": s["no"]}
+        # ① 场次本身
+        entries.append(dict(base, slug="", title=sess_title, kind="场次"))
+        f = s.get("fields") or {}
+        # ② 各字段的**值**也编进索引，点结果直接跳到该字段
+        for key, label in FIELD_LABEL.items():
+            v = (f.get(key) or "").strip()
+            if not v:
+                continue
+            entries.append(dict(base, slug="", frag="f-" + key,
+                                title=v[:T_MAX], kind=label))
+        # ③ 地点与在场：**逐条拆开**，这样搜某个地名/人名能精确命中
+        for key, label in (("places", "地点"), ("present", "在场")):
+            v = (f.get(key) or "").strip()
+            if not v:
+                continue
+            for piece in SPLIT_RE.split(re.sub(r"玩家角色|NPC", "、", v)):
+                piece = piece.strip(" 　·→|")
+                if 2 <= len(piece) <= T_MAX:
+                    entries.append(dict(base, slug="", frag="f-" + key,
+                                        title=piece, kind=label))
+        # ④ 剧情摘要的每个小节
+        for j, part in enumerate(s.get("summary_parts") or [], 1):
+            t = (part.get("title") or "").strip()
+            if not t:
+                continue
+            entries.append(dict(base, slug="", frag="beat-%d" % j,
+                                title=re.sub(r"^[（(][^）)]*[）)]\s*", "", t)[:T_MAX],
+                                kind="剧情"))
+        # ⑤ 关键决策点逐条
+        for d in (s.get("decisions") or []):
+            t = re.sub(r"\*\*", "", (d or "").strip())
+            if 6 <= len(t):
+                entries.append(dict(base, slug="", frag="f-decisions",
+                                    title=t[:T_MAX], kind="决策"))
+
+    for s in seasons:
+        entries.append({"id": "season/" + season_slug(s["name"]), "slug": "",
+                        "title": s["name"] + " · " + ("团志" if s["name"].startswith("短团·") else "季志"),
+                        "kind": "季志", "tags": []})
+
+    # 缩短键名以压体积（客户端在 app.js 里按同样约定读）
+    search = {"entries": entries}
     n += write_if_changed(os.path.join(OUT, "assets", "search.json"),
                           json.dumps(search, ensure_ascii=False))
 

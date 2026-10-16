@@ -80,8 +80,37 @@ LABEL = re.compile(r"^【([^】]{1,8})】\s*(.*)$")
 ORDER = ["概述", "详述", "异说", "收录范围", "源"]
 
 
+KEEP = set()   # 本次生成的页面（相对 OUT）
+
+
+def prune(keep_prefixes=("entry", "sec", "vol")):
+    """删掉本次**没有**生成的 .html。
+
+    为什么需要：改了 slug 规则（例如 slugify 从「按字符截断」改成「按词边界截断」）后，
+    旧文件名的页面会留在磁盘上——它们既不会被任何链接指向，又会被误以为还在，
+    排查「子页面打不开」时极易误导。设定站此前缺这一步（只有花絮站有 prune_stale）。
+    """
+    removed = 0
+    for pre in keep_prefixes:
+        d = os.path.join(OUT, pre)
+        if not os.path.isdir(d):
+            continue
+        for f in os.listdir(d):
+            if not f.endswith(".html"):
+                continue
+            rel = "%s/%s" % (pre, f)
+            if rel not in KEEP:
+                os.remove(os.path.join(d, f))
+                removed += 1
+    return removed
+
+
 def write_if_changed(path, content):
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    try:
+        KEEP.add(os.path.relpath(path, OUT).replace("\\", "/"))
+    except ValueError:
+        pass
     data = content.encode("utf-8")
     if os.path.exists(path):
         try:
@@ -242,7 +271,7 @@ def page(title, body, rel, extra_head="", body_class=""):
 <p class="friend-links">友情链接：{friend_links_html(SITE)}</p>
 </footer>
 <a class="to-top" href="#" id="to-top" title="回到顶部" aria-label="回到顶部">↑ 顶部</a>
-<script>window.SITE_REL = {json.dumps(rel)};window.SITE_LIST = "entry/";</script>
+<script>window.SITE_REL = {json.dumps(rel)};window.SITE_LIST = "entry/";window.SITE_INDEX="assets/search.json";</script>
 <script src="{rel}../assets/app.js" defer></script>
 </body>
 </html>
@@ -614,7 +643,7 @@ def main():
     # 样式 + 搜索索引
     n += write_if_changed(os.path.join(SHARED, "lore.css"), LORE_CSS)
     search = {"entries": [
-        {"id": e["slug"], "slug": "", "title": e["title"], "kind": e["vol"],
+        {"id": "entry/" + e["slug"], "slug": "", "title": e["title"], "kind": e["vol"],
          "tags": [e.get("section") or "", e["vol"]]}
         for v in vols
         for e in ((v.get("direct_entries") or [])
@@ -623,7 +652,9 @@ def main():
                           json.dumps(search, ensure_ascii=False))
 
     tot_e = sum(v["n_entries"] for v in vols)
-    print(json.dumps({"station": "lore", "written": n, "vols": len(vols),
+    n_pruned = prune()          # 删掉本次没生成的旧页面（slug 规则变了会留残留）
+    print(json.dumps({"station": "lore", "written": n,
+                      "pruned_stale_pages": n_pruned, "vols": len(vols),
                       "sections": sum(v["n_sections"] for v in vols),
                       "entries": tot_e}, ensure_ascii=False))
 

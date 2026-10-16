@@ -82,7 +82,14 @@ def friend_links_html(_cfg=None):
     return "".join(out) or "—"
 
 
-def page(title, body, rel, site, extra_head="", body_class=""):
+def page(title, body, rel, site, extra_head="", body_class="", rel_root=None,
+         site_index=None):
+    """rel_root：回**本站根**（docs/huaxu/）的相对前缀。
+
+    条目页在 entry/ 下 → "../"；tag/cat 页也在子目录下 → "../"；首页 → ""。
+    搜索结果的 href 是 rel_root + e.id，索引路径是 rel_root + site_index。
+    `site_index` 必须写成**相对本站根**的路径。
+    """
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -121,7 +128,7 @@ def page(title, body, rel, site, extra_head="", body_class=""):
 <p class="friend-links">友情链接：{friend_links_html(site)}</p>
 </footer>
 <a class="to-top" href="#" id="to-top" title="回到顶部" aria-label="回到顶部">↑ 顶部</a>
-<script>window.SITE_REL = {json.dumps(rel)};</script>
+<script>window.SITE_REL = {json.dumps(rel_root)};{('window.SITE_INDEX = ' + json.dumps(site_index) + ';') if site_index else ''}</script>
 <script src="{rel}../assets/app.js" defer></script>
 </body>
 </html>
@@ -305,7 +312,13 @@ def render_entries(data, by_id, site, tag_to_cat=None):
 </footer>
 </article>"""
         title = rec["title"]
-        out = page(title, body, rel, site, body_class="entry-page")
+        # 条目页在 entry/ 下 → 回本站根的相对前缀是 rel + "../"
+        # rel_root 是「相对**页面自己**」的前缀：条目页在 entry/ 下 → "../"
+        # （注意：不能写成 rel + "../" —— rel 是「相对 docs/」，两者不是一回事）
+        # 索引在共享 docs/assets/ → 相对页面是 "../../assets/search.json"
+        # 花絮站的索引在共享 docs/assets/ 里 → 不输出 SITE_INDEX，用 app.js 的回退分支
+        out = page(title, body, rel, site, body_class="entry-page",
+                   rel_root="../")
         n_written += write_if_changed(os.path.join(DOCS, "entry", fn), out)
     return n_written
 
@@ -395,7 +408,7 @@ def render_tags(data, by_id, site, min_doc=2):
 </section>"""
         n += write_if_changed(os.path.join(DOCS, "tag", "%s.html" % m["slug"]),
                               page(t, body, "../", site, extra_head=extra,
-                                   body_class="tag-detail"))
+                                   body_class="tag-detail", rel_root="../"))
     return n
 
 
@@ -589,7 +602,7 @@ def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
   {''.join('<li data-id="%s" data-kind="%s" data-layer="%s"><a href="entry/%s-%s.html">%s</a><span class="muted">%s · %d 字 · %s</span></li>' % (e['id'], e['kind'], layer_of(e, meta), e['id'], common.slugify(e['title']), html.escape(e['title']), html.escape(e['kind']), e['chars'], e['id']) for e in data['entries'])}
   </ul>
 </section>"""
-    return page(site["title"], body, "", site, body_class="home")
+    return page(site["title"], body, "", site, body_class="home", rel_root="")
 
 
 # ------------------------------------------------------------------ 资源
@@ -730,14 +743,20 @@ background:var(--card);border-radius:0 8px 8px 0;color:var(--muted);font-size:.8
 APP_JS = """/* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，这里只做筛选/搜索） */
 (function () {
   var rel = window.SITE_REL || "";
-  // 列表页所在目录：花絮站是 entry/，跑团站是 session/（两站共用本脚本）
-  var list = window.SITE_LIST || "entry/";
+  // 链接 = rel + e.id + (slug ? "-" + slug : "") + ".html"
+  //   e.id   = 相对本站根的路径（含目录，如 entry/hx-001、session/di-…），**不含** .html
+  //   e.slug = 文件名里 id 之后、连字符之后的部分：花絮站必填（→ hx-001-<slug>.html），
+  //            跑团/设定/分析三站的文件名里没有这一段，故留空串
+  // 早先写死 rel + list + e.id + "-" + e.slug，各站结构不一 → 跑团/设定/分析三站全是坏链。
   var q = document.getElementById("q");
   var box = document.getElementById("q-results");
   var index = null;
 
-  // 索引路径：优先用各站自带的 window.SITE_INDEX（相对本站根），
-  // 否则退回共享的 ../assets/search.json（花絮/跑团/设定三站沿用原行为）
+  // 索引路径 = rel + 索引相对 docs/ 的路径。
+  //   · 跑团/设定/分析三站：SITE_INDEX = "assets/search.json"（各站自带的索引）
+  //   · 花絮站：不输出 SITE_INDEX，走下面的回退分支 —— 它的索引就是共享的
+  //     docs/assets/search.json（花絮站自己产出的），所以回退值是正确目标
+  // 两条分支都拼 rel，因此任意目录深度的页面都能取到。
   var idxPath = window.SITE_INDEX
     ? (rel + window.SITE_INDEX)
     : (rel + "../assets/search.json");
@@ -752,9 +771,19 @@ APP_JS = """/* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，�
   function render(list) {
     if (!list.length) { box.hidden = true; return; }
     box.innerHTML = list.slice(0, 20).map(function (e) {
-      return '<a href="' + rel + list + e.id + "-" + e.slug + '.html">' +
-        e.title + '<br><span class="muted">' + e.kind + " · " +
-        (e.tags || []).slice(0, 5).join("、") + "</span></a>";
+      // id 与 slug 之间原本有个连字符：hx-001 + "-" + <slug>。
+    // slug 为空的站（跑团/设定/分析）就没有这个连字符。
+    // frag 是可选的**页内锚点**（跑团站的场次卡会把「地点/在场/剧情摘要小节」也编进索引，
+    // 点结果直接跳到对应字段或小节）。
+    // 所属行：优先用 e.sub；否则用 e.season + e.n（跑团站的紧凑写法）拼出来
+    var belong = e.sub || (e.season ? e.season + (e.n ? " 第" + e.n + "场" : "") : "");
+    // 标签：优先 e.tags；否则退回 e.season（跑团站的条目只带季名）
+    var tg = e.tags && e.tags.length ? e.tags : (e.season ? [e.season] : []);
+    return '<a href="' + rel + e.id + (e.slug ? "-" + e.slug : "") + '.html' +
+        (e.frag ? "#" + e.frag : "") + '">' +
+        e.title + '<br><span class="muted">' + e.kind +
+        (belong ? " · " + belong : "") +
+        (tg.length ? " · " + tg.slice(0, 5).join("、") : "") + "</span></a>";
     }).join("");
     box.hidden = false;
   }
@@ -817,7 +846,7 @@ APP_JS = """/* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，�
 
 def render_assets(data, by_id, featured):
     search = {"note": "标题 + 标签轻量搜索索引",
-              "entries": [{"id": e["id"], "title": e["title"],
+              "entries": [{"id": "entry/" + e["id"], "title": e["title"],
                            "slug": common.slugify(e["title"]),
                            "kind": e["kind"], "chars": e["chars"],
                            "tags": e["tags"]} for e in data["entries"]]}

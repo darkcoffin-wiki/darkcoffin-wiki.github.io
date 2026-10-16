@@ -57,6 +57,7 @@ def slugify(text, maxlen=40):
     * 连续的 ASCII 字母/数字（如 THEM、287）→ 一个词；
     * 标点/空白只作分词边界，不额外产生词。
     * 多音字：先查 `data/pinyin_overrides.json` 的**词级**覆盖，再查**字级**覆盖。
+    * 超过 `maxlen` 时按**词边界**截断（不切半个音节）。
     """
     table = pinyin_table()
     _, words = _load_pinyin_overrides()
@@ -93,7 +94,15 @@ def slugify(text, maxlen=40):
         i += 1
     flush_ascii()
     s = re.sub(r"-{2,}", "-", "-".join(p for p in parts if p)).strip("-")
-    return s[:maxlen].strip("-") or "x"
+    if len(s) <= maxlen:
+        return s or "x"
+    # 截断时**在词边界切**，不要切出半个拼音音节
+    # （旧写法 `s[:maxlen]` 会产出 `-hong-yu`、`-sheng-zhao-hui-j` 这种残片，
+    #   既难看又让 slug 失去区分度；跑团站的「第N场」等后缀也因此受影响）
+    cut = s[:maxlen]
+    if "-" in cut:
+        cut = cut[:cut.rfind("-")]
+    return cut.strip("-") or s[:maxlen].strip("-") or "x"
 
 
 # ------------------------------------------------------------------ 正文

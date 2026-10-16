@@ -245,10 +245,11 @@ def write_if_changed(path, content):
 # ══════════════════════════════════════════════════════════════
 # 渲染报告页
 # ══════════════════════════════════════════════════════════════
-def render_report(slug, cfg, md):
-    meta_t = cfg["titles"].get(slug, slug)
-    meta_s = cfg["subtitles"].get(slug, "")
-    num = cfg["series"].get(slug, "")
+def render_report(key, cfg, md, slug=None):
+    """key：原中文名（**查配置用这个**）；slug：ASCII 文件名（只用于文件名，本函数不用）。"""
+    meta_t = cfg["titles"].get(key, key)
+    meta_s = cfg["subtitles"].get(key, "")
+    num = cfg["series"].get(key, "")
     html_body, toc = md_to_html(md)
     hanzi = len(HANZI.findall(md))
     n_tbl = html_body.count('<table class="rp">')
@@ -280,7 +281,8 @@ def render_report(slug, cfg, md):
 # 渲染首页
 # ══════════════════════════════════════════════════════════════
 def render_index(cfg, catalog):
-    by = {c["slug"]: c for c in catalog}
+    # g["reports"] 里写的是**原中文名**，故按 key 建索引
+    by = {(c.get("key") or c["slug"]): c for c in catalog}
     blocks = []
     for g in cfg["groups"]:
         cards = []
@@ -298,7 +300,8 @@ def render_index(cfg, catalog):
                 '<p class="muted">{h} 汉字 · {tb} 张表</p></a>'.format(
                     n=("《黑柩》设定研究之%s" % num) if num else "专题报告",
                     t=html.escape(t), sub=html.escape(sub),
-                    h=format(c["hanzi"], ","), tb=c["tables"], slug=slug))
+                    h=format(c["hanzi"], ","), tb=c["tables"],
+                    slug=c["slug"]))   # 卡片链接用 ASCII slug
         blocks.append(
             '<section class="rp-group"><h2>%s</h2>'
             '<p class="muted">%s</p>'
@@ -492,32 +495,39 @@ def main():
     # 报告页
     order = [s for g in cfg["groups"] for s in g["reports"]]
     for c in catalog:
-        slug = c["slug"]
+        slug = c["slug"]              # ASCII slug → 文件名
+        key = c.get("key") or slug    # 原中文名 → 查 titles/series/subtitles
         md = io.open(os.path.join(DATA, slug + ".md"), encoding="utf-8").read()
         n += write_if_changed(
             os.path.join(OUT, "entry", slug + ".html"),
-            page(cfg["titles"].get(slug, slug) + " · " + cfg["site_title"],
-                 render_report(slug, cfg, md), self_rel="../", up="../../"))
+            page(cfg["titles"].get(key, slug) + " · " + cfg["site_title"],
+                 render_report(key, cfg, md, slug=slug), self_rel="../",
+                 up="../../"))
 
     # 本站搜索索引：报告标题 + 各节标题（子项带锚点）
     idx = []
     for c in catalog:
-        slug = c["slug"]
+        slug = c["slug"]              # ASCII → 搜索结果链接
+        key = c.get("key") or slug    # 原中文名 → 查配置
         md = io.open(os.path.join(DATA, slug + ".md"), encoding="utf-8").read()
-        title = cfg["titles"].get(slug, slug)
-        sub = cfg["subtitles"].get(slug, "")
-        num = cfg["series"].get(slug, "")
+        title = cfg["titles"].get(key, slug)
+        sub = cfg["subtitles"].get(key, "")
+        num = cfg["series"].get(key, "")
         # id 必须带上目录：app.js 拼的是 SITE_REL + id + ".html"，
         # 而报告页在 entry/ 下（与设定站的 entry/ 同理）
-        idx.append({"id": "entry/" + slug, "slug": slug, "title": title,
+        # id 已是完整路径（entry/<报告名>），故 slug 留空；
+        # 约定见 build_site.py 的 app.js：href = rel + id + slug + ".html"
+        idx.append({"id": "entry/" + slug, "slug": "", "title": title,
                     "kind": ("设定研究之%s" % num) if num else "专题报告",
-                    "tags": [w for w in (sub, c.get("slug", "")) if w]})
+                    "tags": [w for w in (sub, key) if w]})
         for i, (hashes, htxt) in enumerate(re.findall(r"^(#{2,3}) (.+)$", md, re.M)):
             t = re.sub(r"\*\*", "", htxt).strip()
             if len(t) < 2 or len(t) > 42:
                 continue
-            idx.append({"id": "entry/" + slug, "slug": slug + "-s%d" % i,
-                        "title": t, "kind": title, "tags": []})
+            # 章节条目也指向报告页（slug 留空），锚点用 report 页里真实的 h2/h3 的 id
+            _a = re.sub(r"[^\w\u4e00-\u9fff]+", "-", t).strip("-")[:48].lower() or "h"
+            idx.append({"id": "entry/" + slug, "slug": "", "title": t,
+                        "kind": title, "tags": [], "frag": _a})
     n += write_if_changed(
         os.path.join(OWN, "search.json"),
         json.dumps({"entries": idx}, ensure_ascii=False, separators=(",", ":")))

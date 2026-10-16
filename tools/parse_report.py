@@ -259,13 +259,20 @@ def main():
 
     files = sorted(f for f in os.listdir(args.src)
                    if f.lower().endswith(".docx") and not f.startswith("~$"))
+    # 中间产物与页面都用 ASCII slug（配置在 data/report_site.json 的 slugs）
+    slugs = {}
+    _cfg = os.path.join(W, "data", "report_site.json")
+    if os.path.exists(_cfg):
+        slugs = json.load(io.open(_cfg, encoding="utf-8")).get("slugs") or {}
     catalog, issues = [], []
     print("解析 %d 份报告 → %s" % (len(files), out_dir))
     for fn in files:
         p = os.path.join(args.src, fn)
         r = parse_docx(p)
-        slug = fn.replace("黑柩报告-", "").replace(".docx", "")
-        rec = {"file": fn, "slug": slug, **{k: v for k, v in r.items() if k != "md"}}
+        key = fn.replace("黑柩报告-", "").replace(".docx", "")
+        slug = slugs.get(key) or key          # 没配 slug 时退回原名
+        rec = {"file": fn, "key": key, "slug": slug,
+               **{k: v for k, v in r.items() if k != "md"}}
         catalog.append(rec)
         io.open(os.path.join(out_dir, slug + ".md"), "w",
                 encoding="utf-8", newline="\n").write(r["md"] + "\n")

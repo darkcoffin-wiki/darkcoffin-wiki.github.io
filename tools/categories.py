@@ -160,7 +160,10 @@ def render_pages(cat_index, tags_data, site, page_fn, write_fn, rel="../", min_d
                  ('<p class="dim-note">分组依据：%s</p>' % c["source"]) if c.get("source") else "",
                  "".join(rows), len(c["member_tags"]), tag_chips)
         n += write_fn(common.site_dir(c["url"]),
-                      page_fn(c["name"], body, rel, site, body_class="cat-detail"))
+                      # 分类页在 cat/ 下：rel_root 相对页面是 "../"，
+                      # 索引在共享 docs/assets/ → 相对页面 "../../assets/search.json"
+                      page_fn(c["name"], body, rel, site, body_class="cat-detail",
+                              rel_root="../"))
     return n
 
 

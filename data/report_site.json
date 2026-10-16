@@ -21,22 +21,36 @@
   {
    "name": "制度与法律",
    "desc": "国家怎么运转、法律怎么写、刑罚怎么执行",
-   "reports": ["六国制度比较研究", "各国法律体系比较", "处刑的剧场"]
+   "reports": [
+    "六国制度比较研究",
+    "各国法律体系比较",
+    "处刑的剧场"
+   ]
   },
   {
    "name": "意识形态",
    "desc": "希联与教团国两条社会主义路线的理论与实践",
-   "reports": ["希联人道社会主义理论与实践", "教团国神权社会主义"]
+   "reports": [
+    "希联人道社会主义理论与实践",
+    "教团国神权社会主义"
+   ]
   },
   {
    "name": "北沙专题",
    "desc": "北沙戡乱政府的政权、人物与两块自治试验田",
-   "reports": ["高氏政权人物研究", "中分山治理实验", "自治的代价-日本街如何活下来"]
+   "reports": [
+    "高氏政权人物研究",
+    "中分山治理实验",
+    "自治的代价-日本街如何活下来"
+   ]
   },
   {
    "name": "集团与人物",
    "desc": "势力群像与个人传记",
-   "reports": ["十三圣人群像", "齐藤优子传"]
+   "reports": [
+    "十三圣人群像",
+    "齐藤优子传"
+   ]
   }
  ],
  "series": {
@@ -74,5 +88,18 @@
   "中分山治理实验": "从土匪窝到自治区 · 三期规划 · 镜缘与制度",
   "自治的代价-日本街如何活下来": "北沙三篇之三 · 五大家族与一条街的生存术",
   "齐藤优子传": "一个把「天才」当信条的人"
- }
+ },
+ "slugs": {
+  "希联人道社会主义理论与实践": "xi-lian-ren-dao-she-hui-zhu-yi",
+  "六国制度比较研究": "hei-jiu-liu-guo-zhi-du-bi-jiao-yan-jiu",
+  "各国法律体系比较": "hei-jiu-ge-guo-fa-lv-ti-xi-bi-jiao",
+  "处刑的剧场": "chu-xing-de-ju-chang",
+  "教团国神权社会主义": "jiao-tuan-guo-shen-quan-she-hui-zhu-yi",
+  "十三圣人群像": "shi-san-sheng-ren-qun-xiang",
+  "高氏政权人物研究": "gao-shi-zheng-quan-ren-wu-yan-jiu",
+  "中分山治理实验": "zhong-fen-shan-yi-ge-zi-zhi-zheng-quan-de-zhi",
+  "自治的代价-日本街如何活下来": "zi-zhi-de-dai-jia-ri-ben-jie-ru-he-huo-xia-lai",
+  "齐藤优子传": "qi-teng-you-zi-chuan"
+ },
+ "slug_note": "slugs：报告页的 ASCII 文件名（与花絮/跑团/设定三站同一风格的拼音 slug）。由 common.slugify + 词边界截断生成。"
 }
