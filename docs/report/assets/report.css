@@ -1,4 +1,22 @@
 /* ══ 分析站：报告页专用样式（长文阅读优先）══ */
+/* 首页置顶「最近主打」：整块卡片，视觉上要明显高于普通分组卡片 */
+.rp-feature{margin:1.4rem 0 .6rem}
+.rp-feature-card{
+  display:block;padding:1.1rem 1.2rem;border-radius:14px;
+  border:1px solid var(--accent);background:var(--card);
+  box-shadow:0 2px 14px rgba(0,0,0,.06);
+}
+.rp-feature-card:hover{text-decoration:none;border-color:var(--accent2)}
+.rp-feature-tag{
+  display:inline-block;margin:0 0 .5rem;padding:.12rem .6rem;border-radius:99px;
+  background:var(--accent);color:#fff;font-size:.78rem;font-weight:700;letter-spacing:.06em;
+}
+.rp-feature-card h2{font-size:1.28rem;margin:.15rem 0 .3rem;line-height:1.35;color:var(--fg)}
+.rp-feature-card .rp-sub{margin:.1rem 0 .35rem}
+.rp-feature-note{margin:.5rem 0 0;font-size:.84rem;color:var(--accent2)}
+@media (prefers-color-scheme:light){
+  .rp-feature-card{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+}
 /* 顶部菜单的样式：另三站在各自 CSS（lore.css / trpg.css）里定义了这两条，
    分析站此前没有，导致「本站首页」后的分隔符和不换色。补上以保持一致。 */
 .nav-sep{width:1px;height:1.1em;background:var(--line);display:inline-block}

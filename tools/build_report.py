@@ -79,6 +79,8 @@ def inline(txt):
     # 显示星号的场合），个别段落星号数量本身就不配对（如 `*A……****B***`），
     # 上面几轮替换后仍会剩 1 个，这里统一抹掉，保证页面上永远看不到星号。
     t = t.replace("*", "")
+    # 去掉空的内联标签（docx 里偶有 `** **` 这种只有空格的加粗）
+    t = re.sub(r"<(em|strong)>\s*</\1>", "", t)
     return t
 
 
@@ -95,8 +97,13 @@ def slugify_anchor(text, seen):
 # ══════════════════════════════════════════════════════════════
 COVER_TOC_RE = re.compile(r"^#{1,6}\s*目\s*[录錄]\s*$", re.M)
 # docx 里给 Word 用户的操作提示（「按 F9 更新域」「视图→导航窗格」等），网页读者不需要
+# 两种实际形态都要覆盖：
+#   · （本目录为自动域：在 Word 中全选后按 F9…）
+#   · 在 Word 中右键下方区域并选择「更新域」，或按 Ctrl+A 后 F9，即可生成带页码的目录。
+#   · （目录占位：更新域后生成）
 WORD_HINT_RE = re.compile(
-    r"^[（(][^\n]{0,240}?(?:自动域|更新域|更新目录|导航窗格|按\s*F9|Word/WPS)[^\n]{0,240}?[）)]\s*$",
+    r"^[（(]?[^\n]{0,260}?(?:自动域|更新域|更新目录|导航窗格|按\s*Ctrl\+A\s*后\s*F9"
+    r"|按\s*F9|Word\s*/\s*WPS|目录占位)[^\n]{0,260}?[）)]?\s*$",
     re.M)
 
 
@@ -123,13 +130,27 @@ def strip_cover(md):
 
     只在「第一个二级标题之前确实存在目录标题」时才剥，避免误伤没有封面区的文档。
     """
-    m = re.search(r"^## ", md, re.M)
+    md = WORD_HINT_RE.sub("", md)
+    m = COVER_TOC_RE.search(md)
     if not m:
         return md
-    head = md[:m.start()]
-    if not COVER_TOC_RE.search(head):
-        return WORD_HINT_RE.sub("", md)
-    return WORD_HINT_RE.sub("", md[m.start():])
+    tail = md[m.end():]
+
+    # 结构 A（多数旧报告）：目录标题之后还有一片「封面装饰」——
+    #   # 标题（与 rp-head 重复）
+    #   **——副标题**
+    #   **——《黑柩》设定研究之N**
+    # 用它当锚点，剥到该行之后。
+    m2 = re.search(r"^\*\*——《黑柩》设定研究之[^*]*\*\*\s*$", tail, re.M)
+    if m2:
+        return tail[m2.end():].lstrip("\n")
+
+    # 结构 B（部分新报告）：目录标题之后直接就是正文标题（# 绪言 / # 前言 / # 引言），
+    # 没有那片装饰，剥到第一个标题即可。
+    m3 = re.search(r"^#{1,6}\s+\S", tail, re.M)
+    if m3:
+        return tail[m3.start():]
+    return tail
 
 
 def md_to_html(md):
@@ -396,6 +417,28 @@ def render_index(cfg, catalog):
             '<div class="rp-grid">%s</div></section>'
             % (html.escape(g["name"]), html.escape(g["desc"]), "".join(cards)))
 
+    # ── 置顶「最近主打」──
+    # 配置见 data/report_site.json 的 featured：{report, label, note}
+    # 它是**推荐位**，与该报告在下面栏目里的位置并存（栏目要保持完整）。
+    feat_html = ""
+    _f = cfg.get("featured") or {}
+    _fk = _f.get("report")
+    if _fk and _fk in by:
+        _c = by[_fk]
+        _num = cfg["series"].get(_fk, "")
+        _t = cfg["titles"].get(_fk, _fk)
+        _sub = cfg["subtitles"].get(_fk, "")
+        feat_html = f"""<section class="rp-feature">
+  <a class="rp-feature-card" href="entry/{_c['slug']}.html">
+    <p class="rp-feature-tag">{html.escape(_f.get('label', '最近主打'))}</p>
+    <p class="rp-series mono">{('《黑柩》设定研究之%s' % _num) if _num else '专题报告'}</p>
+    <h2>{html.escape(_t)}</h2>
+    {f'<p class="rp-sub">{html.escape(_sub)}</p>' if _sub else ''}
+    <p class="muted">{format(_c['hanzi'], ',')} 汉字 · {_c['tables']} 张表</p>
+    {f'<p class="rp-feature-note">{html.escape(_f["note"])}</p>' if _f.get('note') else ''}
+  </a>
+</section>"""
+
     warns = "".join(
         '<p class="rp-warn %s">%s</p>' % (w.get("kind", ""), inline(w["text"]))
         for w in cfg["warnings"])
@@ -409,6 +452,7 @@ def render_index(cfg, catalog):
 </header>
 <section class="rp-warns">{warns}</section>
 <section class="rp-intro"><p>{inline(cfg['intro'])}</p></section>
+{feat_html}
 {''.join(blocks)}
 <section class="rp-howto"><h2>怎么读</h2>
 <ol class="howto">
@@ -424,6 +468,24 @@ def render_index(cfg, catalog):
 # ══════════════════════════════════════════════════════════════
 CSS = r"""
 /* ══ 分析站：报告页专用样式（长文阅读优先）══ */
+/* 首页置顶「最近主打」：整块卡片，视觉上要明显高于普通分组卡片 */
+.rp-feature{margin:1.4rem 0 .6rem}
+.rp-feature-card{
+  display:block;padding:1.1rem 1.2rem;border-radius:14px;
+  border:1px solid var(--accent);background:var(--card);
+  box-shadow:0 2px 14px rgba(0,0,0,.06);
+}
+.rp-feature-card:hover{text-decoration:none;border-color:var(--accent2)}
+.rp-feature-tag{
+  display:inline-block;margin:0 0 .5rem;padding:.12rem .6rem;border-radius:99px;
+  background:var(--accent);color:#fff;font-size:.78rem;font-weight:700;letter-spacing:.06em;
+}
+.rp-feature-card h2{font-size:1.28rem;margin:.15rem 0 .3rem;line-height:1.35;color:var(--fg)}
+.rp-feature-card .rp-sub{margin:.1rem 0 .35rem}
+.rp-feature-note{margin:.5rem 0 0;font-size:.84rem;color:var(--accent2)}
+@media (prefers-color-scheme:light){
+  .rp-feature-card{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+}
 /* 顶部菜单的样式：另三站在各自 CSS（lore.css / trpg.css）里定义了这两条，
    分析站此前没有，导致「本站首页」后的分隔符和不换色。补上以保持一致。 */
 .nav-sep{width:1px;height:1.1em;background:var(--line);display:inline-block}
