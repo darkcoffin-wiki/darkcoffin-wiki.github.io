@@ -93,11 +93,59 @@ def slugify_anchor(text, seen):
 # ══════════════════════════════════════════════════════════════
 # Markdown（本项目的子集）→ HTML
 # ══════════════════════════════════════════════════════════════
+COVER_TOC_RE = re.compile(r"^#{1,6}\s*目\s*[录錄]\s*$", re.M)
+# docx 里给 Word 用户的操作提示（「按 F9 更新域」「视图→导航窗格」等），网页读者不需要
+WORD_HINT_RE = re.compile(
+    r"^[（(][^\n]{0,240}?(?:自动域|更新域|更新目录|导航窗格|按\s*F9|Word/WPS)[^\n]{0,240}?[）)]\s*$",
+    re.M)
+
+
+def strip_cover(md):
+    """剥掉 docx 的封面区（开头到第一个 `## ` 之前）。
+
+    docx 每篇开头都是这样一片「封面」：
+        **标题**
+        副标题
+        依据《黑柩设定集》整理
+        # 目　录
+        （本目录为自动域：在 Word 中全选后按 F9，或右键"更新域"，…）
+        # 标题
+        **——副标题**
+        **——《黑柩》设定研究之N**
+        ## 一、导论        ← 正文从这里开始
+
+    页面的 <header class="rp-head"> 已经用配置渲染了系列号 / 标题 / 副标题，
+    所以这片封面留着只会造成：
+      · 页面上出现两个标题（h1 重复）
+      · 正文里多出一个「目　录」标题（页面顶部本来就有自动目录 rp-toc）
+      · 把「按 F9 更新域」这种**给 Word 用户看的操作提示**暴露给网页读者
+    作者明确要求删掉这些，故在渲染前整片剥离。
+
+    只在「第一个二级标题之前确实存在目录标题」时才剥，避免误伤没有封面区的文档。
+    """
+    m = re.search(r"^## ", md, re.M)
+    if not m:
+        return md
+    head = md[:m.start()]
+    if not COVER_TOC_RE.search(head):
+        return WORD_HINT_RE.sub("", md)
+    return WORD_HINT_RE.sub("", md[m.start():])
+
+
 def md_to_html(md):
+    md = strip_cover(md)
     lines = md.split("\n")
     out, toc = [], []
     seen = {}
     i, n = 0, len(lines)
+
+    # 标题层级归一化：正文里最浅的标题要落到 <h2>。
+    # rp-head 已经用了 <h1>（报告标题），所以正文里再出现 h1 就是语义重复。
+    # 各报告的写法不统一：有的正文直接从 `## 一、导论` 起（章=h2，本来就对），
+    # 有的先用 `# 上篇　总论` 分篇（篇应该也是 h2，章顺延为 h3）。
+    # 取正文里最小的层级，整体平移，保证「一篇只有一个 h1」。
+    _lvs = [len(x.group(1)) for x in re.finditer(r"^(#{1,6})\s+\S", md, re.M)]
+    _shift = max(0, (min(_lvs) if _lvs else 2) - 2)
     while i < n:
         ln = lines[i]
         s = ln.strip()
@@ -109,12 +157,15 @@ def md_to_html(md):
         # ── 标题 ──
         m = re.match(r"^(#{1,6})\s+(.*)$", s)
         if m:
-            lv = len(m.group(1))
+            lv = max(2, len(m.group(1)) - _shift)
             txt = m.group(2).strip()
+            # 兜底：残留的「目录」标题直接跳过（不进 toc、不输出）
+            if re.fullmatch(r"目\s*[录錄]", txt.replace("\u3000", "").strip()):
+                i += 1
+                continue
             aid = slugify_anchor(txt, seen)
             if lv <= 3:
                 toc.append((lv, txt, aid))
-            # 报告标题块（正文里的《…》设定研究之N）跳过不渲染为标题
             out.append('<h%d id="%s">%s</h%d>' % (lv, aid, inline(txt), lv))
             i += 1
             continue
