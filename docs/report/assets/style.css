@@ -128,5 +128,47 @@ font-size:.85rem}
 .disclaimer{color:var(--accent);font-weight:600;margin:0 0 .4rem}
 .ai-note{margin:.9rem 0 0;padding:.5rem .8rem;border-left:3px solid var(--accent);
 background:var(--card);border-radius:0 8px 8px 0;color:var(--muted);font-size:.88rem}
+/* ── 移动端顶栏：品牌与搜索框同一行，导航落下面 ──────────────────────
+   旧版是 display:flex;flex-wrap:wrap，于是「品牌 / 导航 / 搜索框」各占一段：
+   品牌一行、导航被挤成 2~3 行、搜索框又单独占一行，顶栏能吃掉约 290px。
+   （.site-nav 原本没有 flex-wrap，小屏上链接还会被直接裁掉。）
+   这里小屏改用 CSS Grid：品牌和搜索框共占第一行，导航整齐落到第二行。
+   大屏（>1024px）完全走原来的 flex 布局，不受影响。
+   （断点的取法：原版单行需要「品牌130 + 导航620 + 间距32 + 搜索框200 ≈ 980px」，
+     所以 <1000px 时搜索框必然掉到第三行。取 1024 后，1024 及以下一律用紧凑两行版式，
+     1025 以上才回原版——避免出现「品牌+导航一行、搜索框又一行」的三行乱版。） */
+@media (max-width: 1024px){
+  .site-head{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:.45rem .7rem;
+    padding:.55rem .9rem;
+  }
+  .site-head > .brand{
+    grid-column:1;grid-row:1;
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .site-head > .search-wrap{
+    grid-column:2;grid-row:1;
+    margin-left:0;justify-self:end;
+  }
+  .site-head > .site-nav{grid-column:1 / -1;grid-row:2}
+  /* 不允许被裁掉：允许换行，并收一点间距让 7 个链接更好挤 */
+  .site-head .site-nav{flex-wrap:wrap;gap:.3rem .8rem;font-size:.86rem;line-height:1.5}
+  #q{min-width:0;width:min(10rem,42vw)}
+  .q-results{right:0;left:auto}
+}
+
+/* ── 中间宽度（1025–1280px）：原版单行布局的「收紧」档 ──────────────
+   原版单行需要约 1000px：品牌 162 + 导航 647 + 搜索框 160 + 间距 32。
+   所以在 1025~1280px 之间虽然还用原版，但导航会把搜索框挤到只剩「…」。
+   这里把导航字号/间距收一点，并让搜索框可伸缩（有下限），过渡更平滑。 */
+@media (min-width:1025px) and (max-width:1280px){
+  .site-nav{gap:.62rem;font-size:.88rem}
+  .search-wrap{flex:0 1 auto;min-width:0}
+  #q{width:auto;min-width:8.5rem;flex:0 1 auto}
+}
+
 @media(max-width:640px){main{padding:1rem .8rem 3rem}#q{min-width:9rem}
 .q-results{min-width:16rem;right:-1rem}.entry-list li{flex-direction:column;gap:.1rem}}

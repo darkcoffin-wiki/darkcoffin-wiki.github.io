@@ -167,18 +167,31 @@ def friend_links_html():
         for f in cfg.get("friend_links", []) or []) or "—"
 
 
-def station_switch(up):
-    """四站切换菜单。"""
-    # href 里**不要**再写 ../，前缀由 page() 的 rel 统一提供
+def station_switch(up, self_rel=""):
+    """四站切换菜单。
+
+    self_rel：**回本站根**的前缀（首页 ""、entry/ 页 "../"）。
+    up     ：**回 docs 根**的前缀（首页 "../"、entry/ 页 "../../"）。
+
+    两者的区别必须分清楚——「本站首页」要用 self_rel 拼，
+    早先用 up 拼会指向联合首页（真实踩过的 bug）。也正因为这个坑，
+    当初干脆把「本站首页」整个删掉了；但那样子页面里就没有回本站首页的入口，
+    只能靠页眉的品牌名（不够显眼）。现在用 self_rel 正确拼上。
+    """
+    # 结构对齐另三站：本站链接 → 分隔符 → 他站切换 → 联合首页
+    # （原来最前面有个 <span class="nav-cur">分析站</span> 标记「你正在这里」，
+    #   但 .nav-cur 在 style.css / report.css 里都没有定义，等于裸文字；
+    #   去掉它、补上「本站首页」，和花絮/跑团/设定的菜单保持一致。）
     items = [("huaxu/index.html", "花絮站"), ("trpg/index.html", "跑团站"),
              ("lore/index.html", "设定站")]
-    here = "分析站"
-    # 注意：**不要**在这里加「本站首页」——本站首页由页眉的 .brand 承担，
-    # 而 up 是「回 docs 根」的前缀，用它拼本站首页会错误地指向联合首页。
-    out = ['<span class="nav-cur" title="你正在这里">%s</span>' % here]
+    out = [
+        '<a href="%sindex.html">本站首页</a>' % self_rel,
+        '<span class="nav-sep"></span>',
+    ]
     for href, name in items:
-        out.append('<a class="nav-other" href="%s%s">%s →</a>' % (up, href, name))
-    out.append('<a class="nav-other" href="%sindex.html">联合首页</a>' % up)
+        out.append('<a class="nav-other" href="%s%s" title="切换到%s">%s →</a>'
+                   % (up, href, name, name))
+    out.append('<a class="nav-other" href="%sindex.html" title="四站入口">联合首页</a>' % up)
     return "".join(out)
 
 
@@ -213,7 +226,7 @@ def page(title, body, self_rel="", up="../", extra_head="", show_search=True):
 <body class="rp-body">
 <header class="site-head">
   <a class="brand" href="{self_rel}index.html">{html.escape(SITE['title'])}</a>
-  <nav class="site-nav">{station_switch(up)}</nav>
+  <nav class="site-nav">{station_switch(up, self_rel)}</nav>
   {search}
 </header>
 <main class="wrap">
@@ -336,6 +349,10 @@ def render_index(cfg, catalog):
 # ══════════════════════════════════════════════════════════════
 CSS = r"""
 /* ══ 分析站：报告页专用样式（长文阅读优先）══ */
+/* 顶部菜单的样式：另三站在各自 CSS（lore.css / trpg.css）里定义了这两条，
+   分析站此前没有，导致「本站首页」后的分隔符和不换色。补上以保持一致。 */
+.nav-sep{width:1px;height:1.1em;background:var(--line);display:inline-block}
+.nav-other{color:var(--accent)}
 .rp-body{background:var(--bg);color:var(--fg)}
 .rp-head{margin:1rem 0 1.4rem}
 .rp-series{font-size:.82rem;color:var(--accent2);margin:0 0 .3rem;letter-spacing:.04em}

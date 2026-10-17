@@ -1,4 +1,8 @@
 /* ══ 分析站：报告页专用样式（长文阅读优先）══ */
+/* 顶部菜单的样式：另三站在各自 CSS（lore.css / trpg.css）里定义了这两条，
+   分析站此前没有，导致「本站首页」后的分隔符和不换色。补上以保持一致。 */
+.nav-sep{width:1px;height:1.1em;background:var(--line);display:inline-block}
+.nav-other{color:var(--accent)}
 .rp-body{background:var(--bg);color:var(--fg)}
 .rp-head{margin:1rem 0 1.4rem}
 .rp-series{font-size:.82rem;color:var(--accent2);margin:0 0 .3rem;letter-spacing:.04em}
