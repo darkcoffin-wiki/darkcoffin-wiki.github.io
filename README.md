@@ -59,6 +59,7 @@ docs/
 | `lore-data/` | 解析产物（**不进 git**） |
 | `lore-data/versions/` | 版本归档：结构差异报告、旧 overrides |
 | `lore-data/overrides.json` | **声明式更正值**：`text_replace`（笔误更正，源头 docx 不改） |
+| `docs/records/` | **跑团原始记录（脱敏）**：152 场切片 + 索引，供「黑柩问答」取证用；**不在任何导航里**，但可通过 URL 直接取 |
 | `tools/parse_lore.py` | docx → JSON（样式映射、页码剥离、slug 唯一化、跨卷同名自动标注） |
 | `tools/lore_report.py` | 结构校验报告（目录 vs 样式交叉校验） |
 | `tools/lore_diff_11.py` | **移动感知**的版本结构比对 |
@@ -106,6 +107,72 @@ python tools/parse_report.py     # 解析（需先有源 docx）
 python tools/build_report.py     # 生成分析站
 python tools/audit_reports.py    # 富文本构成审计
 ```
+
+---
+
+## 黑柩问答（`/chat.html`）与检索（`/ask.html`）
+
+两个纯前端页面，代码在 `tools/ask/`，构建时分发到 `docs/`：
+
+| 页面 | 做什么 |
+|---|---|
+| `/ask.html` | 跨四站检索 + **一次性** AI 解释 |
+| `/chat.html` | 黑柩问答：自由多轮对话，每轮自动检索并补料 |
+
+**不需要后端**：GitHub Pages 的 JSON 带 `Access-Control-Allow-Origin: *`，
+DeepSeek API 也回显任意 Origin，所以宿主页（WordPress）能直连两者。
+用户的 API key 只存 `sessionStorage`，不经过本站服务器。
+
+### 资料从哪来
+
+1. **wiki 四站索引**（`assets/` · `trpg/` · `lore/` · `report/` 下的 `search.json`，共 7,267 条）
+2. **跑团原始记录**（`docs/records/`，见下）
+
+### `docs/records/` 是什么
+
+从 `E:\黑柩\黑柩跑团记录-整理\归一数据\全部消息.tsv`（237,878 行）生成的**脱敏切片**：
+
+```
+docs/records/
+├── index.json          152 场索引（季/场/时间/地点/在场/摘要）
+└── session/*.tsv       152 个按场切片（季 场 序号 时间 规范名 类型 正文）
+```
+
+**脱敏规则**（按作者《检索取证与写作流程》的要求）：
+
+* **删除 `QQ` 与 `发言名` 两列** —— 账号数字一律不出现
+* 删除 来源/日期/回复/字数/身份依据
+* 只保留 类型 ∈ {台词, 旁白, 舞台}（去掉 噪声/骰/系统 共 10.1 万条）
+* 丢掉「场」为空的群聊闲聊（约 7 万条，都是「今晚有团吗」这类）
+* **名字兜底**：没设群名片的人，QQ 号会直接变成「规范名」。只要名字形如号码就改成
+  **「匿名玩家」**（实测 14 条）
+* **正文脱敏**：把 91 个真实账号在其它列出现的 21 处替换为 `[已隐去]`；
+  整条消息就是一串数字的 3 条换成 `[数字]`
+
+**验证**（`python tools/build_records.py` 之后必跑）：
+
+```
+扫描 152 个切片，135,046 行
+① 规范名是纯数字的行：0
+② 非序号列里等于真实 QQ 号的单元格：0
+③ 非序号列里形如 7-12 位纯数字的单元格：0
+结论：✅ 未发现 QQ 号
+```
+
+> 注意 `序号` 列本身就是 5~6 位数字（如 `5216`），用正则粗筛会误报，
+> 必须按列判断 —— `asktest/verify_privacy.py` 是那个严格版检查脚本。
+
+**重建**（源文件只在本机，不在仓库里）：
+
+```powershell
+python tools\build_records.py --force
+```
+
+`build_all.py --clean` 后若发现 `docs/records/` 缺失且源文件在，会自动重建；源文件不在则警告。
+
+> ⚠️ **群昵称（如「海燕与雷电」）是保留的**——原始记录里就是这群玩家当时的名字，
+> 已按作者意见不做替换。但 **QQ 号绝不会出现**。
+
 
 ## 跑团站（`/trpg/`）
 

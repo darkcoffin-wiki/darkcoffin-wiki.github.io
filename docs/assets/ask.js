@@ -53,8 +53,11 @@
 
   var LIMIT_PER_STATION = 6;
   var LIMIT_TOTAL = 20;
-  var AI_PICKS = 5;          // 喂给模型的资料条数
+  var AI_PICKS = 5;          // 喂给模型的资料条数（wiki 四站）
   var AI_CTX_CHARS = 2600;   // 每条资料截断字数
+  var REC_INDEX = "records/index.json";   // 跑团原始记录索引（152 场）
+  var REC_MAX_SESSIONS = 2;  // 每次最多取几场原始记录
+  var REC_MAX_LINES = 36;    // 每场最多摘几行台词
 
   // ══════════════════════════════════════════════════════════
   // 工具
@@ -389,6 +392,170 @@
       for (i = 0; i < out.length; i++) out[i].n = i + 1;
       return out;
     });
+  }
+
+  // ── 跑团原始记录：索引 + 按场取证 ──
+  //
+  // 记录检索比 wiki 检索更依赖「季名 + 实体名」这类**短词**。
+  // 用户问「第八季发生了什么」，通用 termsOf 只会切出「第八季发生了」这种长串，
+  // 在季名「第八季·人民万岁」里匹配不到。所以这里再洗一遍常见动词/泛词。
+  var REC_STOP = [
+    "发生", "出现", "内容", "剧情", "经过", "结果", "情况", "后来", "然后",
+    "讲了", "说了", "说了什么", "什么样", "什么事", "做什么", "干什么",
+    "大概", "具体", "详细", "简单", "总结", "概括", "描述", "介绍"
+  ].sort(function (a, b) { return b.length - a.length; });
+
+  function recordTermsOf(q) {
+    var t = String(q || ""), i;
+    for (i = 0; i < REC_STOP.length; i++) {
+      if (t.indexOf(REC_STOP[i]) >= 0) t = t.split(REC_STOP[i]).join(" ");
+    }
+    return termsOf(t);
+  }
+  var recCache = null, recLoading = null;
+
+  function loadRecords() {
+    if (recCache) return Promise.resolve(recCache);
+    if (recLoading) return recLoading;
+    recLoading = fetch(BASE + REC_INDEX, { cache: "force-cache" })
+      .then(function (r) { return r.ok ? r.json() : { entries: [] }; })
+      .then(function (d) { recCache = d.entries || []; recLoading = null; return recCache; })
+      .catch(function () { recCache = []; recLoading = null; return []; });
+    return recLoading;
+  }
+
+  // 在记录索引里找与问题最相关的几场
+  // 打分：季名/地点/在场/结尾状态命中 → 加分；摘要命中的词越多分越高
+  function searchRecords(entries, query) {
+    var list = recordTermsOf(query);
+    if (!list.length || !entries.length) return [];
+    var out = [], i, j, w, e, s, hit, hay;
+    for (i = 0; i < entries.length; i++) {
+      e = entries[i];
+      hay = norm(e.season + " " + (e.places || "") + " " + (e.present || "") + " "
+                 + (e.end_state || "") + " " + (e.summary || ""));
+      s = 0; hit = 0;
+      for (j = 0; j < list.length; j++) {
+        w = list[j];
+        if (!w) continue;
+        if (hay.indexOf(w) >= 0) { s += 10; hit++; }
+        // 季名里出现该词，权重更高（用户常直接点名季）
+        if (norm(e.season).indexOf(w) >= 0) { s += 25; hit++; }
+      }
+      if (!hit) continue;
+      // 摘要里出现次数越多越相关
+      for (j = 0; j < list.length; j++) {
+        var n = (e.summary || "").split(list[j]).length - 1;
+        if (n > 0) s += Math.min(20, n * 2);
+      }
+      out.push({ e: e, s: s });
+    }
+    out.sort(function (a, b) { return b.s - a.s; });
+    return out.slice(0, REC_MAX_SESSIONS).map(function (x) { return x.e; });
+  }
+
+  // wiki 跑团站的命中条目里带着 season / n，可以直接反查是哪一场。
+  // 这比在 record index 的 600 字摘要里碰运气可靠：
+  // 实测「四季常村」在 record 摘要里一个都没命中，但在跑团站索引里有精确命中。
+  function sessionsFromGroups(groups) {
+    var out = [], seen = {}, i, j, g, e, k;
+    for (i = 0; i < groups.length; i++) {
+      g = groups[i];
+      if (g.st.key !== "trpg") continue;
+      for (j = 0; j < g.hits.length; j++) {
+        e = g.hits[j].e;
+        if (!e || !e.season || !e.n) continue;
+        k = e.season + "|" + e.n;
+        if (seen[k]) continue;
+        seen[k] = 1;
+        out.push({ season: e.season, no: e.n });
+      }
+    }
+    return out;
+  }
+
+  function findRecord(entries, season, no) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].season === season && entries[i].no === no) return entries[i];
+    }
+    return null;
+  }
+
+  // 拉一场的脱敏 TSV，按关键词挑出相关台词（带前一行上下文）
+  function fetchRecordLines(entry, query) {
+    var list = recordTermsOf(query);
+    return fetch(BASE + "records/" + entry.file, { cache: "force-cache" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(function (txt) {
+        if (!txt) return null;
+        var lines = txt.split("\n");
+        var head = lines[0].split("\t");
+        var iTime = head.indexOf("时间"), iName = head.indexOf("规范名"),
+            iBody = head.indexOf("正文"), iType = head.indexOf("类型");
+        var picked = [], total = 0, i, j, p, body, ok;
+        for (i = 1; i < lines.length; i++) {
+          p = lines[i].split("\t");
+          if (p.length < head.length) continue;
+          body = p[iBody] || "";
+          ok = false;
+          for (j = 0; j < list.length; j++) {
+            if (list[j] && body.indexOf(list[j]) >= 0) { ok = true; break; }
+          }
+          if (!ok) continue;
+          picked.push({
+            t: p[iTime] || "", n: p[iName] || "",
+            ty: p[iType] || "", b: body
+          });
+          total += body.length;
+          if (picked.length >= REC_MAX_LINES || total > 2400) break;
+        }
+        // 正文命中太少 → 退回该场摘要（关键词常常只出现在场次提要里）
+        var useSummary = false;
+        if (picked.length < 4) {
+          useSummary = true;
+          picked = [];
+        }
+        return {
+          season: entry.season, no: entry.no, file: entry.file,
+          lines: picked,
+          summary: entry.summary || "",
+          places: entry.places || "",
+          present: entry.present || "",
+          useSummary: useSummary,
+          date: (entry.realtime || "").split("｜")[0]
+        };
+      })
+      .catch(function () { return null; });
+  }
+
+  // 把一场记录转成「资料」对象（与 wiki 资料同构，编号稍后统一分配）
+  function recordToSource(rec) {
+    var text, meta;
+    if (rec.useSummary || !rec.lines.length) {
+      // 关键词没落在正文里 → 用场次提要（含地点/在场/结局），更有信息量
+      var parts = [];
+      if (rec.places) parts.push("地点：" + rec.places);
+      if (rec.present) parts.push("在场：" + rec.present);
+      if (rec.summary) parts.push("提要：" + rec.summary);
+      text = parts.join("\n");
+      meta = (rec.date || "") + " · 场次提要";
+    } else {
+      var body = [], i, l;
+      for (i = 0; i < rec.lines.length; i++) {
+        l = rec.lines[i];
+        body.push("[" + (l.t || "") + "] " + (l.n || "") + "：" + (l.b || ""));
+      }
+      text = body.join("\n");
+      meta = (rec.date || "") + " · " + rec.lines.length + " 条台词摘录";
+    }
+    return {
+      st: "跑团原始记录",
+      stKey: "record",
+      title: rec.season + " 第 " + rec.no + " 场",
+      meta: meta,
+      url: BASE + "records/" + rec.file,
+      text: text.slice(0, 3000)
+    };
   }
 
   function systemPrompt() {
@@ -851,7 +1018,7 @@
       };
     }
 
-    // 一轮对话：先检索 → 补料 → 拼消息 → 流式
+    // 一轮对话：先检索（wiki 四站 + 跑团原始记录）→ 拼消息 → 流式
     function askOnce(question) {
       if (busy) return;
       if (sess.turns >= MAX_TURNS) {
@@ -886,11 +1053,69 @@
           if (have[key]) continue;
           fresh.push(picks[i]);
         }
-        // 资料已满则不再补
         if (sess.sources.length >= MAX_SOURCES) fresh = [];
+
+        // ── 并行取两类资料 ──
+        // ① wiki 四站：设定 / 花絮 / 跑团场次页 / 分析
+        var wikiP = fresh.length
+          ? buildContext(fresh, function (d, n) {
+              statusEl.textContent = "正在读取 wiki 资料… " + d + "/" + n;
+            })
+          : Promise.resolve([]);
+
+        // ② 跑团原始记录：索引匹配 → 取那几场的脱敏台词
+        var recP = loadRecords().then(function (entries) {
+          var hits = [], i6, e6;
+          // ① 优先：wiki 跑团站已经指出了是哪几场（精确）
+          var fromWiki = sessionsFromGroups(groups);
+          for (i6 = 0; i6 < fromWiki.length && hits.length < REC_MAX_SESSIONS; i6++) {
+            e6 = findRecord(entries, fromWiki[i6].season, fromWiki[i6].no);
+            if (e6) hits.push(e6);
+          }
+          // ② 兜底：用提问在 record index 里做关键词匹配
+          if (!hits.length) hits = searchRecords(entries, question);
+          if (!hits.length) return [];
+          statusEl.textContent = "正在读取跑团原始记录…";
+          return Promise.all(hits.map(function (h) {
+            return fetchRecordLines(h, question);
+          }));
+        }).then(function (recs) {
+          var out = [], i2;
+          for (i2 = 0; i2 < (recs || []).length; i2++) {
+            if (recs[i2]) out.push(recs[i2]);
+          }
+          return out;
+        }).catch(function () { return []; });
+
+        Promise.all([wikiP, recP]).then(function (res) {
+          var arr = res[0] || [], recs = res[1] || [];
+          var base = sess.sources.length;
+          var added = [], i3, s2;
+
+          // 先加 wiki 资料
+          for (i3 = 0; i3 < arr.length && (base + added.length) < MAX_SOURCES; i3++) {
+            s2 = arr[i3];
+            s2.n = base + added.length + 1;
+            sess.sources.push(s2);
+            added.push(s2);
+          }
+          // 再加跑团原始记录（编号接着排）
+          for (i3 = 0; i3 < recs.length && sess.sources.length < MAX_SOURCES; i3++) {
+            s2 = recordToSource(recs[i3]);
+            s2.n = sess.sources.length + 1;
+            sess.sources.push(s2);
+            added.push(s2);
+          }
+
+          proceed(added);
+        });
 
         function proceed(added) {
           var prefix = "";
+          var recAdded = [], i4;
+          for (i4 = 0; i4 < added.length; i4++) {
+            if (added[i4].stKey === "record") recAdded.push(added[i4]);
+          }
           if (!first && added.length) {
             var parts = ["<补充资料>"], x;
             for (x = 0; x < added.length; x++) {
@@ -901,8 +1126,6 @@
             }
             parts.push("</补充资料>");
             prefix = parts.join("\n") + "\n\n";
-          } else if (!first) {
-            /* 没有新料，直接追问 */
           }
           var userMsg = first
             ? contextPrompt(picks, sess.sources, question)
@@ -911,8 +1134,8 @@
 
           var handle = addTurn(question);
           statusEl.textContent = "正在生成回答…";
-          var chars = 0, i2;
-          for (i2 = 0; i2 < sess.sources.length; i2++) chars += sess.sources[i2].text.length;
+          var chars = 0, i5;
+          for (i5 = 0; i5 < sess.sources.length; i5++) chars += sess.sources[i5].text.length;
 
           streamChat(
             getKey(),
@@ -938,7 +1161,10 @@
                   fmtNum(usage.completion_tokens || 0) + " tokens"
                   : "本轮约 " + fmtNum(Math.round(chars * 0.6)) + " 输入 tokens") +
                 "　本轮约 ¥" + c.toFixed(4) +
-                (added.length ? "　（本轮补充 " + added.length + " 条资料）" : "");
+                (added.length
+                  ? "　（本轮补充 " + added.length + " 条资料" +
+                    (recAdded.length ? "，含 " + recAdded.length + " 场原始记录" : "") + "）"
+                  : "");
               handle.root.appendChild(u);
               updateStatus();
             },
@@ -950,21 +1176,6 @@
             }
           );
         }
-
-        if (!fresh.length) { proceed([]); return; }
-        buildContext(fresh, function (d, n) {
-          statusEl.textContent = "正在读取资料… " + d + "/" + n;
-        }).then(function (arr) {
-          var base = sess.sources.length;
-          var added = [], i3;
-          for (i3 = 0; i3 < arr.length && (base + added.length) < MAX_SOURCES; i3++) {
-            var s2 = arr[i3];
-            s2.n = base + added.length + 1;
-            sess.sources.push(s2);
-            added.push(s2);
-          }
-          proceed(added);
-        });
       });
     }
 

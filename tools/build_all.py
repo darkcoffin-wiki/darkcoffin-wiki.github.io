@@ -373,6 +373,22 @@ def main():
     n += write_if_changed(os.path.join(DOCS, "index.html"), joint_index())
     n += write_if_changed(os.path.join(DOCS, "assets", "joint.css"), JOINT_CSS)
     n += build_ask()
+
+    # 跑团原始记录（docs/records/）不在每次构建范围内：
+    # 它由 tools/build_records.py 从本地大文件生成（14 MB，153 个文件），
+    # 频繁重建纯属浪费。但 `--clean` 会清空 docs/，所以这里检查一下，
+    # 缺了且源数据在时自动补生成，源数据不在就明确警告。
+    _rec_idx = os.path.join(DOCS, "records", "index.json")
+    _rec_src = r"E:\黑柩\黑柩跑团记录-整理\归一数据\全部消息.tsv"
+    if not os.path.exists(_rec_idx):
+        if os.path.exists(_rec_src):
+            print("[rec] docs/records/ 缺失，正在重建跑团原始记录…")
+            code, out = run("build_records.py")
+            print("[%s] 跑团记录 %s" % ("OK " if code == 0 else "FAIL", out[:200]))
+        else:
+            print("[WARN] docs/records/ 不存在，且找不到源数据：")
+            print("       %s" % _rec_src)
+            print("       黑柩问答将只能使用 wiki 四站资料，用不上跑团原始记录。")
     print(json.dumps({"joint_index_written": n}, ensure_ascii=False))
 
 
