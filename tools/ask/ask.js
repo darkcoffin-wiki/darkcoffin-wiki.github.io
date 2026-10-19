@@ -619,7 +619,7 @@
   }
 
   // 顺序词：把「最后」真正翻译成「最后一场」
-  var LAST_RE = /最后|结尾|结局|最终|末尾|末场|收尾|尾声/;
+  var LAST_RE = /最后|结尾|结局|最终|末尾|末场|收尾|尾声|决战|终战|终局|大结局|最后一战/;
   var FIRST_RE = /开头|最初|起始|第一场|开场|刚开始/;
 
   function ordinalHint(q) {
@@ -1659,7 +1659,9 @@
               if (entries[pi].season === season) pool.push(entries[pi]);
             }
             if (pool.length) {
-              var tgt = ord === "last" ? [pool[pool.length - 1]] : [pool[0]];
+              // 网页版没有全量缓存，无法按实体行数定位，只能给季末/季首 3 场让模型自己挑。
+              // （插件版能按「该实体在这一季出现了几行」精确取，见 answer.js）
+              var tgt = ord === "last" ? pool.slice(-3) : pool.slice(0, 3);
               for (pi = 0; pi < tgt.length; pi++) push(tgt[pi]);
               locked = true;
             }
