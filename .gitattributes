@@ -1,0 +1,13 @@
+# 跑团记录切片必须保持 LF。
+# 前端按 "\n" 逐行解析 TSV，若 checkout 时被转成 CRLF，每行末尾会多一个 \r，
+# 会让「正文」字段带上脏字符，关键词匹配和引用都会受影响。
+# （本机 core.autocrlf=true，默认会把工作区转成 CRLF，所以这里显式覆盖。）
+docs/records/** text eol=lf
+
+# 其余源码/文档保持默认（Windows 上 CRLF 无妨）
+*.py     text
+*.js     text
+*.css    text
+*.html   text
+*.md     text
+*.json   text
