@@ -86,7 +86,7 @@
   var STOP_CHARS = (function () {
     var set = {};
     var chars = "的了是我你他她它们这那有和与就都也不没很太更最个上下来到去把被让给对从为以于而但可" +
-      "能要会什怎谁哪吗呢吧啊呀哦嗯请您些过做说讲看想去来点样时候" +
+      "能要会什怎谁哪吗呢吧啊呀哦嗯请您些过做说讲看想去来点样时候在用拿" +
       "一二三四五六七八九十百千万亿么呢吧";
     for (var i = 0; i < chars.length; i++) set[chars[i]] = 1;
     return set;
@@ -670,12 +670,21 @@
       }
     }
 
+    // GENERIC 词被整词过滤后，它们的字（讲/解/剧/情/台/词）不该再作为单字补回来，
+    // 否则会把分母撑大、稀释真正的关键词。
+    var genericChars = {};
+    for (var gk in GENERIC) {
+      if (!Object.prototype.hasOwnProperty.call(GENERIC, gk)) continue;
+      for (var gi = 0; gi < gk.length; gi++) genericChars[gk.charAt(gi)] = 1;
+    }
+
     // 单字只补「没有被任何多字词覆盖」的
     var qn = norm(q);
     for (i = 0; i < qn.length; i++) {
       var ch = qn.charAt(i);
       if (!/[\u4e00-\u9fff]/.test(ch)) continue;
       if (STOP_CHARS[ch]) continue;
+      if (genericChars[ch]) continue;
       var covered = false;
       for (j = 0; j < multi.length; j++) {
         if (multi[j].indexOf(ch) >= 0) { covered = true; break; }
