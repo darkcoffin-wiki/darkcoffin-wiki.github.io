@@ -136,6 +136,36 @@ def joint_index():
     disc = H.escape(site.get("disclaimer", "本网站由 AI 生成，内容准确性无法完全保证。"))
     _upd = latest_source_mtime() or "—"
     domain = H.escape(site.get("domain", ""))
+    # ── 《黑柩》是什么（内容依据作者官网《黑柩TRPG·简介&规则2026版》的「背景资料」一节）
+    # 数字取构建时的真实统计，避免像「113 场、12 季」那样过期。
+    # 注意：这里用 % 格式化生成**普通字符串**，再在 f-string 里以 {about_html} 插入；
+    # 千万不要把 {占位符} 直接写进 return 的 f-string —— 那会被当表达式求值并抛 NameError。
+    about_html = (
+        '<section class="joint-about">\n'
+        '  <h2>《黑柩》是什么</h2>\n'
+        '  <p>这是一个<strong>后启示录的彷徨世界</strong>：五百年前，高热射线把地表烧成地狱，'
+        '只有「古中国」内陆被一道<strong>神圣障壁</strong>护住，成了人类仅存的圣地。'
+        '圣地里，掌握魔法的<strong>天空教</strong>统治了两百余年；一场大革命推翻它之后，'
+        '革命的两个成果——<strong>希望联邦</strong>与<strong>进化者同盟</strong>——各自走向极端。'
+        '进盟研究「灵魂学」，造出被植入杀意的<strong>天使</strong>，'
+        '在「和平纪念日」以数十万天使屠尽希联首都星都。</p>\n'
+        '  <p>战后的圣地再没有统一秩序：希联退守青都、进盟南北分裂，'
+        '南部的<strong>启示录教团国</strong>、夜都的<strong>神圣希望帝国</strong>、'
+        '北沙的<strong>戡乱政府</strong>、夹在中间的<strong>走廊区</strong>各据一方。'
+        '<strong>烽火未断，战乱不休。</strong></p>\n'
+        '  <ul class="about-forms">'
+        '<li><b>原典</b>设定集 %d 卷 · %s 词条</li>'
+        '<li><b>实录</b>跑团 %d 季 · %d 场</li>'
+        '<li><b>短篇</b>花絮与画外音 %d 篇</li>'
+        '</ul>\n'
+        '  <p class="about-hint"><b>第一次来？</b>'
+        '想看这是什么样的世界 → <a href="lore/index.html">设定站</a>（从卷一读起）；'
+        '想看故事怎么真实发生 → <a href="trpg/index.html">跑团站</a>；'
+        '想读短篇 → <a href="huaxu/index.html">花絮站</a>。</p>\n'
+        '</section>\n\n'
+    ) % (lore.get("vols", 11), format(lore.get("entries", 0), ","),
+         trpg.get("seasons", 0), trpg.get("sessions", 0), huaxu.get("entries", 0))
+
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -208,7 +238,7 @@ def joint_index():
      各站<strong>一律照录、不代为圆说</strong>；设定站对确有分歧的条目以【异说】单列。</p>
 </section>
 
-<section class="joint-note">
+{about_html}<section class="joint-note">
   <h2>四个站的关系</h2>
   <p class="muted">四站共用一套视觉与导航，但<strong>内容性质不同</strong>，按「原典 → 实录 → 花絮 → 解读」
   的顺序逐层展开：</p>
@@ -278,6 +308,18 @@ border-radius:10px;padding:.55rem .9rem;margin:.45rem 0;font-size:.9rem;color:va
 .joint-warns .warn.spoiler{border-left:3px solid #d98b2b}
 .joint-warns .warn.eating{border-left:3px solid var(--accent)}
 .joint-warns strong{color:var(--fg)}
+.joint-about{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:1rem 1.15rem;margin:1.4rem 0}
+.joint-about h2{font-size:1.05rem;margin:.1rem 0 .6rem}
+.joint-about p{margin:.55rem 0;font-size:.94rem;line-height:1.78;color:var(--muted)}
+.joint-about strong{color:var(--fg)}
+.joint-about .about-forms{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;
+margin:.75rem 0 .3rem;padding:0;list-style:none;font-size:.88rem;color:var(--muted)}
+.joint-about .about-forms li{white-space:nowrap}
+.joint-about .about-forms b{color:var(--accent2);margin-right:.35rem}
+.joint-about .about-hint{font-size:.88rem;color:var(--muted);
+border-top:1px dashed var(--line);padding-top:.65rem;margin-top:.75rem}
+.joint-about .about-hint a{color:var(--accent2)}
 """
 
 

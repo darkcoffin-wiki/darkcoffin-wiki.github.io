@@ -31,3 +31,15 @@ border-radius:10px;padding:.55rem .9rem;margin:.45rem 0;font-size:.9rem;color:va
 .joint-warns .warn.spoiler{border-left:3px solid #d98b2b}
 .joint-warns .warn.eating{border-left:3px solid var(--accent)}
 .joint-warns strong{color:var(--fg)}
+.joint-about{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:1rem 1.15rem;margin:1.4rem 0}
+.joint-about h2{font-size:1.05rem;margin:.1rem 0 .6rem}
+.joint-about p{margin:.55rem 0;font-size:.94rem;line-height:1.78;color:var(--muted)}
+.joint-about strong{color:var(--fg)}
+.joint-about .about-forms{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;
+margin:.75rem 0 .3rem;padding:0;list-style:none;font-size:.88rem;color:var(--muted)}
+.joint-about .about-forms li{white-space:nowrap}
+.joint-about .about-forms b{color:var(--accent2);margin-right:.35rem}
+.joint-about .about-hint{font-size:.88rem;color:var(--muted);
+border-top:1px dashed var(--line);padding-top:.65rem;margin-top:.75rem}
+.joint-about .about-hint a{color:var(--accent2)}
