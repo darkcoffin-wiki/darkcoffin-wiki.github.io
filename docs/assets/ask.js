@@ -849,6 +849,20 @@
   }
 
   // SSE 流式读取
+  // 回调里的异常必须就地吞掉并打日志。
+  // 否则它会冒泡到 fetch 的 .catch()，被当成「网络错误」——
+  // 实测就出现过：一个 null.textContent 的 TypeError 显示成了「跨域被拦或断网」。
+  function safeCall(fn, a, b) {
+    if (typeof fn !== "function") return;
+    try {
+      fn(a, b);
+    } catch (e) {
+      if (window.console && console.error) {
+        console.error("[黑柩问答] 回调出错：", e);
+      }
+    }
+  }
+
   function streamChat(key, messages, onDelta, onDone, onError) {
     var ctrl = null;
     try { ctrl = new AbortController(); } catch (e) {}
@@ -882,7 +896,7 @@
       function pump() {
         return reader.read().then(function (res) {
           if (res.done) {
-            onDone(full, usage);
+            safeCall(onDone, full, usage);
             return;
           }
           buf += dec.decode(res.value, { stream: true });
@@ -897,7 +911,7 @@
               var j = JSON.parse(payload);
               if (j.usage) usage = j.usage;
               var d = j.choices && j.choices[0] && j.choices[0].delta;
-              if (d && d.content) { full += d.content; onDelta(d.content, full); }
+              if (d && d.content) { full += d.content; safeCall(onDelta, d.content, full); }
             } catch (e) {}
           }
           return pump();
@@ -1114,6 +1128,15 @@
     var out = host.querySelector(".ha-out");
     var aibar = host.querySelector(".ha-aibar");
     var oneshot = host.querySelector(".ha-oneshot");
+
+    // 统一清空一次性解读，并让进行中的流式回调失效。
+    // 之前各处直接写 oneshot.innerHTML = ""，正在生成的回答结束时
+    // 还会去写 .ha-usage-slot，那时它已经是 null 了。
+    function clearOneShot() {
+      oneshotToken++;
+      oneshot.innerHTML = "";
+      oneshot.hidden = true;
+    }
     var chat = host.querySelector(".ha-chat");
     var keyInline = host.querySelector(".ha-keyinline");
     var followIn = host.querySelector(".ha-follow");
@@ -1122,6 +1145,7 @@
     var statusEl = host.querySelector(".ha-status");
 
     var cur = { query: "", groups: [] };     // 当前搜索结果
+    var oneshotToken = 0;                    // 一次性解读的失效令牌
     var sess = {                             // 问答会话（与搜索无关）
       system: systemPrompt(), sources: [], history: [],
       turns: 0, cost: 0, lastQuestion: ""
@@ -1167,8 +1191,7 @@
       if (!query) { out.innerHTML = ""; aibar.innerHTML = ""; return; }
       out.innerHTML = '<p class="ha-loading">正在加载索引…</p>';
       aibar.innerHTML = "";
-      oneshot.innerHTML = "";
-      oneshot.hidden = true;
+      clearOneShot();
 
       loadInvert().then(function (inv) {
         if (inv && inv.terms) setDict(inv.terms);
@@ -1212,14 +1235,18 @@
     }
 
     function runOneShot() {
+      var myToken = ++oneshotToken;          // 本次解读的令牌
+      function stale() { return myToken !== oneshotToken; }
       var question = cur.query;
       var picks = fetchPicks(cur.groups, AI_PICKS, 2);
       oneshot.hidden = false;
       oneshot.innerHTML = '<p class="ha-loading">正在读取资料…</p>';
 
       buildContext(picks, function (d, n) {
+        if (stale()) return;
         oneshot.innerHTML = '<p class="ha-loading">正在读取资料… ' + d + "/" + n + "</p>";
       }).then(function (sources) {
+        if (stale()) return;
         if (!sources.length) {
           oneshot.innerHTML = '<p class="ha-empty">没能读到资料正文，无法作答。</p>';
           return;
@@ -1234,9 +1261,7 @@
           '<p class="ha-usage-slot"></p>';
         var bodyEl = oneshot.querySelector(".ha-oneshot-body");
         var srcEl = oneshot.querySelector(".ha-oneshot-src");
-        oneshot.querySelector(".ha-oneshot-close").addEventListener("click", function () {
-          oneshot.innerHTML = ""; oneshot.hidden = true;
-        });
+        oneshot.querySelector(".ha-oneshot-close").addEventListener("click", clearOneShot);
 
         streamChat(
           getKey(),
@@ -1244,21 +1269,29 @@
             { role: "system", content: sess.system },
             { role: "user", content: contextPrompt(picks, sources, question) }
           ],
-          function (d, body) { bodyEl.innerHTML = ansHtml(body, sources); },
+          function (d, body) {
+            if (stale()) return;
+            bodyEl.innerHTML = ansHtml(body, sources);
+          },
           function (body, usage) {
+            if (stale()) return;                 // 已被清空/重新搜索，丢弃结果
             bodyEl.innerHTML = ansHtml(body, sources);
             var cite = citedSources(body, sources);
             srcEl.innerHTML = cite.length ? sourcesHtml(cite) : "";
             var c = estCost(chars, body.length);
-            oneshot.querySelector(".ha-usage-slot").className = "ha-usage";
-            oneshot.querySelector(".ha-usage-slot").textContent =
-              "以上为 AI 生成，请以资料来源为准。　" +
-              (usage ? "输入 " + fmtNum(usage.prompt_tokens || 0) + " / 输出 " +
-                fmtNum(usage.completion_tokens || 0) + " tokens" : "") +
-              "　本次约 ¥" + c.toFixed(4) +
-              "　想接着问？用下面的对话框。";
+            var slot = oneshot.querySelector(".ha-usage-slot");
+            if (slot) {
+              slot.className = "ha-usage";
+              slot.textContent =
+                "以上为 AI 生成，请以资料来源为准。　" +
+                (usage ? "输入 " + fmtNum(usage.prompt_tokens || 0) + " / 输出 " +
+                  fmtNum(usage.completion_tokens || 0) + " tokens" : "") +
+                "　本次约 ¥" + c.toFixed(4) +
+                "　想接着问？用下面的对话框。";
+            }
           },
           function (st, msg) {
+            if (stale()) return;
             bodyEl.innerHTML = '<p class="ha-empty"><b>' + esc(failHint(st)) +
               "</b><br>" + esc(String(msg || "").slice(0, 300)) + "</p>";
           }
@@ -1501,7 +1534,7 @@
     // ── 事件 ──
     clearBtn.addEventListener("click", function () {
       q.value = ""; out.innerHTML = ""; aibar.innerHTML = "";
-      oneshot.innerHTML = ""; oneshot.hidden = true;
+      clearOneShot();
       cur.query = ""; cur.groups = [];
       host.querySelector(".ha-meta").innerHTML = "跨四站检索：设定 · 花絮 · 跑团 · 分析";
       if (window.history && history.replaceState) {
