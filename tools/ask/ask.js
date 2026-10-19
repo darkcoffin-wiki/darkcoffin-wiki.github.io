@@ -60,8 +60,18 @@
     { key: "npc", file: "records/npc.md", label: "NPC 总表", take: 3 },
     { key: "ply", file: "records/players.md", label: "玩家用名总表", take: 2 }
   ];
-  var REC_MAX_SESSIONS = 2;  // 每次最多取几场原始记录
-  var REC_MAX_LINES = 36;    // 每场最多摘几行台词
+  var REC_MAX_SESSIONS = 2;  // 每次最多取几场原始记录（列举类问题会放大）
+  var REC_MAX_LINES = 36;    // 每场最多摘几行台词（列举类问题会放大）
+  var INVERT_FILE = "records/invert.json";   // 词 → 场次 倒排索引（原始记录的独立入口）
+
+  // 列举型问题：「有哪些 / 都有谁 / 全部 / 列举」。
+  // 这类问题的答案是**散布在整个语料**里的集合，不是某一篇文档里的一个事实。
+  // 靠 top-5 片段必然答不全，必须扩大召回范围，并且在回答里说明「可能不全」。
+  var ENUM_RE = /有哪些|都有谁|都有哪些|都有什么|有谁|全部|所有|列举|列出|哪些人|哪些场|哪几位|一共|总共|几次|多少次|多少个|名单/;
+
+  function isEnumeration(q) {
+    return ENUM_RE.test(String(q || ""));
+  }
 
   // ══════════════════════════════════════════════════════════
   // 工具
@@ -71,6 +81,32 @@
       .toLowerCase()
       .replace(/[\u3000\s]+/g, "")
       .replace(/[（）()「」『』【】《》〈〉·・,，、。.;；:：!！?？"'“”‘’\-—–_/\\|~～*]/g, "");
+  }
+
+  // ── 词典（来自原始记录的倒排索引，供长串切分用）──
+  var DICT = null;
+
+  function setDict(terms) {
+    DICT = {};
+    for (var k in terms) {
+      if (Object.prototype.hasOwnProperty.call(terms, k)) DICT[k] = 1;
+    }
+  }
+
+  // 最长匹配切分：一段中文在没有空格的情况下，只能靠词表切开。
+  // 「北沙希共党员」不在任何标题里，但切开成「北沙 / 希共 / 党员」就能命中。
+  function segmentByDict(text) {
+    if (!DICT) return [];
+    var out = [], i = 0, n = text.length, len, sub, matched;
+    while (i < n) {
+      matched = false;
+      for (len = Math.min(4, n - i); len >= 2; len--) {
+        sub = text.substr(i, len);
+        if (DICT[sub]) { out.push(sub); i += len; matched = true; break; }
+      }
+      if (!matched) i++;
+    }
+    return out;
   }
 
   // ── 中文长句的分词 ──
@@ -167,6 +203,18 @@
       }
     }
     for (i = 0; i < reps.length; i++) out.push(reps[i]);
+
+    // 3.7) 词典切分：长串用倒排词典切开（「北沙希共党员」→ 北沙 / 希共 / 党员）
+    if (DICT) {
+      var segs2 = [];
+      for (i = 0; i < out.length; i++) {
+        if (out[i].length > 4) {
+          var ss = segmentByDict(out[i]);
+          for (j = 0; j < ss.length; j++) segs2.push(ss[j]);
+        }
+      }
+      for (i = 0; i < segs2.length; i++) out.push(segs2[i]);
+    }
 
     // 4) 短句额外保留「整句」这一个 term，提高精确匹配的权重
     var full = norm(raw);
@@ -395,13 +443,14 @@
     return txt.replace(/\s+/g, " ").trim();
   }
 
-  function fetchPicks(groups) {
-    // 按「设定 → 花絮 → 跑团 → 分析」的顺序挑，每站最多 2 条，总数 AI_PICKS
+  function fetchPicks(groups, limit, perStation) {
+    // 按「设定 → 花絮 → 跑团 → 分析」的顺序挑，每站最多 perStation 条，总数 limit
+    limit = limit || AI_PICKS;
+    perStation = perStation || 2;
     var picks = [], i, j, g;
-    var perStation = 2;
-    for (i = 0; i < groups.length && picks.length < AI_PICKS; i++) {
+    for (i = 0; i < groups.length && picks.length < limit; i++) {
       g = groups[i];
-      for (j = 0; j < g.hits.length && j < perStation && picks.length < AI_PICKS; j++) {
+      for (j = 0; j < g.hits.length && j < perStation && picks.length < limit; j++) {
         picks.push({ st: g.st, e: g.hits[j].e });
       }
     }
@@ -498,6 +547,84 @@
     }
     out.sort(function (a, b) { return b.s - a.s; });
     return out.slice(0, REC_MAX_SESSIONS).map(function (x) { return x.e; });
+  }
+
+  // ── 倒排索引：原始记录的独立入口 ──
+  var invCache = null, invLoading = null;
+
+  function loadInvert() {
+    if (invCache) return Promise.resolve(invCache);
+    if (invLoading) return invLoading;
+    invLoading = fetch(BASE + INVERT_FILE, { cache: "force-cache" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { invCache = d || { terms: {}, speakers: {} }; invLoading = null; return invCache; })
+      .catch(function () { invCache = { terms: {}, speakers: {} }; invLoading = null; return invCache; });
+    return invLoading;
+  }
+
+  // 问题里点名了某一季？（「第九季」→ 第九季上/下 的所有场次）
+  // 必须特殊处理：否则「第九季发生了什么」会被「什么 / 发生」这类子串刷分，
+  // 实测会命中第七季第 20 场。
+  function seasonHint(q) {
+    var m = /第([一二三四五六七八九十]+)季/.exec(String(q || ""));
+    return m ? "第" + m[1] + "季" : "";
+  }
+
+  function sessionsOfSeason(entries, hint) {
+    var out = [], i;
+    if (!hint) return out;
+    for (i = 0; i < entries.length; i++) {
+      if ((entries[i].season || "").indexOf(hint) >= 0) out.push(entries[i]);
+    }
+    return out;
+  }
+
+  // 把问题拆成 2~4 字的所有子串（中文没有空格，穷举子串查索引最可靠）
+  function substrsOf(q) {
+    var s2 = norm(q), out = [], len, i;
+    for (len = 4; len >= 2; len--) {
+      for (i = 0; i + len <= s2.length; i++) out.push(s2.substr(i, len));
+    }
+    return out;
+  }
+
+  // 用倒排索引定位场次。返回 [{season, no, score}]，按相关度降序。
+  function sessionsFromInvert(inv, question, maxN) {
+    if (!inv || !inv.terms) return [];
+    var subs = substrsOf(question);
+    var score = {}, i, j, parts, sid, w;
+
+    function add(sidRaw, cnt, weight) {
+      score[sidRaw] = (score[sidRaw] || 0) + cnt * weight;
+    }
+
+    // ① 正文提到的词：词越长越具体，权重越高
+    for (i = 0; i < subs.length; i++) {
+      var arr = inv.terms[subs[i]];
+      if (!arr) continue;
+      w = subs[i].length - 1;                 // 2字→1, 3字→2, 4字→3
+      for (j = 0; j < arr.length; j++) {
+        parts = arr[j].split(":");
+        add(parts[0], parseInt(parts[1], 10), w);
+      }
+    }
+    // ② 发言人：问「余烬说过什么」时，正文里不一定提到余烬，必须查发言人索引
+    for (i = 0; i < subs.length; i++) {
+      var sp = inv.speakers && inv.speakers[subs[i]];
+      if (!sp) continue;
+      for (j = 0; j < sp.length; j++) {
+        parts = sp[j].split(":");
+        add(parts[0], parseInt(parts[1], 10), 2);   // 发言人权重给足
+      }
+    }
+
+    var list = [];
+    for (sid in score) {
+      if (!Object.prototype.hasOwnProperty.call(score, sid)) continue;
+      list.push({ sid: sid, score: score[sid] });
+    }
+    list.sort(function (a, b) { return b.score - a.score; });
+    return list.slice(0, maxN || 6);
   }
 
   // ── 人物表：NPC 总表 / 玩家用名总表 ──
@@ -599,7 +726,9 @@
   }
 
   // 拉一场的脱敏 TSV，按关键词挑出相关台词（带前一行上下文）
-  function fetchRecordLines(entry, query) {
+  function fetchRecordLines(entry, query, maxLines, maxChars, speakerSet) {
+    maxLines = maxLines || REC_MAX_LINES;
+    maxChars = maxChars || 2400;
     var list = recordTermsOf(query);
     return fetch(BASE + "records/" + entry.file, { cache: "force-cache" })
       .then(function (r) { return r.ok ? r.text() : ""; })
@@ -615,8 +744,13 @@
           if (p.length < head.length) continue;
           body = p[iBody] || "";
           ok = false;
-          for (j = 0; j < list.length; j++) {
-            if (list[j] && body.indexOf(list[j]) >= 0) { ok = true; break; }
+          // 问「某人说过什么」时，正文里不会出现他自己的名字，
+          // 必须按「规范名」匹配，否则永远命中 0 行、只剩场次提要。
+          if (speakerSet && speakerSet[p[iName]]) { ok = true; }
+          if (!ok) {
+            for (j = 0; j < list.length; j++) {
+              if (list[j] && body.indexOf(list[j]) >= 0) { ok = true; break; }
+            }
           }
           if (!ok) continue;
           picked.push({
@@ -624,14 +758,11 @@
             ty: p[iType] || "", b: body
           });
           total += body.length;
-          if (picked.length >= REC_MAX_LINES || total > 2400) break;
+          if (picked.length >= maxLines || total > maxChars) break;
         }
-        // 正文命中太少 → 退回该场摘要（关键词常常只出现在场次提要里）
-        var useSummary = false;
-        if (picked.length < 4) {
-          useSummary = true;
-          picked = [];
-        }
+        // 原来是「命中 < 4 行就整个退回摘要、原文全丢」——这正是「原始记录相当于没用」的主因。
+        // 现在改成：命中多少用多少；摘要**始终附上**作为背景，两者并存。
+        var useSummary = !picked.length;
         return {
           season: entry.season, no: entry.no, file: entry.file,
           lines: picked,
@@ -687,6 +818,10 @@
       "4. 标注为「分析站」的资料是读者的 AI 分析，不是作者设定；引用时必须说明这一点。",
       "5. 不要编造资料里没有的人物、事件、数字。",
       "6. 简洁：一般 150~400 字；用户要求展开时才写长。",
+      "",
+      "8. 用户问「有哪些 / 都有谁 / 全部 / 列举」这类问题时，你看到的资料只是从全库检索到的**一部分**。",
+      "   必须明确说明「以下是检索到的，可能不全」，并给出你判断的依据（出现在哪几场/哪一季），",
+      "   **绝对不要装作已经穷举完整，也不要把没查到的说成不存在**。",
       "",
       "7. 你面对的是一段多轮对话，但用户随时可能换话题。**判断依据只看本次问题与本次资料**：",
       "   如果本次问题跟前面的对话无关，就当之前的对话不存在，不要把它们扯进来。",
@@ -1213,6 +1348,15 @@
       }
       if ((keyIn.value || "").trim()) setKey(keyIn.value.trim());
 
+      // ── 是不是「列举型」问题？决定召回规模 ──
+      var enumer = isEnumeration(question);
+      var nPicks = enumer ? 12 : AI_PICKS;
+      var nPerStation = enumer ? 3 : 2;
+      var nRecSess = enumer ? 8 : 2;
+      var nRecLines = enumer ? 150 : REC_MAX_LINES;
+      var nRecChars = enumer ? 9000 : 2400;
+      var maxSrc = enumer ? 20 : MAX_SOURCES;
+
       // ── 话题切换 ──
       var switched = isNewTopic(question, sess.lastQuestion);
       if (switched) {
@@ -1226,9 +1370,13 @@
       setBusy(true);
       statusEl.textContent = switched ? "检测到换话题，已重置上下文，正在检索…" : "正在检索资料…";
 
-      loadAll().then(function (data) {
+      // 词典必须先就位，否则「北沙希共党员」这类长串在 search() 里切不开
+      Promise.all([loadAll(), loadInvert()]).then(function (pre) {
+        var data = pre[0], inv = pre[1];
+        if (inv && inv.terms) setDict(inv.terms);
+
         var groups = search(data, question);
-        var picks = fetchPicks(groups) || [];
+        var picks = fetchPicks(groups, nPicks, nPerStation) || [];
 
         // 已有资料的签名，用于去重
         var have = {}, i;
@@ -1237,7 +1385,7 @@
         }
 
         var first = sess.turns === 0;
-        var wantFresh = first ? AI_PICKS : 2;
+        var wantFresh = first ? nPicks : (enumer ? 6 : 2);
         var fresh = [];
         for (i = 0; i < picks.length && fresh.length < wantFresh; i++) {
           var key = picks[i].st.key + "|" + urlOf(picks[i].st.key, picks[i].e);
@@ -1254,19 +1402,54 @@
           : Promise.resolve([]);
 
         var recP = loadRecords().then(function (entries) {
-          var hits = [], i6, e6;
-          // ① 优先：wiki 跑团站已经指出是哪几场（精确）
-          var fromWiki = sessionsFromGroups(groups);
-          for (i6 = 0; i6 < fromWiki.length && hits.length < REC_MAX_SESSIONS; i6++) {
-            e6 = findRecord(entries, fromWiki[i6].season, fromWiki[i6].no);
-            if (e6) hits.push(e6);
+          var hits = [], seen = {}, i6, e6;
+          function push(e) {
+            if (!e || seen[e.file]) return;
+            seen[e.file] = 1;
+            hits.push(e);
           }
-          // ② 兜底：用提问在 record index 里做关键词匹配
-          if (!hits.length) hits = searchRecords(entries, question);
+
+          // ① 问题点名了某一季 → 该季场次直接置顶
+          //    （否则「第九季发生了什么」会被「什么/发生」这类子串刷到别的季）
+          var hint = seasonHint(question);
+          if (hint) {
+            var bySeason = sessionsOfSeason(entries, hint);
+            for (i6 = 0; i6 < bySeason.length && hits.length < nRecSess; i6++) {
+              push(bySeason[i6]);
+            }
+          }
+          // ② 倒排索引：不依赖季志，问什么词就找哪些场（最全）
+          var found = sessionsFromInvert(inv, question, nRecSess);
+          for (i6 = 0; i6 < found.length && hits.length < nRecSess; i6++) {
+            var want = "session/" + found[i6].sid + ".tsv";
+            for (var k6 = 0; k6 < entries.length; k6++) {
+              if (entries[k6].file === want) { push(entries[k6]); break; }
+            }
+          }
+          // ③ wiki 跑团站已经点名了是哪几场（最准）
+          var fromWiki = sessionsFromGroups(groups);
+          for (i6 = 0; i6 < fromWiki.length && hits.length < nRecSess; i6++) {
+            push(findRecord(entries, fromWiki[i6].season, fromWiki[i6].no));
+          }
+          // ④ 兜底：index 的 600 字摘要关键词
+          if (!hits.length) {
+            var byKw = searchRecords(entries, question);
+            for (i6 = 0; i6 < byKw.length; i6++) push(byKw[i6]);
+          }
           if (!hits.length) return [];
-          statusEl.textContent = "正在读取跑团原始记录…";
+
+          // 问题里的人名是不是某位发言人？（「余烬说过什么」→ 取他的话，不是搜正文）
+          var speakerSet = {}, subs = substrsOf(question), k7;
+          if (inv && inv.speakers) {
+            for (k7 = 0; k7 < subs.length; k7++) {
+              if (inv.speakers[subs[k7]]) speakerSet[subs[k7]] = 1;
+            }
+          }
+
+          statusEl.textContent = "正在读取跑团原始记录…" +
+            (enumer ? "（列举型问题，已扩大检索范围）" : "");
           return Promise.all(hits.map(function (h) {
-            return fetchRecordLines(h, question);
+            return fetchRecordLines(h, question, nRecLines, nRecChars, speakerSet);
           }));
         }).then(function (recs) {
           var out = [], i2;
@@ -1285,20 +1468,20 @@
           var base = sess.sources.length;
           var added = [], i3, s2;
 
-          for (i3 = 0; i3 < arr.length && (base + added.length) < MAX_SOURCES; i3++) {
+          for (i3 = 0; i3 < arr.length && (base + added.length) < maxSrc; i3++) {
             s2 = arr[i3];
             s2.n = base + added.length + 1;
             sess.sources.push(s2);
             added.push(s2);
           }
-          for (i3 = 0; i3 < recs.length && sess.sources.length < MAX_SOURCES; i3++) {
+          for (i3 = 0; i3 < recs.length && sess.sources.length < maxSrc; i3++) {
             s2 = recordToSource(recs[i3]);
             s2.n = sess.sources.length + 1;
             sess.sources.push(s2);
             added.push(s2);
           }
           // 人物表放最后（编号最大），不挤占设定/原始记录的位置
-          if (tblSrc && sess.sources.length < MAX_SOURCES) {
+          if (tblSrc && sess.sources.length < maxSrc) {
             tblSrc.n = sess.sources.length + 1;
             sess.sources.push(tblSrc);
             added.push(tblSrc);
