@@ -72,7 +72,25 @@
   // 注意要收「哪些」本身，而不只是「有哪些 / 哪些人 / 哪些场」。
   // 实测「鸣做过哪些有趣的事」因为只写了「哪些」而没被判成列举，
   // 于是只取 2 场原始记录，答案单薄；补上后取 8 场。
-  var ENUM_RE = /哪些|有哪些|都有谁|都有哪些|都有什么|有谁|全部|所有|列举|列出|哪几位|哪几场|一共|总共|几次|多少次|多少个|名单/;
+  var ENUM_RE = /哪些|有哪些|有些什么|有什么|都有谁|都有哪些|都有什么|有谁|全部|所有|列举|列出|哪几位|哪几场|一共|总共|几次|多少次|多少个|名单/;
+
+  // 「讲解 / 概述」类问题：要的是整场脉络，不是「同时含某几个关键词的那几行」
+  var OVERVIEW_RE = /讲解|讲讲|说说|概述|经过|发生了什么|怎么回事|复盘|梳理|介绍一下|详细讲|具体讲|来龙去脉|前因后果/;
+
+  function isOverview(q) {
+    return OVERVIEW_RE.test(String(q || ""));
+  }
+
+  // 字符级停用表：扫描台词时剔除没有辨识度的单字。
+  // 「碗」这种单字道具名要保留，「的」「了」「上」必须排除。
+  var STOP_CHARS = (function () {
+    var set = {};
+    var chars = "的了是我你他她它们这那有和与就都也不没很太更最个上下来到去把被让给对从为以于而但可" +
+      "能要会什怎谁哪吗呢吧啊呀哦嗯请您些过做说讲看想去来点样时候" +
+      "一二三四五六七八九十百千万亿么呢吧";
+    for (var i = 0; i < chars.length; i++) set[chars[i]] = 1;
+    return set;
+  })();
 
   function isEnumeration(q) {
     return ENUM_RE.test(String(q || ""));
@@ -570,6 +588,103 @@
   // 问题里点名了某一季？（「第九季」→ 第九季上/下 的所有场次）
   // 必须特殊处理：否则「第九季发生了什么」会被「什么 / 发生」这类子串刷分，
   // 实测会命中第七季第 20 场。
+  // 从问题里认出「哪一季 / 哪一个团」。
+  // 旧实现只认「第X季」，「竖棺」「食龙则肥」这类短团名完全匹配不到；
+  // 而团名很少出现在台词正文里，倒排索引也覆盖不到。
+  function matchSeason(q, records) {
+    var qn = norm(q);
+    if (!qn) return "";
+    var seasons = [], seen = {}, i;
+    for (i = 0; i < (records || []).length; i++) {
+      var sn = records[i].season;
+      if (sn && !seen[sn]) { seen[sn] = 1; seasons.push(sn); }
+    }
+    var best = "", bestLen = 0;
+    for (i = 0; i < seasons.length; i++) {
+      var sname = seasons[i];
+      var cands = [sname, sname.replace(/^短团·/, "")];
+      var m = /^第([一二三四五六七八九十]+)季/.exec(sname);
+      if (m) cands.push("第" + m[1] + "季");
+      var mp = /^幕间季([一二三四五六七八九十]+)/.exec(sname);
+      if (mp) cands.push("幕间季" + mp[1]);
+      for (var j = 0; j < cands.length; j++) {
+        var cn = norm(cands[j]);
+        if (cn && cn.length >= 2 && qn.indexOf(cn) >= 0 && cn.length > bestLen) {
+          best = sname;
+          bestLen = cn.length;
+        }
+      }
+    }
+    return best;
+  }
+
+  // 顺序词：把「最后」真正翻译成「最后一场」
+  var LAST_RE = /最后|结尾|结局|最终|末尾|末场|收尾|尾声/;
+  var FIRST_RE = /开头|最初|起始|第一场|开场|刚开始/;
+
+  function ordinalHint(q) {
+    var t = String(q || "");
+    if (LAST_RE.test(t)) return "last";
+    if (FIRST_RE.test(t)) return "first";
+    return "";
+  }
+
+  // 扫描/筛台词用的关键词：保留单字（「碗」），按长度给权重
+  function scanTermsOf(q) {
+    var GENERIC = {
+      "讲解": 1, "剧情": 1, "故事": 1, "内容": 1, "情节": 1, "经过": 1,
+      "细节": 1, "介绍": 1, "情况": 1, "大概": 1, "具体": 1, "详细": 1,
+      "简单": 1, "总结": 1, "经典": 1, "台词": 1, "名句": 1, "名言": 1,
+      "有趣": 1, "好玩": 1
+    };
+    var out = [], seen = {}, i, j;
+    function push(w, weight) {
+      if (!w || seen[w]) return;
+      seen[w] = 1;
+      out.push({ w: w, weight: weight });
+    }
+
+    var base = termsOf(q);
+    var multi = [];
+
+    for (i = 0; i < base.length; i++) {
+      var t = base[i];
+      if (GENERIC[t]) continue;
+
+      // 3 字以上基本是切分残渣：「顺风车筷子」「碗穿身上」。
+      // 能用词典切开就切，切不开整个丢弃，且**不记入 multi**——
+      // 否则它里面的单字会被连带跳过，「碗」就补不回来。
+      if (t.length >= 3) {
+        var segs = segmentByDict(t);
+        for (j = 0; j < segs.length; j++) {
+          if (GENERIC[segs[j]]) continue;
+          push(segs[j], segs[j].length - 1);
+          multi.push(segs[j]);
+        }
+        continue;
+      }
+      if (t.length === 2) {
+        push(t, 1);
+        multi.push(t);
+      }
+    }
+
+    // 单字只补「没有被任何多字词覆盖」的
+    var qn = norm(q);
+    for (i = 0; i < qn.length; i++) {
+      var ch = qn.charAt(i);
+      if (!/[\u4e00-\u9fff]/.test(ch)) continue;
+      if (STOP_CHARS[ch]) continue;
+      var covered = false;
+      for (j = 0; j < multi.length; j++) {
+        if (multi[j].indexOf(ch) >= 0) { covered = true; break; }
+      }
+      if (covered) continue;
+      push(ch, 1);
+    }
+
+    return out;
+  }
   function seasonHint(q) {
     var m = /第([一二三四五六七八九十]+)季/.exec(String(q || ""));
     return m ? "第" + m[1] + "季" : "";
@@ -782,27 +897,44 @@
         var head = lines[0].split("\t");
         var iTime = head.indexOf("时间"), iName = head.indexOf("规范名"),
             iBody = head.indexOf("正文"), iType = head.indexOf("类型");
-        var picked = [], total = 0, i, j, p, body, ok;
+        // ── 按相关度排序，而不是从原文开头凑够就停 ──
+        //
+        // 旧实现从头往后扫，够 maxLines 就 break。
+        // 实测踩坑：问「顺风车筷子和碗」时，竖棺第 7 场前面是「用鼻孔吃面」的戏，
+        // 顺势把后面的「筷子立起、碗盖住肚脐」全挤掉了，模型只能答吃面。
+        //
+        // 现在先收全部命中行并打分，再按「多字词命中数 → 单字命中数 → 原文顺序」排序，
+        // 保证最相关的那几行一定进得来。
+        var terms2 = scanTermsOf(query);
+        var candidates = [], i, j, p, body, strong, weak, isSp;
         for (i = 1; i < lines.length; i++) {
           p = lines[i].split("\t");
           if (p.length < head.length) continue;
           body = p[iBody] || "";
-          ok = false;
-          // 问「某人说过什么」时，正文里不会出现他自己的名字，
-          // 必须按「规范名」匹配，否则永远命中 0 行、只剩场次提要。
-          if (speakerSet && speakerSet[p[iName]]) { ok = true; }
-          if (!ok) {
-            for (j = 0; j < list.length; j++) {
-              if (list[j] && body.indexOf(list[j]) >= 0) { ok = true; break; }
+          strong = 0; weak = 0;
+          for (j = 0; j < terms2.length; j++) {
+            if (terms2[j].w && body.indexOf(terms2[j].w) >= 0) {
+              if (terms2[j].w.length >= 2) strong++; else weak++;
             }
           }
-          if (!ok) continue;
-          picked.push({
-            t: p[iTime] || "", n: p[iName] || "",
-            ty: p[iType] || "", b: body
-          });
-          total += body.length;
+          // 问「某人说过什么」时正文里不会出现他自己的名字，必须看规范名
+          isSp = !!(speakerSet && speakerSet[p[iName]]);
+          if (strong === 0 && weak === 0 && !isSp) continue;
+          candidates.push({ p: p, strong: strong, weak: weak, isSp: isSp, idx: candidates.length });
+        }
+        candidates.sort(function (a, b) {
+          return (b.strong - a.strong) || (b.weak - a.weak) || (a.idx - b.idx);
+        });
+
+        var picked = [], total = 0;
+        for (i = 0; i < candidates.length; i++) {
           if (picked.length >= maxLines || total > maxChars) break;
+          var c = candidates[i];
+          picked.push({
+            t: c.p[iTime] || "", n: c.p[iName] || "",
+            ty: c.p[iType] || "", b: c.p[iBody] || ""
+          });
+          total += (c.p[iBody] || "").length;
         }
         // 原来是「命中 < 4 行就整个退回摘要、原文全丢」——这正是「原始记录相当于没用」的主因。
         // 现在改成：命中多少用多少；摘要**始终附上**作为背景，两者并存。
@@ -826,9 +958,25 @@
   }
 
   // 把一场记录转成「资料」对象（与 wiki 资料同构，编号稍后统一分配）
-  function recordToSource(rec) {
+  function recordToSource(rec, opts) {
+    opts = opts || {};
     var text, meta;
-    if (rec.useSummary || !rec.lines.length) {
+
+    // 概述类问题：「场次提要」（整场脉络，几千字）+「台词摘录」（原话细节）都要。
+    // 二选一的话，只给台词会丢掉整体经过，只给提要又缺原话。
+    if (opts.withSummary && rec.lines.length && rec.summary) {
+      var ps = [];
+      if (rec.places) ps.push("地点：" + rec.places);
+      if (rec.present) ps.push("在场：" + rec.present);
+      ps.push("提要：" + rec.summary);
+      ps.push("台词摘录：");
+      for (var li = 0; li < rec.lines.length; li++) {
+        var l = rec.lines[li];
+        ps.push("[" + (l.t || "") + "] " + (l.n || "") + "：" + (l.b || ""));
+      }
+      text = ps.join("\n");
+      meta = (rec.date || "") + " · 提要 + " + rec.lines.length + " 条台词";
+    } else if (rec.useSummary || !rec.lines.length) {
       // 关键词没落在正文里 → 用场次提要（含地点/在场/结局），更有信息量
       var parts = [];
       if (rec.places) parts.push("地点：" + rec.places);
@@ -1437,8 +1585,9 @@
       var nPicks = enumer ? 12 : AI_PICKS;
       var nPerStation = enumer ? 3 : 2;
       var nRecSess = enumer ? 8 : 2;
-      var nRecLines = enumer ? 150 : REC_MAX_LINES;
-      var nRecChars = enumer ? 9000 : 2400;
+      var overview = isOverview(question);
+      var nRecLines = enumer ? 150 : (overview ? 80 : REC_MAX_LINES);
+      var nRecChars = enumer ? 9000 : (overview ? 8000 : 3600);
       var maxSrc = enumer ? 20 : MAX_SOURCES;
 
       var switched = isNewTopic(question, sess.lastQuestion);
@@ -1486,26 +1635,71 @@
             if (!e || seen[e.file]) return;
             seen[e.file] = 1; hits.push(e);
           }
-          var hint = seasonHint(question);
-          if (hint) {
-            var bs = sessionsOfSeason(entries, hint);
-            for (i6 = 0; i6 < bs.length && hits.length < nRecSess; i6++) push(bs[i6]);
-          }
-          var found = sessionsFromInvert(inv, question, nRecSess);
-          for (i6 = 0; i6 < found.length && hits.length < nRecSess; i6++) {
-            var want = "session/" + found[i6].sid + ".tsv";
-            for (var k6 = 0; k6 < entries.length; k6++) {
-              if (entries[k6].file === want) { push(entries[k6]); break; }
+          // ── 场次选取：统一打分，不再「分阶段先到先得」 ──
+          // 旧实现是「季名→倒排→wiki→摘要」依次 push，先到的占满名额，
+          // 问「顺风车筷子和碗」时「顺风车」先把名额吃光，含筷子的那场反而进不来。
+          var season = matchSeason(question, entries);
+          var ord = ordinalHint(question);
+          var locked = false;
+
+          // 顺序词 + 季名 = 唯一确定，直接锁死
+          if (season && ord) {
+            var pool = [], pi;
+            for (pi = 0; pi < entries.length; pi++) {
+              if (entries[pi].season === season) pool.push(entries[pi]);
+            }
+            if (pool.length) {
+              var tgt = ord === "last" ? [pool[pool.length - 1]] : [pool[0]];
+              for (pi = 0; pi < tgt.length; pi++) push(tgt[pi]);
+              locked = true;
             }
           }
-          var fw = sessionsFromGroups(groups);
-          for (i6 = 0; i6 < fw.length && hits.length < nRecSess; i6++) {
-            push(findRecord(entries, fw[i6].season, fw[i6].no));
+
+          if (!locked) {
+            // 发言人 → 每场说了多少行
+            var speakerStats = {};
+            var snames = namesInText(question, inv && inv.speakers, 3), si, sj;
+            for (si = 0; si < snames.length; si++) {
+              var spArr = (inv.speakers && inv.speakers[snames[si]]) || [];
+              for (sj = 0; sj < spArr.length; sj++) {
+                var pp = spArr[sj].split(":");
+                var ff = "session/" + pp[0] + ".tsv";
+                speakerStats[ff] = (speakerStats[ff] || 0) + (parseInt(pp[1], 10) || 0);
+              }
+            }
+
+            // 倒排索引
+            var invScores = {};
+            var invFound = sessionsFromInvert(inv, question, 30);
+            for (si = 0; si < invFound.length; si++) {
+              invScores["session/" + invFound[si].sid + ".tsv"] = invFound[si].score;
+            }
+
+            // wiki 跑团站已点名
+            var wikiPairs = {};
+            var fw0 = sessionsFromGroups(groups);
+            for (si = 0; si < fw0.length; si++) wikiPairs[fw0[si].season + "|" + fw0[si].no] = 1;
+
+            var scored = [], e6;
+            for (si = 0; si < entries.length; si++) {
+              e6 = entries[si];
+              var sc = 0;
+              if (season && e6.season === season) sc += 1000;
+              if (speakerStats[e6.file]) sc += Math.min(200, speakerStats[e6.file] * 0.5);
+              if (invScores[e6.file]) sc += invScores[e6.file] * 0.3;
+              if (wikiPairs[e6.season + "|" + e6.no]) sc += 80;
+              if (sc > 0) scored.push({ e: e6, sc: sc });
+            }
+            scored.sort(function (a, b) { return b.sc - a.sc; });
+            for (si = 0; si < scored.length && hits.length < nRecSess; si++) push(scored[si].e);
+
+            // 兜底：摘要关键词
+            if (!hits.length) {
+              var bk = searchRecords(entries, question);
+              for (si = 0; si < bk.length; si++) push(bk[si]);
+            }
           }
-          if (!hits.length) {
-            var bk = searchRecords(entries, question);
-            for (i6 = 0; i6 < bk.length; i6++) push(bk[i6]);
-          }
+
           if (!hits.length) return [];
           // 同样是名字扫描，保证「鸣」「白」这类单字名能命中自己的台词
           var speakerSet = {}, asked2 = namesInText(question, inv && inv.speakers, 3), k7;
@@ -1532,7 +1726,7 @@
             sess.sources.push(s2); added.push(s2);
           }
           for (i3 = 0; i3 < recs.length && sess.sources.length < maxSrc; i3++) {
-            s2 = recordToSource(recs[i3]);
+            s2 = recordToSource(recs[i3], { withSummary: overview });
             s2.n = sess.sources.length + 1;
             sess.sources.push(s2); added.push(s2);
           }
