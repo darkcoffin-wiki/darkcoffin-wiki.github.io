@@ -202,6 +202,73 @@
 /* 被引用跳转时高亮一下 */
 #heijiu-ask .ha-src:target{border-color:var(--ha-accent); background:rgba(168,59,37,.06)}
 
+/* ── 对话流（追问）── */
+#heijiu-ask .ha-chat{margin:.9rem 0 0}
+#heijiu-ask .ha-turn{
+  margin:0 0 1rem; padding:0 0 .8rem;
+  border-bottom:1px dashed var(--ha-line);
+}
+#heijiu-ask .ha-turn:last-child{border-bottom:0; padding-bottom:0}
+
+#heijiu-ask .ha-q-line{
+  display:flex; gap:.5rem; align-items:baseline;
+  margin:0 0 .5rem; font-weight:600; font-size:.95rem;
+}
+#heijiu-ask .ha-a-line{display:flex; gap:.5rem; align-items:baseline}
+#heijiu-ask .who{
+  flex:0 0 auto; padding:0 .38rem; border-radius:4px;
+  font-size:.72rem; font-weight:700; line-height:1.5;
+  border:1px solid var(--ha-line-strong); color:var(--ha-muted);
+}
+#heijiu-ask .who.ai{border-color:var(--ha-accent); color:var(--ha-accent)}
+#heijiu-ask .ha-body{flex:1 1 auto; min-width:0}
+#heijiu-ask .ha-body .ha-ans{
+  margin:0; padding:.7rem .85rem;
+  border:1px solid var(--ha-line); border-radius:10px;
+  font-size:.94rem; line-height:1.8;
+}
+#heijiu-ask .ha-body .ha-ans p{margin:.45rem 0}
+#heijiu-ask .ha-body .ha-ans p:first-child{margin-top:0}
+#heijiu-ask .ha-body .ha-ans p:last-child{margin-bottom:0}
+#heijiu-ask .ha-turn-src{margin:.5rem 0 0 2.1rem}
+#heijiu-ask .ha-turn-src .ha-src-h{display:none}   /* 每轮不必重复标题 */
+
+/* 追问输入行 */
+#heijiu-ask .ha-ask-row{
+  display:flex; gap:.45rem; align-items:center; flex-wrap:wrap;
+  margin:.9rem 0 0; padding-top:.8rem;
+  border-top:1px solid var(--ha-line);
+}
+#heijiu-ask .ha-follow{
+  flex:1 1 14rem; min-width:0;
+  padding:.5rem .7rem; font:inherit; font-size:.9rem; color:inherit;
+  background:transparent;
+  border:1px solid var(--ha-line-strong); border-radius:9px;
+  -webkit-appearance:none; appearance:none;
+}
+#heijiu-ask .ha-follow:focus{
+  outline:none; border-color:var(--ha-accent);
+  box-shadow:0 0 0 3px rgba(168,59,37,.12);
+}
+#heijiu-ask .ha-send{
+  flex:0 0 auto; padding:.5rem 1rem;
+  font:inherit; font-weight:600; color:#fff;
+  background:var(--ha-accent); border:1px solid var(--ha-accent);
+  border-radius:9px; cursor:pointer;
+}
+#heijiu-ask .ha-send:disabled{opacity:.55; cursor:default}
+#heijiu-ask .ha-end{
+  flex:0 0 auto; padding:.5rem .8rem;
+  font:inherit; font-size:.86rem; color:var(--ha-muted);
+  background:transparent; border:1px solid var(--ha-line-strong);
+  border-radius:9px; cursor:pointer;
+}
+#heijiu-ask .ha-end:hover{border-color:var(--ha-accent); color:var(--ha-accent)}
+
+#heijiu-ask .ha-status{
+  margin:.55rem 0 0; font-size:.8rem; color:var(--ha-muted);
+}
+
 /* ── 窄屏 ── */
 @media (max-width:640px){
   #heijiu-ask .ha-q{flex:1 1 100%}
@@ -210,4 +277,7 @@
   #heijiu-ask .ha-start,#heijiu-ask .ha-forget{flex:1 1 auto}
   #heijiu-ask .ha-src{flex-wrap:wrap}
   #heijiu-ask .ha-src .m{flex:1 1 100%; padding-left:1.6rem}
+  #heijiu-ask .ha-follow{flex:1 1 100%}
+  #heijiu-ask .ha-send,#heijiu-ask .ha-end{flex:1 1 auto}
+  #heijiu-ask .ha-turn-src{margin-left:0}
 }

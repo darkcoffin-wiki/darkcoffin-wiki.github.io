@@ -598,9 +598,27 @@
     });
   }
 
-  // ── AI 面板 ──
+  // ── AI 会话面板（支持追问）──
+  //
+  // 设计
+  // · 会话状态保存在闭包里，不随重新检索而丢（除非用户「结束对话」）
+  // · 资料（sources）**增量累积**：首次 5 条，每次追问再把「命中但尚未在资料里」的
+  //   条目补进去（最多 2 条），编号接着排 —— 这样旧回答里的 [1] 永远指向同一条
+  // · 追问消息把「新资料」放在 <补充资料> 里，和原 <资料> 分开，模型更容易分清
+  // · 有轮数与资料总数上限，防止成本和上下文膨胀
+  var MAX_TURNS = 8;
+  var MAX_SOURCES = 10;
+
   function openAI(aiBox, cur) {
-    var key = getKey();
+    var sess = {
+      system: systemPrompt(),
+      sources: [],     // [{n, st, stKey, title, meta, url, text}]
+      history: [],     // [{role, content}]  不含 system
+      turns: 0,
+      cost: 0
+    };
+    var busy = false;
+
     aiBox.innerHTML =
       '<div class="ha-ai-panel">' +
         '<p class="ha-warn">⚠️ 回答由 AI 依据检索到的资料生成，<b>可能出错或遗漏</b>；' +
@@ -609,95 +627,276 @@
           "不会上传到本站服务器，也不会被记录。</p>" +
         '<div class="ha-key-row">' +
           '<input class="ha-key" type="password" autocomplete="off" spellcheck="false" ' +
-            'placeholder="sk-… （DeepSeek API key，仅本标签页有效）" value="' + esc(key) + '">' +
+            'placeholder="sk-… （DeepSeek API key，仅本标签页有效）" value="' + esc(getKey()) + '">' +
           '<button class="ha-start" type="button">开始</button>' +
-          '<button class="ha-forget" type="button" title="清除本标签页里的 key">清除</button>' +
+          '<button class="ha-forget" type="button" title="清除本标签页里的 key">清除 key</button>' +
         "</div>" +
-        '<div class="ha-ai-out"></div>' +
-        '<div class="ha-src-wrap"></div>' +
+        '<div class="ha-chat"></div>' +
+        '<div class="ha-ask-row" hidden>' +
+          '<input class="ha-follow" type="search" autocomplete="off" ' +
+            'placeholder="继续追问，比如：那进盟呢？" aria-label="追问">' +
+          '<button class="ha-send" type="button">发送</button>' +
+          '<button class="ha-end" type="button" title="结束本次对话，重新开始">结束对话</button>' +
+        "</div>" +
+        '<p class="ha-status"></p>' +
       "</div>";
 
     var keyIn = aiBox.querySelector(".ha-key");
     var startBtn = aiBox.querySelector(".ha-start");
     var forgetBtn = aiBox.querySelector(".ha-forget");
-    var outBox = aiBox.querySelector(".ha-ai-out");
-    var srcBox = aiBox.querySelector(".ha-src-wrap");
+    var chat = aiBox.querySelector(".ha-chat");
+    var askRow = aiBox.querySelector(".ha-ask-row");
+    var followIn = aiBox.querySelector(".ha-follow");
+    var sendBtn = aiBox.querySelector(".ha-send");
+    var endBtn = aiBox.querySelector(".ha-end");
+    var statusEl = aiBox.querySelector(".ha-status");
 
     forgetBtn.addEventListener("click", function () {
       clearKey(); keyIn.value = "";
-      outBox.innerHTML = '<p class="ha-loading">已清除本标签页保存的 key。</p>';
+      statusEl.textContent = "已清除本标签页保存的 key。";
     });
 
+    function setBusy(v) {
+      busy = v;
+      startBtn.disabled = v;
+      sendBtn.disabled = v;
+      keyIn.disabled = v;
+      followIn.disabled = v;
+    }
+
+    function updateStatus() {
+      var chars = 0, i;
+      for (i = 0; i < sess.sources.length; i++) chars += sess.sources[i].text.length;
+      statusEl.textContent = sess.turns
+        ? "已 " + sess.turns + " 轮 · 资料 " + sess.sources.length + " 条（约 " +
+          format(chars) + " 字）· 累计估算 ¥" + sess.cost.toFixed(4) +
+          (sess.turns >= MAX_TURNS ? "　｜　已达轮数上限，建议「结束对话」重新开始" : "")
+        : "";
+    }
+
+    function format(n) {
+      return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // 把一轮问答追加到聊天区，返回该轮的元素句柄
+    function addTurn(question) {
+      var wrap = document.createElement("div");
+      wrap.className = "ha-turn";
+      wrap.innerHTML =
+        '<p class="ha-q-line"><span class="who">问</span>' + esc(question) + "</p>" +
+        '<div class="ha-a-line"><span class="who ai">AI</span><div class="ha-body">' +
+          '<p class="ha-loading">正在生成回答…</p></div></div>' +
+        '<div class="ha-turn-src"></div>';
+      chat.appendChild(wrap);
+      wrap.scrollIntoView({ block: "nearest" });
+      return {
+        root: wrap,
+        body: wrap.querySelector(".ha-body"),
+        src: wrap.querySelector(".ha-turn-src")
+      };
+    }
+
+    // 从回答文本里挑出真正被引用的资料编号
+    function citedOf(text) {
+      var seen = {}, out = [], m, re = /\[(\d{1,2})\]/g;
+      while ((m = re.exec(text))) {
+        var n = parseInt(m[1], 10);
+        if (n >= 1 && n <= sess.sources.length && !seen[n]) {
+          seen[n] = 1;
+          out.push(n);
+        }
+      }
+      return out;
+    }
+
+    function finishTurn(handle, full, usage, srcChars) {
+      sess.turns++;
+      sess.history.push({ role: "assistant", content: full });
+      handle.body.innerHTML = ansHtml(full);
+
+      var cited = citedOf(full);
+      var list = [], i, k;
+      for (i = 0; i < cited.length; i++) {
+        for (k = 0; k < sess.sources.length; k++) {
+          if (sess.sources[k].n === cited[i]) { list.push(sess.sources[k]); break; }
+        }
+      }
+      handle.src.innerHTML = list.length ? sourcesHtml(list) : "";
+
+      var tk = usage
+        ? "输入 " + format(usage.prompt_tokens || 0) + " / 输出 " + format(usage.completion_tokens || 0) + " tokens"
+        : "本轮输入约 " + format(Math.round(srcChars * 0.6)) + " tokens";
+      var c = estCost(srcChars, full.length);
+      sess.cost += c;
+      var u = document.createElement("p");
+      u.className = "ha-usage";
+      u.textContent = "以上为 AI 生成，请以资料来源为准。　" + tk + "　本轮约 ¥" + c.toFixed(4);
+      handle.root.appendChild(u);
+      updateStatus();
+    }
+
+    function failTurn(handle, status, msg) {
+      var hint = "";
+      if (status === 401) hint = "API key 无效或已过期。";
+      else if (status === 402) hint = "账户余额不足。";
+      else if (status === 429) hint = "请求太频繁，稍后再试。";
+      else if (status === 0) hint = "网络错误（可能是跨域被拦或断网）。";
+      else hint = "请求失败（HTTP " + status + "）。";
+      handle.body.innerHTML = '<p class="ha-empty"><b>' + esc(hint) + "</b><br>" +
+        esc(String(msg || "").slice(0, 300)) + "</p>";
+    }
+
+    // 回答正文统一包在 .ha-ans 里（样式与测试都依赖这个容器）；
+    // 曾经漏了这层包裹，直接写 renderAnswer 的结果，导致 .ha-ans 不存在。
+    function ansHtml(text) {
+      return '<div class="ha-ans">' + renderAnswer(text, sess.sources) + "</div>";
+    }
+
+    // 发送一轮：msgs 已含本轮 user 消息
+    function send(handle, msgs, srcChars) {
+      var body = "";
+      streamChat(
+        getKey(),
+        msgs,
+        function (delta, full) {
+          body = full;
+          handle.body.innerHTML = ansHtml(body);
+        },
+        function (full, usage) {
+          setBusy(false);
+          finishTurn(handle, full, usage, srcChars);
+        },
+        function (status, msg) {
+          setBusy(false);
+          failTurn(handle, status, msg);
+        }
+      );
+    }
+
+    // ── 第一轮 ──
     startBtn.addEventListener("click", function () {
       var k = (keyIn.value || "").trim();
       if (!k) { keyIn.focus(); return; }
       setKey(k);
-      startBtn.disabled = true;
-      keyIn.disabled = true;
+      setBusy(true);
+      statusEl.textContent = "正在读取资料…";
 
       var picks = fetchPicks(cur.groups);
-      outBox.innerHTML = '<p class="ha-loading">正在读取资料…</p>';
-
       buildContext(picks, function (d, n) {
-        outBox.innerHTML = '<p class="ha-loading">正在读取资料… ' + d + "/" + n + "</p>";
+        statusEl.textContent = "正在读取资料… " + d + "/" + n;
       }).then(function (sources) {
         if (!sources.length) {
-          outBox.innerHTML = '<p class="ha-empty">没能读到资料正文（网络或路径问题），无法作答。</p>';
-          startBtn.disabled = false; keyIn.disabled = false;
+          statusEl.textContent = "没能读到资料正文（网络或路径问题），无法作答。";
+          setBusy(false);
           return;
         }
-        var srcChars = 0, i;
-        for (i = 0; i < sources.length; i++) srcChars += sources[i].text.length;
+        sess.sources = sources.slice(0, MAX_SOURCES);
+        var question = cur.query;
+        var userMsg = contextPrompt(picks, sess.sources, question);
+        sess.history.push({ role: "user", content: userMsg });
 
-        outBox.innerHTML = '<p class="ha-loading">正在生成回答…</p>';
-        srcBox.innerHTML = "";
+        chat.innerHTML = "";
+        var handle = addTurn(question);
+        askRow.hidden = false;
+        statusEl.textContent = "正在生成回答…";
 
-        var body = "";
-        var answerEl = null;
-
-        streamChat(
-          k,
-          [
-            { role: "system", content: systemPrompt() },
-            { role: "user", content: contextPrompt(picks, sources, cur.query) }
-          ],
-          function (delta, full) {
-            body = full;
-            if (!answerEl) {
-              outBox.innerHTML = '<div class="ha-ans"></div><p class="ha-usage"></p>';
-              answerEl = outBox.querySelector(".ha-ans");
-            }
-            answerEl.innerHTML = renderAnswer(body, sources);
-          },
-          function (full, usage) {
-            startBtn.disabled = false; keyIn.disabled = false;
-            if (!answerEl) {
-              outBox.innerHTML = '<p class="ha-empty">没有收到内容。</p>';
-              return;
-            }
-            answerEl.innerHTML = renderAnswer(full, sources);
-            var u = outBox.querySelector(".ha-usage");
-            var cost = estCost(srcChars, full.length);
-            var tk = usage
-              ? "输入 " + (usage.prompt_tokens || "?") + " / 输出 " + (usage.completion_tokens || "?") + " tokens"
-              : "约 " + Math.round(srcChars * 0.6) + " 输入 tokens";
-            u.innerHTML = "以上为 AI 生成，请以资料来源为准。　" + tk +
-              "　估算费用约 ¥" + cost.toFixed(4);
-            srcBox.innerHTML = sourcesHtml(sources);
-          },
-          function (status, msg) {
-            startBtn.disabled = false; keyIn.disabled = false;
-            var hint = "";
-            if (status === 401) hint = "API key 无效或已过期。";
-            else if (status === 402) hint = "账户余额不足。";
-            else if (status === 429) hint = "请求太频繁，稍后再试。";
-            else if (status === 0) hint = "网络错误（可能是跨域被拦或断网）。";
-            else hint = "请求失败（HTTP " + status + "）。";
-            outBox.innerHTML = '<p class="ha-empty"><b>' + esc(hint) + "</b><br>" +
-              esc(String(msg || "").slice(0, 300)) + "</p>";
-          }
-        );
+        var chars = 0, i;
+        for (i = 0; i < sess.sources.length; i++) chars += sess.sources[i].text.length;
+        send(handle, [{ role: "system", content: sess.system }].concat(sess.history), chars);
       });
+    });
+
+    // ── 追问 ──
+    function followUp() {
+      var q = (followIn.value || "").trim();
+      if (!q || busy) return;
+      if (sess.turns >= MAX_TURNS) {
+        statusEl.textContent = "已达轮数上限，请点「结束对话」重新开始。";
+        return;
+      }
+      if (sess.sources.length >= MAX_SOURCES) {
+        // 资料已满，只发追问，不再补充
+      }
+      followIn.value = "";
+      startBtn.disabled = true;
+      setBusy(true);
+
+      // 用追问再检索一遍，看看有没有还没收进来的料
+      loadAll().then(function (data) {
+        var groups = search(data, q);
+        var picks = fetchPicks(groups) || [];
+        var have = {}, i, k;
+        for (i = 0; i < sess.sources.length; i++) {
+          have[sess.sources[i].stKey + "|" + sess.sources[i].url] = 1;
+        }
+        var fresh = [];
+        for (i = 0; i < picks.length && fresh.length < 2; i++) {
+          var p = picks[i];
+          var key = p.st.key + "|" + urlOf(p.st.key, p.e);
+          if (have[key]) continue;
+          // 太长的正文先跳过（多为整篇报告），避免一轮塞太多
+          fresh.push(p);
+        }
+
+        function proceed(newSources) {
+          var prefix = "";
+          if (newSources.length) {
+            var parts = ["<补充资料>"];
+            for (var x = 0; x < newSources.length; x++) {
+              parts.push("[" + newSources[x].n + "] " + newSources[x].st + " · " +
+                newSources[x].title + (newSources[x].meta ? "（" + newSources[x].meta + "）" : ""));
+              parts.push(newSources[x].text);
+              parts.push("");
+            }
+            parts.push("</补充资料>");
+            prefix = parts.join("\n") + "\n\n";
+          }
+          var userMsg = prefix + "追问：" + q;
+          sess.history.push({ role: "user", content: userMsg });
+
+          var handle = addTurn(q);
+          statusEl.textContent = "正在生成回答…";
+
+          var chars = 0, i2;
+          for (i2 = 0; i2 < sess.sources.length; i2++) chars += sess.sources[i2].text.length;
+          send(handle, [{ role: "system", content: sess.system }].concat(sess.history), chars);
+        }
+
+        if (!fresh.length || sess.sources.length >= MAX_SOURCES) {
+          proceed([]);
+          return;
+        }
+        buildContext(fresh, function (d, n) {
+          statusEl.textContent = "正在补充资料… " + d + "/" + n;
+        }).then(function (arr) {
+          var base = sess.sources.length;
+          var added = [], i3;
+          for (i3 = 0; i3 < arr.length && (base + added.length) < MAX_SOURCES; i3++) {
+            var s = arr[i3];
+            s.n = base + added.length + 1;
+            sess.sources.push(s);
+            added.push(s);
+          }
+          proceed(added);
+        });
+      });
+    }
+
+    sendBtn.addEventListener("click", followUp);
+    followIn.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" || ev.keyCode === 13) { ev.preventDefault(); followUp(); }
+    });
+
+    endBtn.addEventListener("click", function () {
+      sess.sources = [];
+      sess.history = [];
+      sess.turns = 0;
+      sess.cost = 0;
+      chat.innerHTML = "";
+      askRow.hidden = true;
+      followIn.value = "";
+      statusEl.textContent = "对话已结束。点「开始」用同样的检索结果重新开一轮。";
+      setBusy(false);
     });
 
     keyIn.focus();
