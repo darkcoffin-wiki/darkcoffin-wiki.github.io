@@ -240,6 +240,14 @@
   border:1px solid var(--ha-line-strong); color:var(--ha-muted);
 }
 .heijiu-ui .ha-need{border-color:var(--ha-accent); color:var(--ha-accent)}
+.heijiu-ui .ha-setkey{
+  margin-left:auto; padding:.1rem .55rem;
+  font-size:.76rem; font-weight:400;
+  color:var(--ha-accent); background:transparent;
+  border:1px solid var(--ha-accent); border-radius:99px;
+  cursor:pointer;
+}
+.heijiu-ui .ha-setkey:hover{background:rgba(168,59,37,.08)}
 
 /* ── 一次性解读结果（搜索区内，独立于下方问答）── */
 .heijiu-ui .ha-oneshot{

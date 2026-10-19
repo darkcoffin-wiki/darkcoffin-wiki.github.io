@@ -69,7 +69,10 @@
   // 列举型问题：「有哪些 / 都有谁 / 全部 / 列举」。
   // 这类问题的答案是**散布在整个语料**里的集合，不是某一篇文档里的一个事实。
   // 靠 top-5 片段必然答不全，必须扩大召回范围，并且在回答里说明「可能不全」。
-  var ENUM_RE = /有哪些|都有谁|都有哪些|都有什么|有谁|全部|所有|列举|列出|哪些人|哪些场|哪几位|一共|总共|几次|多少次|多少个|名单/;
+  // 注意要收「哪些」本身，而不只是「有哪些 / 哪些人 / 哪些场」。
+  // 实测「鸣做过哪些有趣的事」因为只写了「哪些」而没被判成列举，
+  // 于是只取 2 场原始记录，答案单薄；补上后取 8 场。
+  var ENUM_RE = /哪些|有哪些|都有谁|都有哪些|都有什么|有谁|全部|所有|列举|列出|哪几位|哪几场|一共|总共|几次|多少次|多少个|名单/;
 
   function isEnumeration(q) {
     return ENUM_RE.test(String(q || ""));
@@ -581,6 +584,32 @@
     return out;
   }
 
+  // 在文本里找出**字典中的所有名字**。
+  //
+  // 为什么不复用 substrsOf：那条路只生成 2~4 字子串，
+  // 而「鸣」「白」这种单字玩家名永远成不了候选——实测 ask「鸣做过哪些有趣的事」
+  // 完全查不到，但 speakers 索引里「鸣」有 40 场 3949 行。
+  // 名字表很小（发言人 48、NPC 379），遍历键做 indexOf 反而又快又全。
+  // 单字名（鸣 / 白）非常容易误伤：「明白」「白菜」都会命中。
+  // 折中办法：单字名只在前几个字里出现才算——提问里点名某人通常在开头。
+  var SINGLE_CHAR_POS = 4;
+
+  function namesInText(text, dict, limit) {
+    var t = norm(text), out = [], k, at;
+    if (!t || !dict) return out;
+    for (k in dict) {
+      if (!Object.prototype.hasOwnProperty.call(dict, k)) continue;
+      if (!k) continue;
+      at = t.indexOf(norm(k));
+      if (at < 0) continue;
+      if (k.length === 1 && at > SINGLE_CHAR_POS) continue;   // 单字名限制位置
+      out.push(k);
+    }
+    // 长名优先（「顺风车」先于「车」这类包含关系）
+    out.sort(function (a, b) { return b.length - a.length; });
+    return limit ? out.slice(0, limit) : out;
+  }
+
   // 把问题拆成 2~4 字的所有子串（中文没有空格，穷举子串查索引最可靠）
   function substrsOf(q) {
     var s2 = norm(q), out = [], len, i;
@@ -610,13 +639,15 @@
         add(parts[0], parseInt(parts[1], 10), w);
       }
     }
-    // ② 发言人：问「余烬说过什么」时，正文里不一定提到余烬，必须查发言人索引
-    for (i = 0; i < subs.length; i++) {
-      var sp = inv.speakers && inv.speakers[subs[i]];
+    // ② 发言人：问「余烬说过什么」时，正文里不一定提到余烬，必须查发言人索引。
+    //    用名字扫描而不是子串，否则单字的「鸣」「白」永远匹配不到。
+    var asked = namesInText(question, inv.speakers, 3);
+    for (i = 0; i < asked.length; i++) {
+      var sp = inv.speakers[asked[i]];
       if (!sp) continue;
       for (j = 0; j < sp.length; j++) {
         parts = sp[j].split(":");
-        add(parts[0], parseInt(parts[1], 10), 2);   // 发言人权重给足
+        add(parts[0], parseInt(parts[1], 10), 3);   // 发言人权重给足
       }
     }
 
@@ -649,8 +680,9 @@
 
   // 从一张 markdown 表里挑出与问题相关的行。
   // 打分：名字列（第 2 个单元格）命中 +30，别名列（第 3 个）+18，其它 +6。
-  function tableRowsFor(text, terms, take) {
-    if (!text || !terms.length) return [];
+  function tableRowsFor(text, terms, take, question) {
+    if (!text) return [];
+    var qn = norm(question || "");
     var lines = text.split("\n"), out = [], i, j, w;
     for (i = 0; i < lines.length; i++) {
       var ln = lines[i];
@@ -663,6 +695,16 @@
       var aliasCell = norm(cells[3] || "");
       var whole = norm(ln);
       var score = 0, hit = false;
+      // 先做「名字整体出现在提问里」的精确判断——
+      // 这一条对单字名（鸣 / 白）至关重要，因为下面的 terms 都 >= 2 字。
+      var rawName = norm((cells[2] || "").replace(/\s/g, ""));
+      if (qn && rawName && rawName.length >= 1) {
+        var at2 = qn.indexOf(rawName);
+        // 单字 NPC 名同样只认靠前出现，避免误伤
+        if (at2 >= 0 && (rawName.length > 1 || at2 <= 4)) {
+          score += 40; hit = true;
+        }
+      }
       for (j = 0; j < terms.length; j++) {
         w = terms[j];
         if (!w || w.length < 2) continue;
@@ -682,7 +724,7 @@
     var terms = termsOf(question);
     var parts = [], urls = [], i, rows;
     for (i = 0; i < tables.length; i++) {
-      rows = tableRowsFor(tables[i].text, terms, tables[i].def.take);
+      rows = tableRowsFor(tables[i].text, terms, tables[i].def.take, question);
       if (!rows.length) continue;
       parts.push("〔" + tables[i].def.label + "〕");
       parts.push(rows.join("\n"));
@@ -1049,11 +1091,11 @@
       "不会上传到本站服务器，也不会被记录。</p>";
   }
 
-  function keyRowHtml() {
+  function keyRowHtml(okLabel) {
     return '<div class="ha-key-row">' +
       '<input class="ha-key" type="password" autocomplete="off" spellcheck="false" ' +
         'placeholder="sk-… （DeepSeek API key，仅本标签页有效）" value="' + esc(getKey()) + '">' +
-      '<button class="ha-start" type="button">开始</button>' +
+      '<button class="ha-start" type="button">' + esc(okLabel || "开始") + "</button>" +
       '<button class="ha-forget" type="button" title="清除本标签页里的 key">清除 key</button>' +
       "</div>";
   }
@@ -1110,7 +1152,8 @@
 
       // ══════ 问答区（需要 API）══════
       '<section class="ha-block ha-blk-chat">' +
-        '<p class="ha-block-h">问答<span class="ha-need">需要你自己的 DeepSeek API key</span></p>' +
+        '<p class="ha-block-h">问答<span class="ha-need">需要你自己的 DeepSeek API key</span>' +
+          '<button class="ha-setkey" type="button">设置 API key</button></p>' +
         '<div class="ha-chat"></div>' +
         '<div class="ha-keyinline" hidden></div>' +
         '<div class="ha-ask-row">' +
@@ -1155,32 +1198,59 @@
     // ══════════════════════════════════════════════
     // 共用的 key 输入：只有 AI 功能才需要，出现在被点击的地方
     // ══════════════════════════════════════════════
-    function askKey(box, onReady, hint) {
-      if (getKey()) { onReady(); return true; }
+    var setKeyBtn = host.querySelector(".ha-setkey");
+
+    // 按钮文案跟着状态走：没填过 → 「设置 API key」；填过 → 「改 API key」
+    function updateKeyBtn() {
+      if (setKeyBtn) {
+        setKeyBtn.textContent = getKey() ? "改 API key" : "设置 API key";
+      }
+    }
+
+    // 就地渲染 key 输入框并绑定。与「有没有 key」无关，
+    // 这样 401 之后可以重新把输入框摆出来让用户改。
+    function renderKeyBox(box, hint, onReady) {
       box.hidden = false;
       box.innerHTML =
-        '<p class="ha-keytip">' + esc(hint) + "</p>" + keyRowHtml();
+        '<p class="ha-keytip">' + esc(hint) + "</p>" + keyRowHtml("保存");
       var ki = box.querySelector(".ha-key");
       var st = box.querySelector(".ha-start");
       var fg = box.querySelector(".ha-forget");
       fg.addEventListener("click", function () {
-        clearKey(); ki.value = "";
+        clearKey();
+        updateKeyBtn();
         box.hidden = true;
+        box.innerHTML = "";
       });
       function submit() {
         var v = (ki.value || "").trim();
         if (!v) { ki.focus(); return; }
         setKey(v);
+        updateKeyBtn();
         box.hidden = true;
         box.innerHTML = "";
-        onReady();
+        if (onReady) onReady();
       }
       st.addEventListener("click", submit);
       ki.addEventListener("keydown", function (ev) {
         if (ev.key === "Enter" || ev.keyCode === 13) { ev.preventDefault(); submit(); }
       });
       ki.focus();
+    }
+
+    function askKey(box, onReady, hint) {
+      if (getKey()) { onReady(); return true; }
+      renderKeyBox(box, hint, onReady);
       return false;
+    }
+
+    // key 无效时：清掉旧值、把输入框重新摆出来，让用户能直接改
+    function recoverKey() {
+      clearKey();
+      updateKeyBtn();
+      renderKeyBox(keyInline,
+        "API key 无效或已过期，请重新填写（旧值已清除）。",
+        function () { followIn.focus(); });
     }
 
     // ══════════════════════════════════════════════
@@ -1294,6 +1364,7 @@
             if (stale()) return;
             bodyEl.innerHTML = '<p class="ha-empty"><b>' + esc(failHint(st)) +
               "</b><br>" + esc(String(msg || "").slice(0, 300)) + "</p>";
+            if (st === 401) { recoverKey(); }     // 直接把输入框摆出来让用户改
           }
         );
       });
@@ -1429,12 +1500,9 @@
             for (i6 = 0; i6 < bk.length; i6++) push(bk[i6]);
           }
           if (!hits.length) return [];
-          var speakerSet = {}, subs = substrsOf(question), k7;
-          if (inv && inv.speakers) {
-            for (k7 = 0; k7 < subs.length; k7++) {
-              if (inv.speakers[subs[k7]]) speakerSet[subs[k7]] = 1;
-            }
-          }
+          // 同样是名字扫描，保证「鸣」「白」这类单字名能命中自己的台词
+          var speakerSet = {}, asked2 = namesInText(question, inv && inv.speakers, 3), k7;
+          for (k7 = 0; k7 < asked2.length; k7++) speakerSet[asked2[k7]] = 1;
           return Promise.all(hits.map(function (h) {
             return fetchRecordLines(h, question, nRecLines, nRecChars, speakerSet);
           }));
@@ -1525,9 +1593,21 @@
               placeholder.querySelector(".ha-bubble").innerHTML =
                 '<p class="ha-empty"><b>' + esc(failHint(st)) + "</b><br>" +
                 esc(String(msg || "").slice(0, 300)) + "</p>";
+              if (st === 401) { recoverKey(); }
             }
           );
         }
+      });
+    }
+
+    // ── 设置 / 修改 API key（常驻入口，随时可改）──
+    if (setKeyBtn) {
+      setKeyBtn.addEventListener("click", function () {
+        renderKeyBox(keyInline,
+          getKey()
+            ? "当前已保存一个 key。填入新的会覆盖它；也可以点「清除 key」后重填。"
+            : "填入你的 DeepSeek API key。检索区的一键解读与这里的问答共用同一个 key，只存在本页。",
+          function () { followIn.focus(); });
       });
     }
 
@@ -1564,6 +1644,7 @@
     });
 
     // ── 初始化：问答区一开始就在，先打招呼 ──
+    updateKeyBtn();
     greet();
     loadInvert().then(function (inv) {
       if (inv && inv.terms) setDict(inv.terms);
