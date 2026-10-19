@@ -651,10 +651,11 @@
       var t = base[i];
       if (GENERIC[t]) continue;
 
-      // 3 字以上基本是切分残渣：「顺风车筷子」「碗穿身上」。
-      // 能用词典切开就切，切不开整个丢弃，且**不记入 multi**——
-      // 否则它里面的单字会被连带跳过，「碗」就补不回来。
-      if (t.length >= 3) {
+      // 只对**纯中文长串**做切分/丢弃。
+      // 英文名（joy、joy-llk）不能被当成切分残渣丢掉——
+      // 「讲解一下joy和顺风车在厕所的剧情」正是因为把 joy 丢了，
+      // 三个关键词只剩两个，扫不到那场。
+      if (t.length >= 3 && /^[\u4e00-\u9fff]+$/.test(t)) {
         var segs = segmentByDict(t);
         for (j = 0; j < segs.length; j++) {
           if (GENERIC[segs[j]]) continue;
@@ -663,8 +664,8 @@
         }
         continue;
       }
-      if (t.length === 2) {
-        push(t, 1);
+      if (t.length >= 2) {
+        push(t, t.length - 1);
         multi.push(t);
       }
     }
