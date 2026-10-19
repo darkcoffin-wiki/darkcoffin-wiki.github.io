@@ -218,6 +218,111 @@
 .heijiu-ui .ha-keybox .ha-key-row{margin:0}
 .heijiu-ui .ha-keybox .ha-key{font-size:.86rem}
 
+/* ══════════════════════════════════════════════════════════
+   两个区块：搜索（免费） / 问答（需 API）
+   ══════════════════════════════════════════════════════════ */
+.heijiu-ui .ha-block{
+  margin:1.1rem 0; padding:1rem 1.1rem;
+  border:1px solid var(--ha-line); border-radius:12px;
+}
+.heijiu-ui .ha-blk-chat{border-color:var(--ha-line-strong)}
+
+.heijiu-ui .ha-block-h{
+  display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap;
+  margin:0 0 .85rem; padding-bottom:.5rem;
+  font-size:1rem; font-weight:700;
+  border-bottom:1px solid var(--ha-line);
+}
+.heijiu-ui .ha-free,
+.heijiu-ui .ha-need{
+  font-size:.75rem; font-weight:400; letter-spacing:.02em;
+  padding:.06rem .5rem; border-radius:99px;
+  border:1px solid var(--ha-line-strong); color:var(--ha-muted);
+}
+.heijiu-ui .ha-need{border-color:var(--ha-accent); color:var(--ha-accent)}
+
+/* ── 一次性解读结果（搜索区内，独立于下方问答）── */
+.heijiu-ui .ha-oneshot{
+  margin:1rem 0 0; padding:.85rem 1rem;
+  border:1px solid var(--ha-accent); border-radius:12px;
+  background:rgba(168,59,37,.04);
+}
+/* 这个容器有边框，空着就会露出一个难看的空框：
+   除了 [hidden]，再兜一层 :empty。 */
+.heijiu-ui .ha-oneshot[hidden],
+.heijiu-ui .ha-oneshot:empty{display:none}
+.heijiu-ui .ha-oneshot-head{
+  display:flex; align-items:center; justify-content:space-between; gap:.6rem;
+  margin:0 0 .6rem; padding-bottom:.45rem;
+  font-size:.86rem; font-weight:700; color:var(--ha-accent);
+  border-bottom:1px dashed var(--ha-line-strong);
+}
+.heijiu-ui .ha-oneshot-close{
+  flex:0 0 auto; width:1.6rem; height:1.6rem; line-height:1;
+  font-size:1.1rem; color:var(--ha-muted);
+  background:transparent; border:1px solid var(--ha-line);
+  border-radius:8px; cursor:pointer;
+}
+.heijiu-ui .ha-oneshot-close:hover{border-color:var(--ha-accent); color:var(--ha-accent)}
+.heijiu-ui .ha-oneshot-body{font-size:.94rem; line-height:1.8}
+.heijiu-ui .ha-oneshot-body .ha-ans{margin:0; padding:0; border:0; background:transparent}
+.heijiu-ui .ha-oneshot-src{margin:.6rem 0 0}
+
+/* ── 问答：聊天气泡，AI 在左、用户在右 ── */
+.heijiu-ui .ha-chat{
+  margin:0 0 .9rem;
+  max-height:34rem; overflow-y:auto;
+  padding-right:.2rem;
+}
+.heijiu-ui .ha-msg{display:flex; margin:.6rem 0}
+.heijiu-ui .ha-msg.ai{justify-content:flex-start}
+.heijiu-ui .ha-msg.user{justify-content:flex-end}
+
+.heijiu-ui .ha-bubble{
+  max-width:84%; min-width:2rem;
+  padding:.62rem .9rem;
+  border-radius:14px;
+  font-size:.93rem; line-height:1.78;
+  word-break:break-word;
+}
+.heijiu-ui .ha-msg.ai .ha-bubble{
+  background:var(--ha-soft);
+  border:1px solid var(--ha-line);
+  border-top-left-radius:5px;
+}
+.heijiu-ui .ha-msg.user .ha-bubble{
+  background:rgba(168,59,37,.10);
+  border:1px solid rgba(168,59,37,.30);
+  border-top-right-radius:5px;
+}
+.heijiu-ui .ha-bubble p{margin:.42rem 0}
+.heijiu-ui .ha-bubble p:first-child{margin-top:0}
+.heijiu-ui .ha-bubble p:last-child{margin-bottom:0}
+.heijiu-ui .ha-bubble .ha-ans{margin:0; padding:0; border:0; background:transparent}
+.heijiu-ui .ha-greet-tip{
+  margin-top:.5rem !important; padding-top:.45rem;
+  border-top:1px dashed var(--ha-line-strong);
+  font-size:.82rem; color:var(--ha-muted);
+}
+.heijiu-ui .ha-msg-usage{
+  margin:.5rem 0 0 !important; padding-top:.4rem;
+  border-top:1px dashed var(--ha-line);
+  font-size:.75rem; color:var(--ha-muted);
+}
+.heijiu-ui .ha-turn-src{margin:.55rem 0 0}
+.heijiu-ui .ha-turn-src .ha-src{font-size:.8rem}
+
+/* ── 内联 key 输入（只在需要时出现在被点击处）── */
+.heijiu-ui .ha-keyinline{
+  margin:0 0 .7rem; padding:.7rem .8rem;
+  border:1px solid var(--ha-accent); border-radius:10px;
+  background:rgba(168,59,37,.05);
+}
+.heijiu-ui .ha-keytip{
+  margin:0 0 .5rem; font-size:.82rem; line-height:1.6; color:var(--ha-muted);
+}
+.heijiu-ui .ha-keyinline .ha-key-row{margin:0}
+
 /* ── 对话流（追问）── */
 .heijiu-ui .ha-chat{margin:.9rem 0 0}
 .heijiu-ui .ha-turn{

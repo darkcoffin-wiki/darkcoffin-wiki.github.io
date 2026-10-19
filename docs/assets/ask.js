@@ -1077,85 +1077,98 @@
   function mountAsk(host) {
     host.classList.add("heijiu-ui");
     host.innerHTML =
-      '<div class="ha-bar">' +
-        '<input class="ha-q" type="search" autocomplete="off" ' +
-          'placeholder="搜关键词，或直接问一句话" aria-label="检索或提问">' +
-        '<button class="ha-go" type="button">搜索</button>' +
-        '<button class="ha-clear" type="button" title="清空搜索与结果（不影响对话）">清空</button>' +
-      "</div>" +
-      '<p class="ha-meta">跨四站检索：设定 · 花絮 · 跑团 · 分析</p>' +
-      '<div class="ha-keybox">' + keyRowHtml() + "</div>" +
-      '<div class="ha-out"></div>' +
-      '<div class="ha-aibar"></div>' +
-      '<div class="ha-chat"></div>' +
-      '<div class="ha-ask-row" hidden>' +
-        '<input class="ha-follow" type="search" autocomplete="off" ' +
-          'placeholder="继续追问，比如：那进盟呢？" aria-label="追问">' +
-        '<button class="ha-send" type="button">发送</button>' +
-        '<button class="ha-end" type="button" title="结束本次对话，重新开始">清空对话</button>' +
-      "</div>" +
-      '<p class="ha-status"></p>' +
-      '<p class="ha-legend">结果按站分组：<b>设定站</b>是作者原典（含剧透），' +
-        "<b>分析站</b>是读者的 AI 分析、不是作者设定。点任一条进入原文核对。</p>";
+      // ══════ 搜索区（不需要 API）══════
+      '<section class="ha-block ha-blk-search">' +
+        '<p class="ha-block-h">搜索<span class="ha-free">免费 · 不需要 API key</span></p>' +
+        '<div class="ha-bar">' +
+          '<input class="ha-q" type="search" autocomplete="off" ' +
+            'placeholder="搜关键词，比如：希联、四季常村、镜缘" aria-label="检索《黑柩》四个站">' +
+          '<button class="ha-go" type="button">搜索</button>' +
+          '<button class="ha-clear" type="button" title="清空搜索与结果">清空</button>' +
+        "</div>" +
+        '<p class="ha-meta">跨四站检索：设定 · 花絮 · 跑团 · 分析</p>' +
+        '<div class="ha-out"></div>' +
+        '<div class="ha-aibar"></div>' +
+        '<div class="ha-oneshot" hidden></div>' +
+        '<p class="ha-legend">结果按站分组：<b>设定站</b>是作者原典（含剧透），' +
+          "<b>分析站</b>是读者的 AI 分析、不是作者设定。点任一条进入原文核对。</p>" +
+      "</section>" +
+
+      // ══════ 问答区（需要 API）══════
+      '<section class="ha-block ha-blk-chat">' +
+        '<p class="ha-block-h">问答<span class="ha-need">需要你自己的 DeepSeek API key</span></p>' +
+        '<div class="ha-chat"></div>' +
+        '<div class="ha-keyinline" hidden></div>' +
+        '<div class="ha-ask-row">' +
+          '<input class="ha-follow" type="search" autocomplete="off" ' +
+            'placeholder="问一句，比如：希联的意识形态是什么" aria-label="向助手提问">' +
+          '<button class="ha-send" type="button">发送</button>' +
+          '<button class="ha-end" type="button" title="清空对话">清空对话</button>' +
+        "</div>" +
+        '<p class="ha-status"></p>' +
+      "</section>";
 
     var q = host.querySelector(".ha-q");
     var go = host.querySelector(".ha-go");
     var clearBtn = host.querySelector(".ha-clear");
     var out = host.querySelector(".ha-out");
     var aibar = host.querySelector(".ha-aibar");
+    var oneshot = host.querySelector(".ha-oneshot");
     var chat = host.querySelector(".ha-chat");
-    var askRow = host.querySelector(".ha-ask-row");
+    var keyInline = host.querySelector(".ha-keyinline");
     var followIn = host.querySelector(".ha-follow");
     var sendBtn = host.querySelector(".ha-send");
     var endBtn = host.querySelector(".ha-end");
     var statusEl = host.querySelector(".ha-status");
-    var keyIn = host.querySelector(".ha-key");
-    var forgetBtn = host.querySelector(".ha-forget");
 
-    var sess = {
-      system: systemPrompt(),
-      sources: [],
-      history: [],
-      turns: 0,
-      cost: 0,
-      lastQuestion: ""
+    var cur = { query: "", groups: [] };     // 当前搜索结果
+    var sess = {                             // 问答会话（与搜索无关）
+      system: systemPrompt(), sources: [], history: [],
+      turns: 0, cost: 0, lastQuestion: ""
     };
-    var cur = { query: "", groups: [] };
     var busy = false;
 
-    // ── key ──
-    forgetBtn.addEventListener("click", function () {
-      clearKey(); keyIn.value = "";
-      statusEl.textContent = "已清除本页保存的 key。";
-    });
-
-    function setBusy(v) {
-      busy = v;
-      go.disabled = v;
-      sendBtn.disabled = v;
-      keyIn.disabled = v;
-      followIn.disabled = v;
-    }
-
-    function updateStatus(extra) {
-      var chars = 0, i;
-      for (i = 0; i < sess.sources.length; i++) chars += sess.sources[i].text.length;
-      statusEl.textContent = (extra ? extra + "　" : "") +
-        (sess.turns
-          ? "已 " + sess.turns + " 轮 · 资料 " + sess.sources.length + " 条（约 " +
-            fmtNum(chars) + " 字）· 累计估算 ¥" + sess.cost.toFixed(4) +
-            (sess.turns >= MAX_TURNS ? "　｜　已达轮数上限，点「清空对话」重开" : "")
-          : "");
+    // ══════════════════════════════════════════════
+    // 共用的 key 输入：只有 AI 功能才需要，出现在被点击的地方
+    // ══════════════════════════════════════════════
+    function askKey(box, onReady, hint) {
+      if (getKey()) { onReady(); return true; }
+      box.hidden = false;
+      box.innerHTML =
+        '<p class="ha-keytip">' + esc(hint) + "</p>" + keyRowHtml();
+      var ki = box.querySelector(".ha-key");
+      var st = box.querySelector(".ha-start");
+      var fg = box.querySelector(".ha-forget");
+      fg.addEventListener("click", function () {
+        clearKey(); ki.value = "";
+        box.hidden = true;
+      });
+      function submit() {
+        var v = (ki.value || "").trim();
+        if (!v) { ki.focus(); return; }
+        setKey(v);
+        box.hidden = true;
+        box.innerHTML = "";
+        onReady();
+      }
+      st.addEventListener("click", submit);
+      ki.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter" || ev.keyCode === 13) { ev.preventDefault(); submit(); }
+      });
+      ki.focus();
+      return false;
     }
 
     // ══════════════════════════════════════════════
-    // 检索
+    // 搜索（免费，不需要 key）
     // ══════════════════════════════════════════════
     function runSearch() {
       var query = q.value.trim();
       if (!query) { out.innerHTML = ""; aibar.innerHTML = ""; return; }
       out.innerHTML = '<p class="ha-loading">正在加载索引…</p>';
       aibar.innerHTML = "";
+      oneshot.innerHTML = "";
+      oneshot.hidden = true;
 
       loadInvert().then(function (inv) {
         if (inv && inv.terms) setDict(inv.terms);
@@ -1184,57 +1197,131 @@
       if (!cur.groups.length) { aibar.innerHTML = ""; return; }
       aibar.innerHTML =
         '<div class="ha-ai-bar">' +
-          '<button class="ha-aibtn" type="button">✨ 用 AI 回答这个问题</button>' +
-          '<span class="ha-ai-note">读取最相关的原文作答，回答后可继续追问</span>' +
+          '<button class="ha-aibtn" type="button">✨ 用 AI 解释这些结果</button>' +
+          '<span class="ha-ai-note">一次性解读，需要 API key</span>' +
         "</div>";
-      aibar.querySelector(".ha-aibtn").addEventListener("click", startAI);
-    }
-
-    function needKey() {
-      var k = (keyIn.value || "").trim();
-      if (!k) {
-        keyIn.focus();
-        statusEl.textContent = "请先填入 DeepSeek API key —— 只需填一次，检索和问答共用。";
-        return "";
-      }
-      setKey(k);
-      return k;
-    }
-
-    function startAI() {
-      if (!needKey()) return;
-      askOnce(cur.query, false);
+      aibar.querySelector(".ha-aibtn").addEventListener("click", startOneShot);
     }
 
     // ══════════════════════════════════════════════
-    // 一轮问答
+    // 一次性解读搜索结果（与下面的问答互不影响）
     // ══════════════════════════════════════════════
-    function addTurn(question) {
-      var wrap = document.createElement("div");
-      wrap.className = "ha-turn";
-      wrap.innerHTML =
-        '<p class="ha-q-line"><span class="who">问</span>' + esc(question) + "</p>" +
-        '<div class="ha-a-line"><span class="who ai">AI</span><div class="ha-body">' +
-          '<p class="ha-loading">正在检索并生成回答…</p></div></div>' +
-        '<div class="ha-turn-src"></div>';
-      chat.appendChild(wrap);
-      if (wrap.scrollIntoView) { wrap.scrollIntoView({ block: "nearest" }); }
-      return {
-        root: wrap,
-        body: wrap.querySelector(".ha-body"),
-        src: wrap.querySelector(".ha-turn-src")
-      };
+    function startOneShot() {
+      askKey(oneshot, runOneShot,
+        "用 AI 解读搜索结果需要 DeepSeek API key。填一次即可，下面的问答也会共用。");
     }
 
-    function askOnce(question, isFollow) {
-      if (busy) return;
-      if (!question) return;
+    function runOneShot() {
+      var question = cur.query;
+      var picks = fetchPicks(cur.groups, AI_PICKS, 2);
+      oneshot.hidden = false;
+      oneshot.innerHTML = '<p class="ha-loading">正在读取资料…</p>';
+
+      buildContext(picks, function (d, n) {
+        oneshot.innerHTML = '<p class="ha-loading">正在读取资料… ' + d + "/" + n + "</p>";
+      }).then(function (sources) {
+        if (!sources.length) {
+          oneshot.innerHTML = '<p class="ha-empty">没能读到资料正文，无法作答。</p>';
+          return;
+        }
+        var chars = 0, i;
+        for (i = 0; i < sources.length; i++) chars += sources[i].text.length;
+        oneshot.innerHTML =
+          '<div class="ha-oneshot-head">✨ AI 对「' + esc(question) + '」的解读' +
+          '<button class="ha-oneshot-close" type="button" title="收起">×</button></div>' +
+          '<div class="ha-oneshot-body"><p class="ha-loading">正在生成…</p></div>' +
+          '<div class="ha-oneshot-src"></div>' +
+          '<p class="ha-usage-slot"></p>';
+        var bodyEl = oneshot.querySelector(".ha-oneshot-body");
+        var srcEl = oneshot.querySelector(".ha-oneshot-src");
+        oneshot.querySelector(".ha-oneshot-close").addEventListener("click", function () {
+          oneshot.innerHTML = ""; oneshot.hidden = true;
+        });
+
+        streamChat(
+          getKey(),
+          [
+            { role: "system", content: sess.system },
+            { role: "user", content: contextPrompt(picks, sources, question) }
+          ],
+          function (d, body) { bodyEl.innerHTML = ansHtml(body, sources); },
+          function (body, usage) {
+            bodyEl.innerHTML = ansHtml(body, sources);
+            var cite = citedSources(body, sources);
+            srcEl.innerHTML = cite.length ? sourcesHtml(cite) : "";
+            var c = estCost(chars, body.length);
+            oneshot.querySelector(".ha-usage-slot").className = "ha-usage";
+            oneshot.querySelector(".ha-usage-slot").textContent =
+              "以上为 AI 生成，请以资料来源为准。　" +
+              (usage ? "输入 " + fmtNum(usage.prompt_tokens || 0) + " / 输出 " +
+                fmtNum(usage.completion_tokens || 0) + " tokens" : "") +
+              "　本次约 ¥" + c.toFixed(4) +
+              "　想接着问？用下面的对话框。";
+          },
+          function (st, msg) {
+            bodyEl.innerHTML = '<p class="ha-empty"><b>' + esc(failHint(st)) +
+              "</b><br>" + esc(String(msg || "").slice(0, 300)) + "</p>";
+          }
+        );
+      });
+    }
+
+    // ══════════════════════════════════════════════
+    // 问答：聊天气泡，AI 在左、用户在右
+    // ══════════════════════════════════════════════
+    function addMsg(role, html) {
+      var d = document.createElement("div");
+      d.className = "ha-msg " + role;
+      d.innerHTML = '<div class="ha-bubble">' + html + "</div>";
+      chat.appendChild(d);
+      if (d.scrollIntoView) { d.scrollIntoView({ block: "nearest" }); }
+      return d;
+    }
+
+    function greet() {
+      chat.innerHTML = "";
+      addMsg("ai",
+        "<p>你好，我是黑柩 Wiki 的助手 👋</p>" +
+        "<p>可以直接问我关于《黑柩》的任何问题 —— 人物、势力、某一段剧情、" +
+        "某一季某一场发生了什么、某人说过什么话，都可以。</p>" +
+        "<p>我会先检索 wiki 四站和跑团原始记录，再依据查到的原文回答，" +
+        "并标出来源编号；资料里没有的我会直说没有。</p>" +
+        '<p class="ha-greet-tip">第一次使用需要填一次 DeepSeek API key（只存在本页）。</p>');
+    }
+
+    function setBusy(v) {
+      busy = v;
+      go.disabled = v;
+      sendBtn.disabled = v;
+      followIn.disabled = v;
+    }
+
+    function updateStatus() {
+      var chars = 0, i;
+      for (i = 0; i < sess.sources.length; i++) chars += sess.sources[i].text.length;
+      statusEl.textContent = sess.turns
+        ? "已 " + sess.turns + " 轮 · 资料 " + sess.sources.length + " 条（约 " +
+          fmtNum(chars) + " 字）· 累计估算 ¥" + sess.cost.toFixed(4) +
+          (sess.turns >= MAX_TURNS ? "　｜　已达上限，点「清空对话」重开" : "")
+        : "";
+    }
+
+    function send() {
+      var text = (followIn.value || "").trim();
+      if (!text) { followIn.focus(); return; }
       if (sess.turns >= MAX_TURNS) {
         statusEl.textContent = "已达轮数上限，点「清空对话」重新开始。";
         return;
       }
-      if (!needKey()) return;
+      askKey(keyInline, function () {
+        followIn.value = "";
+        addMsg("user", esc(text));
+        askTurn(text);
+      }, "问答复一次也不落地，需要 DeepSeek API key（只存本页，检索与解读共用）。");
+    }
 
+    function askTurn(question) {
+      if (busy) return;
       var enumer = isEnumeration(question);
       var nPicks = enumer ? 12 : AI_PICKS;
       var nPerStation = enumer ? 3 : 2;
@@ -1243,18 +1330,16 @@
       var nRecChars = enumer ? 9000 : 2400;
       var maxSrc = enumer ? 20 : MAX_SOURCES;
 
-      // 话题切换
       var switched = isNewTopic(question, sess.lastQuestion);
       if (switched) {
-        sess.history = [];
-        sess.sources = [];
-        sess.turns = 0;
-        sess.cost = 0;
+        sess.history = []; sess.sources = [];
+        sess.turns = 0; sess.cost = 0;
       }
       sess.lastQuestion = question;
 
       setBusy(true);
-      statusEl.textContent = switched ? "检测到换话题，已重置上下文，正在检索…" : "正在检索资料…";
+      var placeholder = addMsg("ai",
+        '<p class="ha-loading">正在检索资料…</p>');
 
       Promise.all([loadAll(), loadInvert()]).then(function (pre) {
         var data = pre[0], inv = pre[1];
@@ -1267,20 +1352,20 @@
         for (i = 0; i < sess.sources.length; i++) {
           have[sess.sources[i].stKey + "|" + sess.sources[i].url] = 1;
         }
-
         var first = sess.turns === 0;
         var wantFresh = first ? nPicks : (enumer ? 6 : 2);
         var fresh = [];
         for (i = 0; i < picks.length && fresh.length < wantFresh; i++) {
-          var key = picks[i].st.key + "|" + urlOf(picks[i].st.key, picks[i].e);
-          if (have[key]) continue;
+          var kk = picks[i].st.key + "|" + urlOf(picks[i].st.key, picks[i].e);
+          if (have[kk]) continue;
           fresh.push(picks[i]);
         }
         if (sess.sources.length >= maxSrc) fresh = [];
 
         var wikiP = fresh.length
           ? buildContext(fresh, function (d, n) {
-              statusEl.textContent = "正在读取 wiki 资料… " + d + "/" + n;
+              placeholder.querySelector(".ha-bubble").innerHTML =
+                '<p class="ha-loading">正在读取 wiki 资料… ' + d + "/" + n + "</p>";
             })
           : Promise.resolve([]);
 
@@ -1288,13 +1373,12 @@
           var hits = [], seen = {}, i6;
           function push(e) {
             if (!e || seen[e.file]) return;
-            seen[e.file] = 1;
-            hits.push(e);
+            seen[e.file] = 1; hits.push(e);
           }
           var hint = seasonHint(question);
           if (hint) {
-            var bySeason = sessionsOfSeason(entries, hint);
-            for (i6 = 0; i6 < bySeason.length && hits.length < nRecSess; i6++) push(bySeason[i6]);
+            var bs = sessionsOfSeason(entries, hint);
+            for (i6 = 0; i6 < bs.length && hits.length < nRecSess; i6++) push(bs[i6]);
           }
           var found = sessionsFromInvert(inv, question, nRecSess);
           for (i6 = 0; i6 < found.length && hits.length < nRecSess; i6++) {
@@ -1303,62 +1387,51 @@
               if (entries[k6].file === want) { push(entries[k6]); break; }
             }
           }
-          var fromWiki = sessionsFromGroups(groups);
-          for (i6 = 0; i6 < fromWiki.length && hits.length < nRecSess; i6++) {
-            push(findRecord(entries, fromWiki[i6].season, fromWiki[i6].no));
+          var fw = sessionsFromGroups(groups);
+          for (i6 = 0; i6 < fw.length && hits.length < nRecSess; i6++) {
+            push(findRecord(entries, fw[i6].season, fw[i6].no));
           }
           if (!hits.length) {
-            var byKw = searchRecords(entries, question);
-            for (i6 = 0; i6 < byKw.length; i6++) push(byKw[i6]);
+            var bk = searchRecords(entries, question);
+            for (i6 = 0; i6 < bk.length; i6++) push(bk[i6]);
           }
           if (!hits.length) return [];
-
           var speakerSet = {}, subs = substrsOf(question), k7;
           if (inv && inv.speakers) {
             for (k7 = 0; k7 < subs.length; k7++) {
               if (inv.speakers[subs[k7]]) speakerSet[subs[k7]] = 1;
             }
           }
-          statusEl.textContent = "正在读取跑团原始记录…" +
-            (enumer ? "（列举型问题，已扩大检索范围）" : "");
           return Promise.all(hits.map(function (h) {
             return fetchRecordLines(h, question, nRecLines, nRecChars, speakerSet);
           }));
         }).then(function (recs) {
-          var arr2 = [], i2;
-          for (i2 = 0; i2 < (recs || []).length; i2++) {
-            if (recs[i2]) arr2.push(recs[i2]);
-          }
-          return arr2;
+          var a2 = [], i2;
+          for (i2 = 0; i2 < (recs || []).length; i2++) if (recs[i2]) a2.push(recs[i2]);
+          return a2;
         }).catch(function () { return []; });
 
-        var tblP = loadTables().then(function (tables) {
-          return tablesToSource(tables, question);
+        var tblP = loadTables().then(function (t) {
+          return tablesToSource(t, question);
         }).catch(function () { return null; });
 
         Promise.all([wikiP, recP, tblP]).then(function (res) {
           var arr = res[0] || [], recs = res[1] || [], tblSrc = res[2];
           var base = sess.sources.length;
           var added = [], i3, s2;
-
           for (i3 = 0; i3 < arr.length && (base + added.length) < maxSrc; i3++) {
-            s2 = arr[i3];
-            s2.n = base + added.length + 1;
-            sess.sources.push(s2);
-            added.push(s2);
+            s2 = arr[i3]; s2.n = base + added.length + 1;
+            sess.sources.push(s2); added.push(s2);
           }
           for (i3 = 0; i3 < recs.length && sess.sources.length < maxSrc; i3++) {
             s2 = recordToSource(recs[i3]);
             s2.n = sess.sources.length + 1;
-            sess.sources.push(s2);
-            added.push(s2);
+            sess.sources.push(s2); added.push(s2);
           }
           if (tblSrc && sess.sources.length < maxSrc) {
             tblSrc.n = sess.sources.length + 1;
-            sess.sources.push(tblSrc);
-            added.push(tblSrc);
+            sess.sources.push(tblSrc); added.push(tblSrc);
           }
-
           proceed(added, first, switched);
         });
 
@@ -1371,22 +1444,19 @@
           var block = sourcesBlock(useSources);
           var curUser = (block ? block + "\n\n" : "") +
             (first ? "问题：" : "追问：") + question;
-
           var msgs = [{ role: "system", content: sess.system }]
             .concat(trimHistory(sess.history))
             .concat([{ role: "user", content: curUser }]);
 
-          var handle = addTurn(question);
-          askRow.hidden = false;
-          statusEl.textContent = "正在生成回答…";
           var chars = 0, i5;
           for (i5 = 0; i5 < useSources.length; i5++) chars += useSources[i5].text.length;
+          placeholder.querySelector(".ha-bubble").innerHTML =
+            '<p class="ha-loading">正在生成回答…</p>';
 
           streamChat(
-            getKey(),
-            msgs,
-            function (delta, body) {
-              handle.body.innerHTML = ansHtml(body, sess.sources);
+            getKey(), msgs,
+            function (d, body) {
+              placeholder.querySelector(".ha-bubble").innerHTML = ansHtml(body, sess.sources);
             },
             function (body, usage) {
               setBusy(false);
@@ -1395,90 +1465,73 @@
               sess.history.push({ role: "assistant", content: body });
               sess.history = trimHistory(sess.history);
 
-              handle.body.innerHTML = ansHtml(body, sess.sources);
-              var cited = citedSources(body, sess.sources);
-              handle.src.innerHTML = cited.length ? sourcesHtml(cited) : "";
-
+              var bubble = placeholder.querySelector(".ha-bubble");
+              bubble.innerHTML = ansHtml(body, sess.sources);
+              var cite = citedSources(body, sess.sources);
+              if (cite.length) {
+                var sd = document.createElement("div");
+                sd.className = "ha-turn-src";
+                sd.innerHTML = sourcesHtml(cite);
+                bubble.appendChild(sd);
+              }
               var c = estCost(chars, body.length);
               sess.cost += c;
               var u = document.createElement("p");
-              u.className = "ha-usage";
-              u.textContent = "以上为 AI 生成，请以资料来源为准。　" +
-                (usage ? "输入 " + fmtNum(usage.prompt_tokens || 0) + " / 输出 " +
-                  fmtNum(usage.completion_tokens || 0) + " tokens"
-                  : "本轮约 " + fmtNum(Math.round(chars * 0.6)) + " 输入 tokens") +
+              u.className = "ha-msg-usage";
+              u.textContent = (usage ? fmtNum(usage.prompt_tokens || 0) + "/" +
+                fmtNum(usage.completion_tokens || 0) + " tokens" : "") +
                 "　本轮约 ¥" + c.toFixed(4) +
-                (added.length
-                  ? "　（本轮 " + added.length + " 条资料" +
-                    (recAdded.length ? "，含 " + recAdded.length + " 场原始记录" : "") + "）"
-                  : "");
-              handle.root.appendChild(u);
-              updateStatus(switched ? "已按新话题重置上下文。" : "");
-              if (followIn) { followIn.focus(); }
-            },
-            function (status, msg) {
-              setBusy(false);
-              handle.body.innerHTML = '<p class="ha-empty"><b>' + esc(failHint(status)) +
-                "</b><br>" + esc(String(msg || "").slice(0, 300)) + "</p>";
+                (recAdded.length ? "　含 " + recAdded.length + " 场原始记录" : "");
+              bubble.appendChild(u);
               updateStatus();
+              if (switched) { statusEl.textContent = "（已按新话题重置上下文）"; }
+              followIn.focus();
+            },
+            function (st, msg) {
+              setBusy(false);
+              placeholder.querySelector(".ha-bubble").innerHTML =
+                '<p class="ha-empty"><b>' + esc(failHint(st)) + "</b><br>" +
+                esc(String(msg || "").slice(0, 300)) + "</p>";
             }
           );
         }
       });
     }
 
-    // ── 追问 ──
-    sendBtn.addEventListener("click", function () {
-      var t = (followIn.value || "").trim();
-      if (!t) { followIn.focus(); return; }
-      followIn.value = "";
-      askOnce(t, true);
-    });
-    followIn.addEventListener("keydown", function (ev) {
-      if (ev.key === "Enter" || ev.keyCode === 13) {
-        ev.preventDefault();
-        var t = (followIn.value || "").trim();
-        if (!t) return;
-        followIn.value = "";
-        askOnce(t, true);
-      }
-    });
-
-    endBtn.addEventListener("click", function () {
-      sess.sources = []; sess.history = []; sess.turns = 0; sess.cost = 0;
-      sess.lastQuestion = "";
-      chat.innerHTML = "";
-      askRow.hidden = true;
-      statusEl.textContent = "对话已清空。可以继续搜索，或点「用 AI 回答这个问题」重开一轮。";
-      setBusy(false);
-      followIn.value = "";
-      q.focus();
-    });
-
-    // ── 清空检索（只清搜索区，对话另行「清空对话」）──
+    // ── 事件 ──
     clearBtn.addEventListener("click", function () {
-      q.value = "";
-      out.innerHTML = "";
-      aibar.innerHTML = "";
-      cur.query = "";
-      cur.groups = [];
+      q.value = ""; out.innerHTML = ""; aibar.innerHTML = "";
+      oneshot.innerHTML = ""; oneshot.hidden = true;
+      cur.query = ""; cur.groups = [];
       host.querySelector(".ha-meta").innerHTML = "跨四站检索：设定 · 花絮 · 跑团 · 分析";
-      statusEl.textContent = sess.turns
-        ? "已清空搜索。下面的对话还在，可继续追问或点「清空对话」结束。"
-        : "";
       if (window.history && history.replaceState) {
         history.replaceState(null, "", location.pathname + location.search);
       }
       q.focus();
     });
 
-    // ── 搜索入口 ──
     go.addEventListener("click", runSearch);
     q.addEventListener("keydown", function (ev) {
       if (ev.key === "Enter" || ev.keyCode === 13) { ev.preventDefault(); runSearch(); }
     });
 
-    // ── 初始化 ──
+    sendBtn.addEventListener("click", send);
+    followIn.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" || ev.keyCode === 13) { ev.preventDefault(); send(); }
+    });
+
+    endBtn.addEventListener("click", function () {
+      sess.sources = []; sess.history = []; sess.turns = 0; sess.cost = 0;
+      sess.lastQuestion = "";
+      greet();
+      statusEl.textContent = "对话已清空。";
+      setBusy(false);
+      followIn.value = "";
+      followIn.focus();
+    });
+
+    // ── 初始化：问答区一开始就在，先打招呼 ──
+    greet();
     loadInvert().then(function (inv) {
       if (inv && inv.terms) setDict(inv.terms);
       return loadAll();

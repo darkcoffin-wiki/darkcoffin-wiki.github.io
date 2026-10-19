@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>问答搜索 · 黑柩 Wiki</title>
-<meta name="description" content="跨花絮、跑团、设定、分析四站检索《黑柩》相关内容：输入一句话，直接跳到原文。">
+<meta name="description" content="搜索《黑柩》四站原文，或与 AI 助手对话提问；搜索免费，AI 部分需自备 DeepSeek API key。">
 <link rel="icon" type="image/png" href="assets/icon.png">
 <link rel="apple-touch-icon" href="assets/icon.png">
 <link rel="stylesheet" href="assets/style.css">
@@ -25,29 +25,37 @@
 
 <main class="wrap">
   <h1>问答搜索</h1>
-  <p class="muted">搜索与问答在同一个页面：先搜关键词（或直接问一句话），
-    <a href="lore/index.html">设定集</a>、<a href="huaxu/index.html">花絮</a>、
-    <a href="trpg/index.html">跑团记录</a>、<a href="report/index.html">分析报告</a>
-    会一起列出相关条目；想深挖就点「用 AI 回答这个问题」，
-    它会读原文作答，回答完还能接着追问。</p>
-
-  <p class="muted">AI 部分用<b>你自己的 DeepSeek API key</b>：<b>只填一次</b>，
-    检索和问答共用（key 只存在本页会话里，关掉标签页即失效，不上传、不记录）。
-    <b>AI 可能出错或遗漏，一切以链接到的原文为准。</b></p>
+  <p class="muted">上面<b>搜索</b>，下面<b>问答</b>，两块互不影响。
+    <b>搜索免费、不需要 API key</b>；AI 的两个入口（「用 AI 解释这些结果」和下方对话框）
+    需要你自己的 DeepSeek API key，只填一次、两处共用。</p>
 
   <div id="heijiu-ask"></div>
 
   <section class="toc" style="margin-top:2rem">
-    <h2 class="plain">怎么问比较好</h2>
+    <h2 class="plain">怎么用比较好</h2>
     <ul style="margin:.4rem 0 0;padding-left:1.2rem;color:var(--muted)">
-      <li><b>名词优先</b>：只输入「希联」「北沙」「天使」「镜缘」这类词，命中率最高。</li>
-      <li><b>不必写整句</b>：写成自然语言也行，但系统是按关键词匹配的，长句的效果取决于里面有几个实体词。</li>
-      <li><b>简称与全称都认</b>：希联／希望联邦、进盟／进化者同盟、教团国／启示录教团国 等会互相当作同义词。</li>
-      <li><b>想看原文就点结果</b>——检索本身不生成内容，每个结果都指向 wiki 里的真实页面。</li>
-      <li><b>AI 问答</b>：点检索结果下方的「用 AI 回答这个问题」，填入你自己的 DeepSeek
-        API key，它会读取相关原文再作答，并给每个结论标注来源编号。回答仅供参考。</li>
-      <li><b>追问</b>：回答完可以在下面的输入框接着问（比如「那进盟呢？」）。
-        换话题时它会自动补查新的原文，并提示「已按新话题重置上下文」。</li>
+      <li><b>只是找原文</b>：用上面的搜索，不需要任何配置。输入「希联」「北沙」「四季常村」这类名词命中率最高；
+        简称和全称互认（希联／希望联邦、进盟／进化者同盟、教团国／启示录教团国）。</li>
+      <li><b>想一次看清某个问题的脉络</b>：先搜，再点「用 AI 解释这些结果」。
+        它会把检索到的原文串起来讲一遍，并标出来源编号；这是<b>一次性</b>的，不占对话。</li>
+      <li><b>想追着问</b>：用下面的对话框。直接写整句就行——「希联的意识形态是什么」
+        「余烬说过什么经典台词」「第九季发生了什么」都可以。</li>
+      <li><b>可以追问</b>：接着问「那进盟呢」；换话题时它会自动重置上下文并补查新原文。</li>
+      <li><b>它不会编</b>：资料里没有的会直说没有；设定互相矛盾时会标「异说」；
+        列举类问题（「都有谁」）会说明「以下是检索到的，可能不全」。</li>
+      <li><b>关于 key</b>：只存在本页会话里，关闭标签页即失效，不上传、不记录。
+        一次问答约一两分钱（deepseek-flash，周末半价），对话框底部显示累计估算。</li>
+    </ul>
+  </section>
+
+  <section class="toc" style="margin-top:1.4rem">
+    <h2 class="plain">数据从哪来</h2>
+    <ul style="margin:.4rem 0 0;padding-left:1.2rem;color:var(--muted)">
+      <li><b>wiki 四站</b>：<a href="lore/index.html">设定集</a>（作者原典）、
+        <a href="huaxu/index.html">花絮</a>、<a href="trpg/index.html">跑团场次</a>、
+        <a href="report/index.html">分析报告</a>（读者分析，非作者设定）。</li>
+      <li><b>跑团原始记录</b>：152 场的脱敏台词切片，用于查「谁在那一场说了什么」。</li>
+      <li><b>人物表</b>：NPC 总表（379 人，含别名／首见季／出场次数）与玩家用名总表。</li>
     </ul>
   </section>
 </main>
