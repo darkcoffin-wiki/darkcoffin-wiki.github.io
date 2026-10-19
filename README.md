@@ -135,8 +135,18 @@ DeepSeek API 也回显任意 Origin，所以宿主页（WordPress）能直连两
 ```
 docs/records/
 ├── index.json          152 场索引（季/场/时间/地点/在场/摘要）
-└── session/*.tsv       152 个按场切片（季 场 序号 时间 规范名 类型 正文）
+├── session/*.tsv       152 个按场切片（季 场 序号 时间 规范名 类型 正文）
+├── npc.md              NPC 总表（379 人：别名／身份／首见季／出场次数）
+└── players.md          玩家用名总表（37 人：一个玩家的全部群名片）
 ```
+
+后两张表是回答「这人还有别的叫法吗」「某玩家用过哪些名字」的关键：
+
+| 问 | 查哪里 |
+|---|---|
+| 李伊一直都叫李伊吗 | `npc.md` 第 18 行：别名「未明」、首见第七季、出场 252 次 |
+| 千分用过哪些名字 | `players.md` 第 4 行：12 个群名片全列 |
+| 镜缘还有别的叫法吗 | `npc.md` 第 1 行：别名「镜缘大人」 |
 
 **脱敏规则**（按作者《检索取证与写作流程》的要求）：
 
@@ -166,6 +176,8 @@ docs/records/
 
 ```powershell
 python tools\build_records.py --force
+python tools\build_people.py --force
+python tools\verify_records_privacy.py   # 必跑：切片里不能有 QQ 号
 ```
 
 `build_all.py --clean` 后若发现 `docs/records/` 缺失且源文件在，会自动重建；源文件不在则警告。

@@ -56,6 +56,10 @@
   var AI_PICKS = 5;          // 喂给模型的资料条数（wiki 四站）
   var AI_CTX_CHARS = 2600;   // 每条资料截断字数
   var REC_INDEX = "records/index.json";   // 跑团原始记录索引（152 场）
+  var TABLES = [                          // 两张人物表（问答时按行摘录）
+    { key: "npc", file: "records/npc.md", label: "NPC 总表", take: 3 },
+    { key: "ply", file: "records/players.md", label: "玩家用名总表", take: 2 }
+  ];
   var REC_MAX_SESSIONS = 2;  // 每次最多取几场原始记录
   var REC_MAX_LINES = 36;    // 每场最多摘几行台词
 
@@ -76,13 +80,45 @@
   // 停用词只收**明确的虚词/疑问词**，并且按长度降序替换（先长后短），
   // 避免把「形态」这种实词切碎。
   var STOPWORDS = [
+    // 疑问 / 语气
     "为什么", "什么", "怎么", "怎样", "如何", "哪些", "哪个", "多少",
-    "请问", "介绍", "讲讲", "说说", "关于", "一下", "会不会", "是不是",
-    "有没有", "可以", "能否", "能不能", "的话", "以及", "还有",
+    "是谁", "是什么", "请问", "介绍", "讲讲", "说说", "关于", "一下",
+    "会不会", "是不是", "有没有", "可以", "能否", "能不能", "的话",
+    "以及", "还有", "到底", "究竟",
+    // 感情 / 关系 / 口语动词
+    // 「李伊喜欢谁」若只切掉「谁」会得到「李伊喜欢」，而没有任何条目叫这个名字，
+    // 命中直接归零。把这类词切掉才能落回核心实体「李伊」。
+    "喜欢", "讨厌", "最爱", "最爱谁", "恨", "爱",
+    "关系", "交情", "认识", "见过", "说过", "做过", "干过",
+    "名字", "别名", "称呼", "叫法", "绰号",
+    "用过", "使过", "换过", "改过", "起过", "取过", "演过", "担任", "扮演",
+    "在哪", "哪里", "哪儿", "何处",
+    "一直", "曾经", "以前", "后来", "现在", "当年", "最初",
+    "叫", "改名", "改成", "换成", "也叫", "还叫", "又叫",
+    // 虚词
     "的", "了", "是", "在", "有", "和", "与", "及", "或", "也", "都",
     "吗", "呢", "吧", "啊", "呀", "谁", "这", "那", "个", "就", "还",
     "我", "你", "他", "她", "它", "们", "要", "想", "能"
   ].sort(function (a, b) { return b.length - a.length; });
+
+  // 取字符串里重复出现（>= 2 次）的 2~3 字子串。
+  // 用于「李伊一直都叫李伊吗」这类句子：同一个实体出现两次，切完停用词后
+  // 变成「李伊李伊」，谁也匹配不到；而它的「李伊」出现了两次，正是核心实体。
+  function repeatedSubstrings(str) {
+    var counts = {}, out = [], len, i, sub;
+    for (len = 2; len <= 3; len++) {
+      for (i = 0; i + len <= str.length; i++) {
+        sub = str.substr(i, len);
+        counts[sub] = (counts[sub] || 0) + 1;
+      }
+    }
+    for (sub in counts) {
+      if (Object.prototype.hasOwnProperty.call(counts, sub) && counts[sub] >= 2) {
+        out.push(sub);
+      }
+    }
+    return out;
+  }
 
   function termsOf(q) {
     var raw = String(q || "").trim();
@@ -121,6 +157,16 @@
       if (out[i].length >= 2) multi.push(out[i]);
     }
     if (multi.length) out = multi;
+
+    // 3.6) 长片段里重复出现的实体（「李伊李伊」→「李伊」）
+    var reps = [];
+    for (i = 0; i < out.length; i++) {
+      if (out[i].length > 4) {
+        var rr = repeatedSubstrings(out[i]);
+        for (j = 0; j < rr.length; j++) reps.push(rr[j]);
+      }
+    }
+    for (i = 0; i < reps.length; i++) out.push(reps[i]);
 
     // 4) 短句额外保留「整句」这一个 term，提高精确匹配的权重
     var full = norm(raw);
@@ -454,6 +500,77 @@
     return out.slice(0, REC_MAX_SESSIONS).map(function (x) { return x.e; });
   }
 
+  // ── 人物表：NPC 总表 / 玩家用名总表 ──
+  var tableCache = null, tableLoading = null;
+
+  function loadTables() {
+    if (tableCache) return Promise.resolve(tableCache);
+    if (tableLoading) return tableLoading;
+    tableLoading = Promise.all(TABLES.map(function (t) {
+      return fetch(BASE + t.file, { cache: "force-cache" })
+        .then(function (r) { return r.ok ? r.text() : ""; })
+        .catch(function () { return ""; });
+    })).then(function (texts) {
+      tableCache = TABLES.map(function (t, i) { return { def: t, text: texts[i] || "" }; });
+      tableLoading = null;
+      return tableCache;
+    });
+    return tableLoading;
+  }
+
+  // 从一张 markdown 表里挑出与问题相关的行。
+  // 打分：名字列（第 2 个单元格）命中 +30，别名列（第 3 个）+18，其它 +6。
+  function tableRowsFor(text, terms, take) {
+    if (!text || !terms.length) return [];
+    var lines = text.split("\n"), out = [], i, j, w;
+    for (i = 0; i < lines.length; i++) {
+      var ln = lines[i];
+      if (ln.charAt(0) !== "|") continue;
+      if (ln.indexOf("---") >= 0) continue;            // 分隔行
+      if (ln.indexOf("| # |") >= 0) continue;          // 表头
+      var cells = ln.split("|");
+      if (cells.length < 4) continue;
+      var nameCell = norm(cells[2] || "");
+      var aliasCell = norm(cells[3] || "");
+      var whole = norm(ln);
+      var score = 0, hit = false;
+      for (j = 0; j < terms.length; j++) {
+        w = terms[j];
+        if (!w || w.length < 2) continue;
+        if (nameCell.indexOf(w) >= 0) { score += 30; hit = true; }
+        else if (aliasCell.indexOf(w) >= 0) { score += 18; hit = true; }
+        else if (whole.indexOf(w) >= 0) { score += 6; hit = true; }
+      }
+      if (!hit) continue;
+      out.push({ line: ln.trim(), score: score });
+    }
+    out.sort(function (a, b) { return b.score - a.score; });
+    return out.slice(0, take).map(function (x) { return x.line; });
+  }
+
+  // 两张表合成**一条**资料（编号只占一位），避免挤掉别的资料
+  function tablesToSource(tables, question) {
+    var terms = termsOf(question);
+    var parts = [], urls = [], i, rows;
+    for (i = 0; i < tables.length; i++) {
+      rows = tableRowsFor(tables[i].text, terms, tables[i].def.take);
+      if (!rows.length) continue;
+      parts.push("〔" + tables[i].def.label + "〕");
+      parts.push(rows.join("\n"));
+      parts.push("");
+      urls.push(BASE + tables[i].def.file);
+    }
+    if (!parts.length) return null;
+    return {
+      st: "人物表",
+      stKey: "table",
+      title: "NPC 总表 / 玩家用名总表（相关行）",
+      meta: "按问题里的人名摘录；「别名·异写」列为空写作「未明」",
+      url: urls[0],
+      text: parts.join("\n")
+    };
+  }
+
   // wiki 跑团站的命中条目里带着 season / n，可以直接反查是哪一场。
   // 这比在 record index 的 600 字摘要里碰运气可靠：
   // 实测「四季常村」在 record 摘要里一个都没命中，但在跑团站索引里有精确命中。
@@ -570,6 +687,10 @@
       "4. 标注为「分析站」的资料是读者的 AI 分析，不是作者设定；引用时必须说明这一点。",
       "5. 不要编造资料里没有的人物、事件、数字。",
       "6. 简洁：一般 150~400 字；用户要求展开时才写长。",
+      "",
+      "7. 你面对的是一段多轮对话，但用户随时可能换话题。**判断依据只看本次问题与本次资料**：",
+      "   如果本次问题跟前面的对话无关，就当之前的对话不存在，不要把它们扯进来。",
+      "   反过来说，如果资料里查不到本次问题涉及的东西，就说查不到，**不要拿之前聊过的人或事来顶替**。",
       "",
       "风格：中文，直接回答，不要客套话，不要重复问题。"
     ].join("\n");
@@ -699,11 +820,65 @@
   //   mountChat   —— 黑柩问答：自由对话，每轮自动检索并补料
   // ══════════════════════════════════════════════════════════
   var MAX_TURNS = 8;       // 对话最多轮数
-  var MAX_SOURCES = 10;    // 资料总数上限（首次 5 + 追问每次最多 2）
+  var MAX_SOURCES = 12;    // 资料总数上限（首次 5 + 追问每次最多 2 + 人物表 1）
 
   // 回答正文统一包在 .ha-ans 里（样式与测试都依赖这个容器）
   function ansHtml(text, sources) {
     return '<div class="ha-ans">' + renderAnswer(text, sources) + "</div>";
+  }
+
+  var HISTORY_TURNS = 3;   // 历史最多保留几轮（不含当前轮）
+
+  // 把一批资料拼成交给模型的文本块
+  function sourcesBlock(list) {
+    if (!list || !list.length) return "";
+    var parts = ["<资料>"], i;
+    for (i = 0; i < list.length; i++) {
+      parts.push("[" + list[i].n + "] " + list[i].st + " · " + list[i].title +
+        (list[i].meta ? "（" + list[i].meta + "）" : ""));
+      parts.push(list[i].text);
+      parts.push("");
+    }
+    parts.push("</资料>");
+    return parts.join("\n");
+  }
+
+  // 两段文本是否共享 >=2 字的公共子串。
+  // 不能直接比字符串相等：「李伊喜欢谁」切成「李伊喜欢」，而「那李伊呢」只切出「李伊」，
+  // 字面不等但明显是同一话题，必须按子串重叠判断。
+  function sharesTerm(a, b) {
+    var maxLen = Math.min(a.length, b.length);
+    for (var len = maxLen; len >= 2; len--) {
+      for (var i = 0; i + len <= a.length; i++) {
+        if (b.indexOf(a.substr(i, len)) >= 0) return true;
+      }
+    }
+    return false;
+  }
+
+  // 判断新问题是不是「换了话题」：
+  //   · 新问题里没有 >=2 字的实词（如「那他呢」）→ 视为延续
+  //   · 与上一轮问题没有任何共同实词 → 视为换话题
+  function isNewTopic(newQ, lastQ) {
+    if (!lastQ) return false;
+    var a = recordTermsOf(newQ), b = recordTermsOf(lastQ);
+    var i, j, meaningful = 0;
+    for (i = 0; i < a.length; i++) {
+      if (a[i].length < 2) continue;
+      meaningful++;
+      for (j = 0; j < b.length; j++) {
+        if (b[j].length < 2) continue;
+        if (sharesTerm(a[i], b[j])) return false;   // 有重叠 → 同话题
+      }
+    }
+    if (!meaningful) return false;
+    return true;                                     // 全是新词 → 换话题
+  }
+
+  function trimHistory(hist) {
+    var keep = HISTORY_TURNS * 2;
+    if (hist.length <= keep) return hist;
+    return hist.slice(hist.length - keep);
   }
 
   function fmtNum(n) {
@@ -951,7 +1126,8 @@
       sources: [],
       history: [],
       turns: 0,
-      cost: 0
+      cost: 0,
+      lastQuestion: ""
     };
     var busy = false;
 
@@ -1018,7 +1194,12 @@
       };
     }
 
-    // 一轮对话：先检索（wiki 四站 + 跑团原始记录）→ 拼消息 → 流式
+    // 一轮对话：检索（wiki 四站 + 跑团原始记录）→ 拼消息 → 流式
+    //
+    // 关键点：**资料不进入对话历史**。
+    // 早先的实现把「<资料>…几千字…</资料>」整块塞进 history[0]，每轮全量重发，
+    // 于是问完「李伊」，历史里全是李伊的资料，再问「第九季」也只会在李伊身上找。
+    // 现在 history 只存「问题 / 回答」两行文本，资料在发送时临时拼进本轮消息。
     function askOnce(question) {
       if (busy) return;
       if (sess.turns >= MAX_TURNS) {
@@ -1032,8 +1213,18 @@
       }
       if ((keyIn.value || "").trim()) setKey(keyIn.value.trim());
 
+      // ── 话题切换 ──
+      var switched = isNewTopic(question, sess.lastQuestion);
+      if (switched) {
+        sess.history = [];
+        sess.sources = [];
+        sess.turns = 0;
+        sess.cost = 0;
+      }
+      sess.lastQuestion = question;
+
       setBusy(true);
-      statusEl.textContent = "正在检索资料…";
+      statusEl.textContent = switched ? "检测到换话题，已重置上下文，正在检索…" : "正在检索资料…";
 
       loadAll().then(function (data) {
         var groups = search(data, question);
@@ -1055,18 +1246,16 @@
         }
         if (sess.sources.length >= MAX_SOURCES) fresh = [];
 
-        // ── 并行取两类资料 ──
-        // ① wiki 四站：设定 / 花絮 / 跑团场次页 / 分析
+        // 并行取两类资料
         var wikiP = fresh.length
           ? buildContext(fresh, function (d, n) {
               statusEl.textContent = "正在读取 wiki 资料… " + d + "/" + n;
             })
           : Promise.resolve([]);
 
-        // ② 跑团原始记录：索引匹配 → 取那几场的脱敏台词
         var recP = loadRecords().then(function (entries) {
           var hits = [], i6, e6;
-          // ① 优先：wiki 跑团站已经指出了是哪几场（精确）
+          // ① 优先：wiki 跑团站已经指出是哪几场（精确）
           var fromWiki = sessionsFromGroups(groups);
           for (i6 = 0; i6 < fromWiki.length && hits.length < REC_MAX_SESSIONS; i6++) {
             e6 = findRecord(entries, fromWiki[i6].season, fromWiki[i6].no);
@@ -1087,66 +1276,74 @@
           return out;
         }).catch(function () { return []; });
 
-        Promise.all([wikiP, recP]).then(function (res) {
-          var arr = res[0] || [], recs = res[1] || [];
+        var tblP = loadTables().then(function (tables) {
+          return tablesToSource(tables, question);
+        }).catch(function () { return null; });
+
+        Promise.all([wikiP, recP, tblP]).then(function (res) {
+          var arr = res[0] || [], recs = res[1] || [], tblSrc = res[2];
           var base = sess.sources.length;
           var added = [], i3, s2;
 
-          // 先加 wiki 资料
           for (i3 = 0; i3 < arr.length && (base + added.length) < MAX_SOURCES; i3++) {
             s2 = arr[i3];
             s2.n = base + added.length + 1;
             sess.sources.push(s2);
             added.push(s2);
           }
-          // 再加跑团原始记录（编号接着排）
           for (i3 = 0; i3 < recs.length && sess.sources.length < MAX_SOURCES; i3++) {
             s2 = recordToSource(recs[i3]);
             s2.n = sess.sources.length + 1;
             sess.sources.push(s2);
             added.push(s2);
           }
+          // 人物表放最后（编号最大），不挤占设定/原始记录的位置
+          if (tblSrc && sess.sources.length < MAX_SOURCES) {
+            tblSrc.n = sess.sources.length + 1;
+            sess.sources.push(tblSrc);
+            added.push(tblSrc);
+          }
 
-          proceed(added);
+          proceed(added, first, switched);
         });
 
-        function proceed(added) {
-          var prefix = "";
+        function proceed(added, first, switched) {
           var recAdded = [], i4;
           for (i4 = 0; i4 < added.length; i4++) {
             if (added[i4].stKey === "record") recAdded.push(added[i4]);
           }
-          if (!first && added.length) {
-            var parts = ["<补充资料>"], x;
-            for (x = 0; x < added.length; x++) {
-              parts.push("[" + added[x].n + "] " + added[x].st + " · " + added[x].title +
-                (added[x].meta ? "（" + added[x].meta + "）" : ""));
-              parts.push(added[x].text);
-              parts.push("");
-            }
-            parts.push("</补充资料>");
-            prefix = parts.join("\n") + "\n\n";
-          }
-          var userMsg = first
-            ? contextPrompt(picks, sess.sources, question)
-            : prefix + "追问：" + question;
-          sess.history.push({ role: "user", content: userMsg });
+
+          // 本轮资料：优先用本轮新检索到的；
+          // 一条都没有时才回退带会话里最近 3 条（免得「那他的儿子呢」这种追问彻底没料）。
+          var useSources = added.length ? added : sess.sources.slice(-3);
+          var block = sourcesBlock(useSources);
+          var curUser = (block ? block + "\n\n" : "") +
+            (first ? "问题：" : "追问：") + question;
+
+          // 历史只含纯问答，当前轮单独拼
+          var msgs = [{ role: "system", content: sess.system }]
+            .concat(trimHistory(sess.history))
+            .concat([{ role: "user", content: curUser }]);
 
           var handle = addTurn(question);
           statusEl.textContent = "正在生成回答…";
           var chars = 0, i5;
-          for (i5 = 0; i5 < sess.sources.length; i5++) chars += sess.sources[i5].text.length;
+          for (i5 = 0; i5 < useSources.length; i5++) chars += useSources[i5].text.length;
 
           streamChat(
             getKey(),
-            [{ role: "system", content: sess.system }].concat(sess.history),
+            msgs,
             function (delta, body) {
               handle.body.innerHTML = ansHtml(body, sess.sources);
             },
             function (body, usage) {
               setBusy(false);
               sess.turns++;
+              // 只记问答文本，**不记资料**
+              sess.history.push({ role: "user", content: question });
               sess.history.push({ role: "assistant", content: body });
+              sess.history = trimHistory(sess.history);
+
               handle.body.innerHTML = ansHtml(body, sess.sources);
 
               var cited = citedSources(body, sess.sources);
@@ -1166,7 +1363,7 @@
                     (recAdded.length ? "，含 " + recAdded.length + " 场原始记录" : "") + "）"
                   : "");
               handle.root.appendChild(u);
-              updateStatus();
+              updateStatus(switched ? "已按新话题重置上下文。" : "");
             },
             function (status, msg) {
               setBusy(false);
