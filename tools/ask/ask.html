@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>问一句 · 黑柩 Wiki</title>
+<meta name="description" content="跨花絮、跑团、设定、分析四站检索《黑柩》相关内容：输入一句话，直接跳到原文。">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/ask.css">
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="index.html">黑柩 Wiki</a>
+  <nav class="site-nav">
+    <a href="index.html">本站首页</a>
+    <span class="nav-sep"></span>
+    <a class="nav-other" href="huaxu/index.html">花絮站 →</a>
+    <a class="nav-other" href="trpg/index.html">跑团站 →</a>
+    <a class="nav-other" href="lore/index.html">设定站 →</a>
+    <a class="nav-other" href="report/index.html">分析站 →</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <h1>问一句</h1>
+  <p class="muted">输入一句话，跨四个站一起找。结果会告诉你这句话在
+    <a href="lore/index.html">设定集</a>、<a href="huaxu/index.html">花絮</a>、
+    <a href="trpg/index.html">跑团记录</a> 和 <a href="report/index.html">分析报告</a> 里分别出现在哪。</p>
+
+  <div id="heijiu-ask"></div>
+
+  <section class="toc" style="margin-top:2rem">
+    <h2 class="plain">怎么问比较好</h2>
+    <ul style="margin:.4rem 0 0;padding-left:1.2rem;color:var(--muted)">
+      <li><b>名词优先</b>：只输入「希联」「北沙」「天使」「镜缘」这类词，命中率最高。</li>
+      <li><b>不必写整句</b>：写成自然语言也行，但系统是按关键词匹配的，长句的效果取决于里面有几个实体词。</li>
+      <li><b>简称与全称都认</b>：希联／希望联邦、进盟／进化者同盟、教团国／启示录教团国 等会互相当作同义词。</li>
+      <li><b>想看原文就点结果</b>——这里是检索，不生成内容，每个结果都指向 wiki 里的真实页面。</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <p>黑柩 Wiki · 四站检索</p>
+  <p class="muted">本站由 AI 协助整理，内容准确性无法完全保证；以设定站与跑团原文为准。</p>
+</footer>
+
+<script src="assets/ask.js"></script>
+</body>
+</html>

@@ -323,6 +323,35 @@ border-top:1px dashed var(--line);padding-top:.65rem;margin-top:.75rem}
 """
 
 
+def build_ask():
+    """把 tools/ask/ 的跨站检索组件分发到 docs/。
+
+    源码（ask.html / ask.css / ask.js）放在 tools/ask/ 而不是直接在 docs/，
+    这样 `build_all.py --clean` 清空 docs/ 之后能原样重建，不会丢文件。
+
+    产出：
+      docs/ask.html          —— 组件在 wiki 里的自用页面（可直接访问 /ask.html）
+      docs/assets/ask.css    —— 样式（所有规则以 #heijiu-ask 前缀隔离）
+      docs/assets/ask.js     —— 逻辑（ES5，无依赖）
+    嵌入 WordPress 只需要：<div id="heijiu-ask"></div> + 引用这两个资源。
+    """
+    src = os.path.join(W, "tools", "ask")
+    if not os.path.isdir(src):
+        return 0
+    pairs = [
+        ("ask.html", os.path.join(DOCS, "ask.html")),
+        ("ask.css", os.path.join(DOCS, "assets", "ask.css")),
+        ("ask.js", os.path.join(DOCS, "assets", "ask.js")),
+    ]
+    n = 0
+    for name, dst in pairs:
+        p = os.path.join(src, name)
+        if not os.path.exists(p):
+            continue
+        n += write_if_changed(dst, io.open(p, encoding="utf-8").read())
+    return n
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--clean", action="store_true")
@@ -341,6 +370,7 @@ def main():
 
     n += write_if_changed(os.path.join(DOCS, "index.html"), joint_index())
     n += write_if_changed(os.path.join(DOCS, "assets", "joint.css"), JOINT_CSS)
+    n += build_ask()
     print(json.dumps({"joint_index_written": n}, ensure_ascii=False))
 
 
