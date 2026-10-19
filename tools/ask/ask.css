@@ -204,8 +204,22 @@
   text-decoration:none;
 }
 .heijiu-ui .ha-src .n{color:var(--ha-accent); font-weight:700; flex:0 0 auto}
-.heijiu-ui .ha-src .t{flex:1 1 auto; min-width:0; font-weight:600}
-.heijiu-ui .ha-src .m{flex:0 0 auto; color:var(--ha-muted); font-size:.78rem}
+
+/* 标题：保底宽度 + 允许词内断行。
+   之前的 min-width:0 让它可以被压到 0，桌面端就会被右侧那串
+   「出版社 · 日期 · 时长 · 条数」挤成竖排。 */
+.heijiu-ui .ha-src .t{
+  flex:1 1 auto; min-width:5em;
+  font-weight:600; word-break:break-word; overflow-wrap:anywhere;
+}
+
+/* 元信息：允许收缩并单行省略。
+   原来是 flex:0 0 auto（永不收缩），这是错乱的直接原因。 */
+.heijiu-ui .ha-src .m{
+  flex:0 1 auto; min-width:0; max-width:46%;
+  color:var(--ha-muted); font-size:.78rem;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
 /* 被引用跳转时高亮一下 */
 .heijiu-ui .ha-src:target{border-color:var(--ha-accent); background:rgba(168,59,37,.06)}
 
@@ -410,7 +424,12 @@
   .heijiu-ui .ha-key{flex:1 1 100%}
   .heijiu-ui .ha-start,.heijiu-ui .ha-forget{flex:1 1 auto}
   .heijiu-ui .ha-src{flex-wrap:wrap}
-  .heijiu-ui .ha-src .m{flex:1 1 100%; padding-left:1.6rem}
+  /* 桌面端的 max-width:46% 在这里必须解除，否则移动端 .m 想独占一行却只到 46% */
+  .heijiu-ui .ha-src .m{
+    flex:1 1 100%; max-width:100%;
+    padding-left:1.6rem; white-space:normal;
+  }
+  .heijiu-ui .ha-src .t{min-width:0}
   .heijiu-ui .ha-follow{flex:1 1 100%}
   .heijiu-ui .ha-send,.heijiu-ui .ha-end{flex:1 1 auto}
   .heijiu-ui .ha-turn-src{margin-left:0}

@@ -814,7 +814,12 @@
           places: entry.places || "",
           present: entry.present || "",
           useSummary: useSummary,
-          date: (entry.realtime || "").split("｜")[0]
+          // 只留日期与起止时间，去掉「（时长 X 小时）」——那句话在来源卡里太长，
+          // 会把标题挤扁，对「是哪一场」的判断也没有帮助。
+          date: ((entry.realtime || "").split("｜")[0] || "")
+                  .replace(/（时长[^）]*）/g, "")
+                  .replace(/\s+/g, " ")
+                  .trim()
         };
       })
       .catch(function () { return null; });
@@ -988,10 +993,12 @@
     var html = '<p class="ha-src-h">资料来源（点开可核对原文）</p>';
     for (var i = 0; i < sources.length; i++) {
       var s = sources[i];
+      // 元信息在窄屏会被省略号截断，补个 title 让悬停能看全
+      var metaText = s.st + (s.meta ? " · " + s.meta : "");
       html += '<a class="ha-src" id="ha-ref-' + s.n + '" href="' + esc(s.url) + '">' +
         '<span class="n">[' + s.n + "]</span>" +
         '<span class="t">' + esc(s.title) + "</span>" +
-        '<span class="m">' + esc(s.st) + (s.meta ? " · " + esc(s.meta) : "") + "</span>" +
+        '<span class="m" title="' + esc(metaText) + '">' + esc(metaText) + "</span>" +
         "</a>";
     }
     return html;
