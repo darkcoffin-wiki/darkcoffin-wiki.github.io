@@ -110,14 +110,19 @@ python tools/audit_reports.py    # 富文本构成审计
 
 ---
 
-## 黑柩问答（`/chat.html`）与检索（`/ask.html`）
+## 黑柩问答（`/ask.html`）与检索（`/ask.html`）
 
 两个纯前端页面，代码在 `tools/ask/`，构建时分发到 `docs/`：
 
 | 页面 | 做什么 |
 |---|---|
-| `/ask.html` | 跨四站检索 + **一次性** AI 解释 |
-| `/chat.html` | 黑柩问答：自由多轮对话，每轮自动检索并补料 |
+| `/ask.html` | **问答搜索**：跨四站检索 → 「用 AI 回答这个问题」→ 可持续追问 |
+
+检索与问答在同一个页面、共用**同一份 API key**（`sessionStorage`，只填一次）
+和同一段对话状态。前端容器用 `<div id="heijiu-ask">` 即可；
+旧页面的 `<div id="heijiu-chat">` 也仍然可用（渲染同一套界面，向后兼容）。
+
+搜索行有**清空**（只清输入与结果，不动对话），对话行有**清空对话**，两者职责分开。
 
 **不需要后端**：GitHub Pages 的 JSON 带 `Access-Control-Allow-Origin: *`，
 DeepSeek API 也回显任意 Origin，所以宿主页（WordPress）能直连两者。

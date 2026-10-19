@@ -1,8 +1,10 @@
 /* ══════════════════════════════════════════════════════════════
    黑柩 Wiki · 跨站检索 + AI 问答
    ══════════════════════════════════════════════════════════════
-   档 1：跨四站关键词检索（零成本、零风险）。
-   档 2：在检索结果之上，让用户用自己的 DeepSeek API key 问一句。
+   一个页面做完两件事：
+     · 跨四站关键词检索（零成本、零风险）
+     · 在检索结果之上，用用户自己的 DeepSeek API key 让 AI 回答，并可持续追问
+   API key 只填一次，检索与问答共用。
 
    设计要点
    · 纯前端：GitHub Pages 的 JSON 带 `Access-Control-Allow-Origin: *`，
@@ -950,9 +952,9 @@
   // 挂载
   // ══════════════════════════════════════════════════════════
   // ══════════════════════════════════════════════════════════
-  // 两种挂载模式
-  //   mountSearch —— 检索页：跨四站检索 + 一次性 AI 解释（无追问）
-  //   mountChat   —— 黑柩问答：自由对话，每轮自动检索并补料
+  // 单一挂载：问答搜索
+  //   检索与问答合并在同一个界面、共用同一份 API key 与同一段对话状态。
+  //   原来的 mountSearch / mountChat 两个入口已合并成 mountAsk。
   // ══════════════════════════════════════════════════════════
   var MAX_TURNS = 8;       // 对话最多轮数
   var MAX_SOURCES = 12;    // 资料总数上限（首次 5 + 追问每次最多 2 + 人物表 1）
@@ -994,8 +996,14 @@
   // 判断新问题是不是「换了话题」：
   //   · 新问题里没有 >=2 字的实词（如「那他呢」）→ 视为延续
   //   · 与上一轮问题没有任何共同实词 → 视为换话题
+  // 承接词开头的问题一定是在延续话题，不能因为「没有共同实词」就判成换话题。
+  // 实测：「希联」之后问「那进盟呢？」，两边没有共同实词，被误判成换话题、
+  // 历史被清空，于是「进盟」变成冷启动，AI 不知道这是在跟希联做对比。
+  var CONTINUE_RE = /^(那|那么|那这个|那个|还有|另外|再|然后|所以|因此|它|他|她|这位|此|上述|上面|刚才|接着|继续|同样|反之|相比)/;
+
   function isNewTopic(newQ, lastQ) {
     if (!lastQ) return false;
+    if (CONTINUE_RE.test(String(newQ).trim())) return false;   // 承接词 → 延续
     var a = recordTermsOf(newQ), b = recordTermsOf(lastQ);
     var i, j, meaningful = 0;
     for (i = 0; i < a.length; i++) {
@@ -1061,201 +1069,49 @@
   }
 
   // ══════════════════════════════════════════════════════════
-  // ① 检索页
+  // 问答搜索（合并版）
+  //   一个输入框、一份 API key、一条时间线：
+  //     输入 → 跨四站检索结果 → 「用 AI 回答这个问题」 → 可继续追问
+  //   搜索与问答共用 sess（资料/历史/费用），key 只填一次。
   // ══════════════════════════════════════════════════════════
-  function mountSearch(host) {
+  function mountAsk(host) {
     host.classList.add("heijiu-ui");
     host.innerHTML =
       '<div class="ha-bar">' +
         '<input class="ha-q" type="search" autocomplete="off" ' +
-          'placeholder="搜一句话，比如：希联的意识形态" aria-label="检索《黑柩》四个站">' +
-        '<button class="ha-go" type="button">检索</button>' +
+          'placeholder="搜关键词，或直接问一句话" aria-label="检索或提问">' +
+        '<button class="ha-go" type="button">搜索</button>' +
+        '<button class="ha-clear" type="button" title="清空搜索与结果（不影响对话）">清空</button>' +
       "</div>" +
       '<p class="ha-meta">跨四站检索：设定 · 花絮 · 跑团 · 分析</p>' +
+      '<div class="ha-keybox">' + keyRowHtml() + "</div>" +
       '<div class="ha-out"></div>' +
-      '<div class="ha-ai"></div>' +
+      '<div class="ha-aibar"></div>' +
+      '<div class="ha-chat"></div>' +
+      '<div class="ha-ask-row" hidden>' +
+        '<input class="ha-follow" type="search" autocomplete="off" ' +
+          'placeholder="继续追问，比如：那进盟呢？" aria-label="追问">' +
+        '<button class="ha-send" type="button">发送</button>' +
+        '<button class="ha-end" type="button" title="结束本次对话，重新开始">清空对话</button>' +
+      "</div>" +
+      '<p class="ha-status"></p>' +
       '<p class="ha-legend">结果按站分组：<b>设定站</b>是作者原典（含剧透），' +
-        "<b>分析站</b>是读者的 AI 分析、不是作者设定。点任一条进入原文核对。" +
-        ' 想连续对话？去 <a href="chat.html">黑柩问答</a>。</p>';
+        "<b>分析站</b>是读者的 AI 分析、不是作者设定。点任一条进入原文核对。</p>";
 
     var q = host.querySelector(".ha-q");
     var go = host.querySelector(".ha-go");
+    var clearBtn = host.querySelector(".ha-clear");
     var out = host.querySelector(".ha-out");
-    var aiBox = host.querySelector(".ha-ai");
-    var cur = { query: "", groups: [] };
+    var aibar = host.querySelector(".ha-aibar");
+    var chat = host.querySelector(".ha-chat");
+    var askRow = host.querySelector(".ha-ask-row");
+    var followIn = host.querySelector(".ha-follow");
+    var sendBtn = host.querySelector(".ha-send");
+    var endBtn = host.querySelector(".ha-end");
+    var statusEl = host.querySelector(".ha-status");
+    var keyIn = host.querySelector(".ha-key");
+    var forgetBtn = host.querySelector(".ha-forget");
 
-    function run() {
-      var query = q.value.trim();
-      if (!query) { out.innerHTML = ""; aiBox.innerHTML = ""; return; }
-      out.innerHTML = '<p class="ha-loading">正在加载索引…</p>';
-      loadAll(function (d, n) {
-        out.innerHTML = '<p class="ha-loading">正在加载索引… ' + d + "/" + n + "</p>";
-      }).then(function (data) {
-        var t0 = (window.performance && performance.now) ? performance.now() : 0;
-        var groups = search(data, query);
-        var t1 = (window.performance && performance.now) ? performance.now() : 0;
-        render(out, groups, query);
-        cur.query = query; cur.groups = groups;
-        renderAIBar(aiBox, cur);
-        var n = 0, i;
-        for (i = 0; i < groups.length; i++) n += groups[i].hits.length;
-        host.querySelector(".ha-meta").innerHTML =
-          "跨四站检索：设定 · 花絮 · 跑团 · 分析　｜　找到 <b>" + n + "</b> 条" +
-          (t1 ? '　<span style="opacity:.6">' + Math.round(t1 - t0) + " ms</span>" : "");
-        if (window.history && history.replaceState) {
-          history.replaceState(null, "", "#q=" + encodeURIComponent(query));
-        }
-      });
-    }
-
-    go.addEventListener("click", run);
-    q.addEventListener("keydown", function (ev) {
-      if (ev.key === "Enter" || ev.keyCode === 13) { ev.preventDefault(); run(); }
-    });
-
-    var m = /[#&]q=([^&]+)/.exec(location.hash || "");
-    if (m) {
-      try { q.value = decodeURIComponent(m[1]); } catch (e) { q.value = m[1]; }
-      run();
-    } else {
-      loadAll();
-    }
-    q.focus();
-  }
-
-  // ── 检索页的 AI 入口 ──
-  function renderAIBar(aiBox, cur) {
-    if (!cur.groups.length) { aiBox.innerHTML = ""; return; }
-    aiBox.innerHTML =
-      '<div class="ha-ai-bar">' +
-        '<button class="ha-aibtn" type="button">用 AI 解释这个问题</button>' +
-        '<span class="ha-ai-note">读取上面最相关的 5 条正文作为资料；' +
-        "需要你自己的 DeepSeek API key。想连续追问请用「黑柩问答」</span>" +
-      "</div>";
-    aiBox.querySelector(".ha-aibtn").addEventListener("click", function () {
-      openOneShot(aiBox, cur);
-    });
-  }
-
-  // ── 检索页：一次性问答（**没有追问**）──
-  function openOneShot(aiBox, cur) {
-    aiBox.innerHTML =
-      '<div class="ha-ai-panel">' +
-        warningHtml() +
-        keyRowHtml() +
-        '<div class="ha-chat"></div>' +
-        '<div class="ha-again" hidden>' +
-          '<button class="ha-restart" type="button">用同一批资料重新回答</button>' +
-          '<a class="ha-tochead" href="chat.html">想连续追问 → 黑柩问答</a>' +
-        "</div>" +
-        '<p class="ha-status"></p>' +
-      "</div>";
-
-    var keyIn = aiBox.querySelector(".ha-key");
-    var startBtn = aiBox.querySelector(".ha-start");
-    var forgetBtn = aiBox.querySelector(".ha-forget");
-    var chat = aiBox.querySelector(".ha-chat");
-    var again = aiBox.querySelector(".ha-again");
-    var restart = aiBox.querySelector(".ha-restart");
-    var statusEl = aiBox.querySelector(".ha-status");
-    var sources = [];
-    var userMsg = "";
-
-    forgetBtn.addEventListener("click", function () {
-      clearKey(); keyIn.value = "";
-      statusEl.textContent = "已清除本标签页保存的 key。";
-    });
-
-    function setBusy(v) {
-      startBtn.disabled = v;
-      keyIn.disabled = v;
-      restart.disabled = v;
-    }
-
-    function turnEl(question) {
-      chat.innerHTML = "";
-      var wrap = document.createElement("div");
-      wrap.className = "ha-turn";
-      wrap.innerHTML =
-        '<p class="ha-q-line"><span class="who">问</span>' + esc(question) + "</p>" +
-        '<div class="ha-a-line"><span class="who ai">AI</span><div class="ha-body">' +
-          '<p class="ha-loading">正在生成回答…</p></div></div>' +
-        '<div class="ha-turn-src"></div>';
-      chat.appendChild(wrap);
-      return { body: wrap.querySelector(".ha-body"), src: wrap.querySelector(".ha-turn-src") };
-    }
-
-    function ask() {
-      var k = (keyIn.value || "").trim();
-      if (!k) { keyIn.focus(); return; }
-      setKey(k);
-      setBusy(true);
-      statusEl.textContent = "正在读取资料…";
-      chat.innerHTML = "";
-      again.hidden = true;
-
-      var picks = fetchPicks(cur.groups);
-      buildContext(picks, function (d, n) {
-        statusEl.textContent = "正在读取资料… " + d + "/" + n;
-      }).then(function (src) {
-        if (!src.length) {
-          statusEl.textContent = "没能读到资料正文（网络或路径问题），无法作答。";
-          setBusy(false);
-          return;
-        }
-        sources = src.slice(0, 5);
-        userMsg = contextPrompt(picks, sources, cur.query);
-
-        var handle = turnEl(cur.query);
-        var chars = 0, i;
-        for (i = 0; i < sources.length; i++) chars += sources[i].text.length;
-        statusEl.textContent = "正在生成回答…";
-
-        var full = "";
-        streamChat(
-          k,
-          [{ role: "system", content: systemPrompt() }, { role: "user", content: userMsg }],
-          function (delta, body) {
-            full = body;
-            handle.body.innerHTML = ansHtml(body, sources);
-          },
-          function (body, usage) {
-            setBusy(false);
-            handle.body.innerHTML = ansHtml(body, sources);
-            var cited = citedSources(body, sources);
-            handle.src.innerHTML = cited.length ? sourcesHtml(cited) : "";
-
-            var cost = estCost(chars, body.length);
-            var u = document.createElement("p");
-            u.className = "ha-usage";
-            u.textContent = "以上为 AI 生成，请以资料来源为准。　" +
-              (usage ? "输入 " + fmtNum(usage.prompt_tokens || 0) + " / 输出 " +
-                fmtNum(usage.completion_tokens || 0) + " tokens"
-                : "约 " + fmtNum(Math.round(chars * 0.6)) + " 输入 tokens") +
-              "　本轮约 ¥" + cost.toFixed(4);
-            handle.body.parentNode.appendChild(u);
-            statusEl.textContent = "资料 " + sources.length + " 条（约 " +
-              fmtNum(chars) + " 字）。想继续追问请去「黑柩问答」。";
-            again.hidden = false;
-          },
-          function (status, msg) {
-            setBusy(false);
-            handle.body.innerHTML = '<p class="ha-empty"><b>' + esc(failHint(status)) +
-              "</b><br>" + esc(String(msg || "").slice(0, 300)) + "</p>";
-          }
-        );
-      });
-    }
-
-    startBtn.addEventListener("click", ask);
-    restart.addEventListener("click", ask);
-    keyIn.focus();
-  }
-
-  // ══════════════════════════════════════════════════════════
-  // ② 黑柩问答（自由对话）
-  // ══════════════════════════════════════════════════════════
-  function mountChat(host) {
     var sess = {
       system: systemPrompt(),
       sources: [],
@@ -1264,38 +1120,18 @@
       cost: 0,
       lastQuestion: ""
     };
+    var cur = { query: "", groups: [] };
     var busy = false;
 
-    host.classList.add("heijiu-ui");
-    host.innerHTML =
-      '<div class="ha-chatpanel">' +
-        warningHtml() +
-        keyRowHtml() +
-        '<div class="ha-chat"></div>' +
-        '<div class="ha-ask-row">' +
-          '<input class="ha-follow" type="search" autocomplete="off" ' +
-            'placeholder="问一句，比如：希联的意识形态是什么" aria-label="向黑柩问答提问">' +
-          '<button class="ha-send" type="button">发送</button>' +
-          '<button class="ha-end" type="button" title="清空对话，重新开始">清空对话</button>' +
-        "</div>" +
-        '<p class="ha-status"></p>' +
-      "</div>";
-
-    var keyIn = host.querySelector(".ha-key");
-    var forgetBtn = host.querySelector(".ha-forget");
-    var chat = host.querySelector(".ha-chat");
-    var followIn = host.querySelector(".ha-follow");
-    var sendBtn = host.querySelector(".ha-send");
-    var endBtn = host.querySelector(".ha-end");
-    var statusEl = host.querySelector(".ha-status");
-
+    // ── key ──
     forgetBtn.addEventListener("click", function () {
       clearKey(); keyIn.value = "";
-      statusEl.textContent = "已清除本标签页保存的 key。";
+      statusEl.textContent = "已清除本页保存的 key。";
     });
 
     function setBusy(v) {
       busy = v;
+      go.disabled = v;
       sendBtn.disabled = v;
       keyIn.disabled = v;
       followIn.disabled = v;
@@ -1312,6 +1148,67 @@
           : "");
     }
 
+    // ══════════════════════════════════════════════
+    // 检索
+    // ══════════════════════════════════════════════
+    function runSearch() {
+      var query = q.value.trim();
+      if (!query) { out.innerHTML = ""; aibar.innerHTML = ""; return; }
+      out.innerHTML = '<p class="ha-loading">正在加载索引…</p>';
+      aibar.innerHTML = "";
+
+      loadInvert().then(function (inv) {
+        if (inv && inv.terms) setDict(inv.terms);
+        return loadAll(function (d, n) {
+          out.innerHTML = '<p class="ha-loading">正在加载索引… ' + d + "/" + n + "</p>";
+        });
+      }).then(function (data) {
+        var t0 = (window.performance && performance.now) ? performance.now() : 0;
+        var groups = search(data, query);
+        var t1 = (window.performance && performance.now) ? performance.now() : 0;
+        render(out, groups, query);
+        cur.query = query; cur.groups = groups;
+        renderAIEntry();
+        var n = 0, i;
+        for (i = 0; i < groups.length; i++) n += groups[i].hits.length;
+        host.querySelector(".ha-meta").innerHTML =
+          "跨四站检索：设定 · 花絮 · 跑团 · 分析　｜　找到 <b>" + n + "</b> 条" +
+          (t1 ? '　<span style="opacity:.6">' + Math.round(t1 - t0) + " ms</span>" : "");
+        if (window.history && history.replaceState) {
+          history.replaceState(null, "", "#q=" + encodeURIComponent(query));
+        }
+      });
+    }
+
+    function renderAIEntry() {
+      if (!cur.groups.length) { aibar.innerHTML = ""; return; }
+      aibar.innerHTML =
+        '<div class="ha-ai-bar">' +
+          '<button class="ha-aibtn" type="button">✨ 用 AI 回答这个问题</button>' +
+          '<span class="ha-ai-note">读取最相关的原文作答，回答后可继续追问</span>' +
+        "</div>";
+      aibar.querySelector(".ha-aibtn").addEventListener("click", startAI);
+    }
+
+    function needKey() {
+      var k = (keyIn.value || "").trim();
+      if (!k) {
+        keyIn.focus();
+        statusEl.textContent = "请先填入 DeepSeek API key —— 只需填一次，检索和问答共用。";
+        return "";
+      }
+      setKey(k);
+      return k;
+    }
+
+    function startAI() {
+      if (!needKey()) return;
+      askOnce(cur.query, false);
+    }
+
+    // ══════════════════════════════════════════════
+    // 一轮问答
+    // ══════════════════════════════════════════════
     function addTurn(question) {
       var wrap = document.createElement("div");
       wrap.className = "ha-turn";
@@ -1329,26 +1226,15 @@
       };
     }
 
-    // 一轮对话：检索（wiki 四站 + 跑团原始记录）→ 拼消息 → 流式
-    //
-    // 关键点：**资料不进入对话历史**。
-    // 早先的实现把「<资料>…几千字…</资料>」整块塞进 history[0]，每轮全量重发，
-    // 于是问完「李伊」，历史里全是李伊的资料，再问「第九季」也只会在李伊身上找。
-    // 现在 history 只存「问题 / 回答」两行文本，资料在发送时临时拼进本轮消息。
-    function askOnce(question) {
+    function askOnce(question, isFollow) {
       if (busy) return;
+      if (!question) return;
       if (sess.turns >= MAX_TURNS) {
         statusEl.textContent = "已达轮数上限，点「清空对话」重新开始。";
         return;
       }
-      if (!getKey() && !(keyIn.value || "").trim()) {
-        keyIn.focus();
-        statusEl.textContent = "请先填入 DeepSeek API key。";
-        return;
-      }
-      if ((keyIn.value || "").trim()) setKey(keyIn.value.trim());
+      if (!needKey()) return;
 
-      // ── 是不是「列举型」问题？决定召回规模 ──
       var enumer = isEnumeration(question);
       var nPicks = enumer ? 12 : AI_PICKS;
       var nPerStation = enumer ? 3 : 2;
@@ -1357,7 +1243,7 @@
       var nRecChars = enumer ? 9000 : 2400;
       var maxSrc = enumer ? 20 : MAX_SOURCES;
 
-      // ── 话题切换 ──
+      // 话题切换
       var switched = isNewTopic(question, sess.lastQuestion);
       if (switched) {
         sess.history = [];
@@ -1370,7 +1256,6 @@
       setBusy(true);
       statusEl.textContent = switched ? "检测到换话题，已重置上下文，正在检索…" : "正在检索资料…";
 
-      // 词典必须先就位，否则「北沙希共党员」这类长串在 search() 里切不开
       Promise.all([loadAll(), loadInvert()]).then(function (pre) {
         var data = pre[0], inv = pre[1];
         if (inv && inv.terms) setDict(inv.terms);
@@ -1378,7 +1263,6 @@
         var groups = search(data, question);
         var picks = fetchPicks(groups, nPicks, nPerStation) || [];
 
-        // 已有资料的签名，用于去重
         var have = {}, i;
         for (i = 0; i < sess.sources.length; i++) {
           have[sess.sources[i].stKey + "|" + sess.sources[i].url] = 1;
@@ -1392,9 +1276,8 @@
           if (have[key]) continue;
           fresh.push(picks[i]);
         }
-        if (sess.sources.length >= MAX_SOURCES) fresh = [];
+        if (sess.sources.length >= maxSrc) fresh = [];
 
-        // 并行取两类资料
         var wikiP = fresh.length
           ? buildContext(fresh, function (d, n) {
               statusEl.textContent = "正在读取 wiki 资料… " + d + "/" + n;
@@ -1402,23 +1285,17 @@
           : Promise.resolve([]);
 
         var recP = loadRecords().then(function (entries) {
-          var hits = [], seen = {}, i6, e6;
+          var hits = [], seen = {}, i6;
           function push(e) {
             if (!e || seen[e.file]) return;
             seen[e.file] = 1;
             hits.push(e);
           }
-
-          // ① 问题点名了某一季 → 该季场次直接置顶
-          //    （否则「第九季发生了什么」会被「什么/发生」这类子串刷到别的季）
           var hint = seasonHint(question);
           if (hint) {
             var bySeason = sessionsOfSeason(entries, hint);
-            for (i6 = 0; i6 < bySeason.length && hits.length < nRecSess; i6++) {
-              push(bySeason[i6]);
-            }
+            for (i6 = 0; i6 < bySeason.length && hits.length < nRecSess; i6++) push(bySeason[i6]);
           }
-          // ② 倒排索引：不依赖季志，问什么词就找哪些场（最全）
           var found = sessionsFromInvert(inv, question, nRecSess);
           for (i6 = 0; i6 < found.length && hits.length < nRecSess; i6++) {
             var want = "session/" + found[i6].sid + ".tsv";
@@ -1426,37 +1303,33 @@
               if (entries[k6].file === want) { push(entries[k6]); break; }
             }
           }
-          // ③ wiki 跑团站已经点名了是哪几场（最准）
           var fromWiki = sessionsFromGroups(groups);
           for (i6 = 0; i6 < fromWiki.length && hits.length < nRecSess; i6++) {
             push(findRecord(entries, fromWiki[i6].season, fromWiki[i6].no));
           }
-          // ④ 兜底：index 的 600 字摘要关键词
           if (!hits.length) {
             var byKw = searchRecords(entries, question);
             for (i6 = 0; i6 < byKw.length; i6++) push(byKw[i6]);
           }
           if (!hits.length) return [];
 
-          // 问题里的人名是不是某位发言人？（「余烬说过什么」→ 取他的话，不是搜正文）
           var speakerSet = {}, subs = substrsOf(question), k7;
           if (inv && inv.speakers) {
             for (k7 = 0; k7 < subs.length; k7++) {
               if (inv.speakers[subs[k7]]) speakerSet[subs[k7]] = 1;
             }
           }
-
           statusEl.textContent = "正在读取跑团原始记录…" +
             (enumer ? "（列举型问题，已扩大检索范围）" : "");
           return Promise.all(hits.map(function (h) {
             return fetchRecordLines(h, question, nRecLines, nRecChars, speakerSet);
           }));
         }).then(function (recs) {
-          var out = [], i2;
+          var arr2 = [], i2;
           for (i2 = 0; i2 < (recs || []).length; i2++) {
-            if (recs[i2]) out.push(recs[i2]);
+            if (recs[i2]) arr2.push(recs[i2]);
           }
-          return out;
+          return arr2;
         }).catch(function () { return []; });
 
         var tblP = loadTables().then(function (tables) {
@@ -1480,7 +1353,6 @@
             sess.sources.push(s2);
             added.push(s2);
           }
-          // 人物表放最后（编号最大），不挤占设定/原始记录的位置
           if (tblSrc && sess.sources.length < maxSrc) {
             tblSrc.n = sess.sources.length + 1;
             sess.sources.push(tblSrc);
@@ -1495,20 +1367,17 @@
           for (i4 = 0; i4 < added.length; i4++) {
             if (added[i4].stKey === "record") recAdded.push(added[i4]);
           }
-
-          // 本轮资料：优先用本轮新检索到的；
-          // 一条都没有时才回退带会话里最近 3 条（免得「那他的儿子呢」这种追问彻底没料）。
           var useSources = added.length ? added : sess.sources.slice(-3);
           var block = sourcesBlock(useSources);
           var curUser = (block ? block + "\n\n" : "") +
             (first ? "问题：" : "追问：") + question;
 
-          // 历史只含纯问答，当前轮单独拼
           var msgs = [{ role: "system", content: sess.system }]
             .concat(trimHistory(sess.history))
             .concat([{ role: "user", content: curUser }]);
 
           var handle = addTurn(question);
+          askRow.hidden = false;
           statusEl.textContent = "正在生成回答…";
           var chars = 0, i5;
           for (i5 = 0; i5 < useSources.length; i5++) chars += useSources[i5].text.length;
@@ -1522,13 +1391,11 @@
             function (body, usage) {
               setBusy(false);
               sess.turns++;
-              // 只记问答文本，**不记资料**
               sess.history.push({ role: "user", content: question });
               sess.history.push({ role: "assistant", content: body });
               sess.history = trimHistory(sess.history);
 
               handle.body.innerHTML = ansHtml(body, sess.sources);
-
               var cited = citedSources(body, sess.sources);
               handle.src.innerHTML = cited.length ? sourcesHtml(cited) : "";
 
@@ -1542,11 +1409,12 @@
                   : "本轮约 " + fmtNum(Math.round(chars * 0.6)) + " 输入 tokens") +
                 "　本轮约 ¥" + c.toFixed(4) +
                 (added.length
-                  ? "　（本轮补充 " + added.length + " 条资料" +
+                  ? "　（本轮 " + added.length + " 条资料" +
                     (recAdded.length ? "，含 " + recAdded.length + " 场原始记录" : "") + "）"
                   : "");
               handle.root.appendChild(u);
               updateStatus(switched ? "已按新话题重置上下文。" : "");
+              if (followIn) { followIn.focus(); }
             },
             function (status, msg) {
               setBusy(false);
@@ -1559,45 +1427,81 @@
       });
     }
 
+    // ── 追问 ──
     sendBtn.addEventListener("click", function () {
-      var q = (followIn.value || "").trim();
-      if (!q) { followIn.focus(); return; }
+      var t = (followIn.value || "").trim();
+      if (!t) { followIn.focus(); return; }
       followIn.value = "";
-      askOnce(q);
+      askOnce(t, true);
     });
     followIn.addEventListener("keydown", function (ev) {
       if (ev.key === "Enter" || ev.keyCode === 13) {
         ev.preventDefault();
-        var q = (followIn.value || "").trim();
-        if (!q) return;
+        var t = (followIn.value || "").trim();
+        if (!t) return;
         followIn.value = "";
-        askOnce(q);
+        askOnce(t, true);
       }
     });
 
     endBtn.addEventListener("click", function () {
       sess.sources = []; sess.history = []; sess.turns = 0; sess.cost = 0;
+      sess.lastQuestion = "";
       chat.innerHTML = "";
-      statusEl.textContent = "对话已清空，可以重新开始。";
+      askRow.hidden = true;
+      statusEl.textContent = "对话已清空。可以继续搜索，或点「用 AI 回答这个问题」重开一轮。";
       setBusy(false);
-      followIn.focus();
+      followIn.value = "";
+      q.focus();
     });
 
-    followIn.focus();
+    // ── 清空检索（只清搜索区，对话另行「清空对话」）──
+    clearBtn.addEventListener("click", function () {
+      q.value = "";
+      out.innerHTML = "";
+      aibar.innerHTML = "";
+      cur.query = "";
+      cur.groups = [];
+      host.querySelector(".ha-meta").innerHTML = "跨四站检索：设定 · 花絮 · 跑团 · 分析";
+      statusEl.textContent = sess.turns
+        ? "已清空搜索。下面的对话还在，可继续追问或点「清空对话」结束。"
+        : "";
+      if (window.history && history.replaceState) {
+        history.replaceState(null, "", location.pathname + location.search);
+      }
+      q.focus();
+    });
+
+    // ── 搜索入口 ──
+    go.addEventListener("click", runSearch);
+    q.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter" || ev.keyCode === 13) { ev.preventDefault(); runSearch(); }
+    });
+
+    // ── 初始化 ──
+    loadInvert().then(function (inv) {
+      if (inv && inv.terms) setDict(inv.terms);
+      return loadAll();
+    });
+
+    var m = /[#&]q=([^&]+)/.exec(location.hash || "");
+    if (m) {
+      try { q.value = decodeURIComponent(m[1]); } catch (e) { q.value = m[1]; }
+      runSearch();
+    }
+    q.focus();
   }
 
   // ══════════════════════════════════════════════════════════
   function boot() {
-    var searchHost = document.getElementById("heijiu-ask");
-    var chatHost = document.getElementById("heijiu-chat");
-    if (searchHost) mountSearch(searchHost);
-    if (chatHost) mountChat(chatHost);
-    if (searchHost || chatHost) return;
-    // 兼容 data 属性
-    var alt = document.querySelector("[data-heijiu-ask]");
-    if (alt) { mountSearch(alt); return; }
-    var alt2 = document.querySelector("[data-heijiu-chat]");
-    if (alt2) { mountChat(alt2); }
+    // 合并后两个容器都渲染同一套界面：
+    //   #heijiu-ask（推荐）／ #heijiu-chat（旧页面兼容）
+    var host = document.getElementById("heijiu-ask") ||
+               document.getElementById("heijiu-chat");
+    if (host) { mountAsk(host); return; }
+    var alt = document.querySelector("[data-heijiu-ask]") ||
+              document.querySelector("[data-heijiu-chat]");
+    if (alt) { mountAsk(alt); }
   }
 
   if (document.readyState === "loading") {

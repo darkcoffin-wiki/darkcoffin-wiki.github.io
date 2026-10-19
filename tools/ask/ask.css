@@ -44,6 +44,13 @@
 }
 .heijiu-ui .ha-go:disabled{opacity:.55; cursor:default}
 .heijiu-ui .ha-go:hover:not(:disabled){filter:brightness(1.08)}
+.heijiu-ui .ha-clear{
+  flex:0 0 auto; padding:.55rem .85rem;
+  font:inherit; font-size:.9rem; color:var(--ha-muted);
+  background:transparent; border:1px solid var(--ha-line-strong);
+  border-radius:10px; cursor:pointer;
+}
+.heijiu-ui .ha-clear:hover{border-color:var(--ha-accent); color:var(--ha-accent)}
 
 /* ── 状态 ── */
 .heijiu-ui .ha-meta{margin:.5rem 0 0; font-size:.84rem; color:var(--ha-muted)}
@@ -202,6 +209,15 @@
 /* 被引用跳转时高亮一下 */
 .heijiu-ui .ha-src:target{border-color:var(--ha-accent); background:rgba(168,59,37,.06)}
 
+/* ── key 输入区（检索与问答共用，只填一次）── */
+.heijiu-ui .ha-keybox{
+  margin:.75rem 0 0; padding:.6rem .7rem;
+  border:1px solid var(--ha-line); border-radius:10px;
+  background:var(--ha-soft);
+}
+.heijiu-ui .ha-keybox .ha-key-row{margin:0}
+.heijiu-ui .ha-keybox .ha-key{font-size:.86rem}
+
 /* ── 对话流（追问）── */
 .heijiu-ui .ha-chat{margin:.9rem 0 0}
 .heijiu-ui .ha-turn{
@@ -257,6 +273,10 @@
   border-radius:9px; cursor:pointer;
 }
 .heijiu-ui .ha-send:disabled{opacity:.55; cursor:default}
+/* display:flex 的优先级高于 [hidden] 的默认 display:none，
+   不显式写这一条，追问框会在还没开始问答时就露出来。 */
+.heijiu-ui .ha-ask-row[hidden]{display:none}
+
 .heijiu-ui .ha-end{
   flex:0 0 auto; padding:.5rem .8rem;
   font:inherit; font-size:.86rem; color:var(--ha-muted);
@@ -272,7 +292,8 @@
 /* ── 窄屏 ── */
 @media (max-width:640px){
   .heijiu-ui .ha-q{flex:1 1 100%}
-  .heijiu-ui .ha-go{flex:1 1 100%}
+  .heijiu-ui .ha-go{flex:1 1 auto}
+  .heijiu-ui .ha-clear{flex:1 1 auto}
   .heijiu-ui .ha-key{flex:1 1 100%}
   .heijiu-ui .ha-start,.heijiu-ui .ha-forget{flex:1 1 auto}
   .heijiu-ui .ha-src{flex-wrap:wrap}

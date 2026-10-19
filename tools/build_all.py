@@ -330,8 +330,7 @@ def build_ask():
     这样 `build_all.py --clean` 清空 docs/ 之后能原样重建，不会丢文件。
 
     产出：
-      docs/ask.html          —— 检索页：跨四站检索 + 一次性 AI 解释
-      docs/chat.html         —— 问答页：黑柩问答，自由多轮对话
+      docs/ask.html          —— 问答搜索：检索 + AI 作答 + 追问（单页）
       docs/assets/ask.css    —— 样式（所有规则以 #heijiu-ask 前缀隔离）
       docs/assets/ask.js     —— 逻辑（ES5，无依赖）
     嵌入 WordPress 只需要：<div id="heijiu-ask"></div> + 引用这两个资源。
@@ -341,7 +340,6 @@ def build_ask():
         return 0
     pairs = [
         ("ask.html", os.path.join(DOCS, "ask.html")),
-        ("chat.html", os.path.join(DOCS, "chat.html")),
         ("ask.css", os.path.join(DOCS, "assets", "ask.css")),
         ("ask.js", os.path.join(DOCS, "assets", "ask.js")),
     ]
