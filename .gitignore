@@ -14,6 +14,7 @@ __pycache__/
 trpg-data/
 lore-data/
 report-data/
+novel-data/
 trpg-src/
 
 # 一次性联网缓存（build_pinyin.py 可重新拉取；保留可让 CI 离线构建）

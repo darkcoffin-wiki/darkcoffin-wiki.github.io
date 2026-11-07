@@ -134,6 +134,7 @@ font-size:.88rem;transition:width .18s,border-color .18s}
 border-radius:0 10px 10px 0;padding:.6rem .95rem;margin:.55rem 0;font-size:.93rem}
 .rp-warn.ai{border-left-color:#d98b2b}
 .rp-warn.not_lore{border-left-color:var(--accent)}
+.rp-warn.origin{border-left-color:var(--accent2)}
 .rp-warn.future{border-left-color:var(--muted)}
 .rp-intro{background:var(--card);border:1px solid var(--line);border-radius:12px;
 padding:.8rem 1rem;margin:1.1rem 0 1.6rem}
@@ -147,3 +148,60 @@ border-radius:12px;padding:.8rem .95rem;color:var(--fg)}
 .rp-card h3{margin:.15rem 0 .3rem;font-size:1.05rem;line-height:1.4}
 .rp-card .rp-sub{font-size:.88rem;margin:.1rem 0 .4rem}
 .rp-card p{margin:.12rem 0}
+
+/* ══ 独立作品研究：作品卡（一张卡两个入口）══ */
+/* 与普通报告卡的唯一差别：卡本身不是链接，里面放两个 <a>，
+   所以用 div + .rp-card 的同一套外观，只补按钮与排版。 */
+.rp-grid-work{grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))}
+.rp-card--work{display:flex;flex-direction:column}
+.rp-card--work:hover{border-color:var(--line)}   /* 整卡不可点，就别给可点的反馈 */
+.rp-work-links{margin:auto 0 0;padding-top:.65rem;display:flex;gap:.5rem;flex-wrap:wrap}
+.rp-btn{display:inline-block;padding:.3rem .85rem;border-radius:99px;
+border:1px solid var(--accent);background:var(--accent);color:#fff;
+font-size:.86rem;font-weight:600;line-height:1.5}
+.rp-btn:hover{text-decoration:none;opacity:.88}
+.rp-btn-ghost{background:transparent;color:var(--accent)}
+.rp-btn-ghost:hover{background:var(--card);opacity:1;border-color:var(--accent2);
+color:var(--accent2)}
+
+/* ══ 报告页：原文入口条（只出现在绑定了原著的报告上）══ */
+.rp-origin{margin:.75rem 0 0;padding:.5rem .9rem;border-left:3px solid var(--accent);
+background:var(--card);border-radius:0 10px 10px 0;font-size:.93rem}
+.rp-origin a{color:var(--accent);font-weight:600}
+/* 封面区搬过来的说明（面向谁读 / 定位 / 内容提示）：
+   沿用 .rp-warn 的外观，只把内边距压小一点，免得页头太长 */
+.rp-head .rp-warn{margin:.55rem 0 0;padding:.5rem .9rem;font-size:.92rem}
+.rp-head .rp-warn.content{border-left-color:#d98b2b}
+
+/* ══ 原著页：这是「书」，不是「论文」══
+   报告页是空行分段、首行不缩进、表格多；原著页反过来——首行缩进 2 字、
+   段间不空行、无表格。两套排版明确区分，读者一眼知道自己在读哪种东西。 */
+.nv-body{line-height:1.98;font-size:1.03rem;max-width:39rem;margin:0 auto}
+.nv-body p{margin:0;text-indent:2em;text-align:justify}
+.nv-body p+p{margin-top:.35rem}
+.nv-body h2.nv-part{font-size:1.32rem;margin:3rem 0 1.2rem;text-align:center;
+padding-bottom:.5rem;border-bottom:1px solid var(--line);scroll-margin-top:1rem}
+/* 章标题要把 .rp-body h2 的下划线关掉——章很多，条条带线会碎掉版面 */
+.nv-body h2.nv-chap,.nv-body h3.nv-chap{font-size:1.02rem;font-weight:700;
+margin:2.4rem 0 1rem;text-align:center;color:var(--accent2);letter-spacing:.02em;
+border-bottom:0;padding-bottom:0;scroll-margin-top:1rem}
+/* 原著页目录：章多（黑柩校园 47 章），保持两列；篇名单独一行做分组 */
+.nv-toc{padding:.55rem 1rem .7rem}
+.nv-toc h2.plain{margin:0 0 .4rem;font-size:1.02rem;padding:0 0 .3rem;
+border-bottom:1px solid var(--line)}
+.nv-toc .nv-part-title{margin:.55rem 0 .25rem;font-weight:700;font-size:.92rem;
+color:var(--accent)}
+.nv-toc .nv-part-title:first-of-type{margin-top:.1rem}
+/* 目录做成芯片而不是竖排 <ol>：47 个章名的竖排目录会占掉一整屏，
+   读者得先滚过目录才见到正文。芯片一行排开，长目录也只是几行。 */
+.nv-chips{display:flex;flex-wrap:wrap;gap:.35rem .4rem;margin:0 0 .3rem}
+.nv-chips a{display:inline-block;padding:.02rem .5rem;border:1px solid var(--line);
+border-radius:6px;font-size:.86rem;line-height:1.7;color:var(--fg)}
+.nv-chips a:hover{border-color:var(--accent2);color:var(--accent2);
+text-decoration:none}
+/* 原著页页头：研究报告入口做成按钮，和首页作品卡的按钮同一套 */
+.nv-report{margin:.85rem 0 0}
+.nv-report a{display:inline-block;padding:.32rem .95rem;border-radius:99px;
+border:1px solid var(--accent);background:var(--accent);color:#fff;
+font-size:.9rem;font-weight:600}
+.nv-report a:hover{text-decoration:none;opacity:.88}

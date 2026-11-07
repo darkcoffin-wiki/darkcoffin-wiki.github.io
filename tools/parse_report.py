@@ -261,15 +261,23 @@ def main():
                    if f.lower().endswith(".docx") and not f.startswith("~$"))
     # 中间产物与页面都用 ASCII slug（配置在 data/report_site.json 的 slugs）
     slugs = {}
+    excludes = set()
     _cfg = os.path.join(W, "data", "report_site.json")
     if os.path.exists(_cfg):
-        slugs = json.load(io.open(_cfg, encoding="utf-8")).get("slugs") or {}
+        _c = json.load(io.open(_cfg, encoding="utf-8"))
+        slugs = _c.get("slugs") or {}
+        excludes = set(_c.get("exclude") or [])
     catalog, issues = [], []
     print("解析 %d 份报告 → %s" % (len(files), out_dir))
     for fn in files:
+        key = fn.replace("黑柩报告-", "").replace(".docx", "")
+        if key in excludes:
+            # 「隔离」：docx 还在本地，但不进 catalog → 不生成页面、不进首页、不进搜索。
+            # 待润色重编号的那两篇（叶心 / 三大恨与李天下）走这条路。
+            print("  %-40s 已隔离，跳过" % key[:40])
+            continue
         p = os.path.join(args.src, fn)
         r = parse_docx(p)
-        key = fn.replace("黑柩报告-", "").replace(".docx", "")
         slug = slugs.get(key) or key          # 没配 slug 时退回原名
         rec = {"file": fn, "key": key, "slug": slug,
                **{k: v for k, v in r.items() if k != "md"}}

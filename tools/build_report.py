@@ -33,7 +33,14 @@ PREFIX = "report"
 OUT = os.path.join(W, "docs", PREFIX)          # docs/report
 ASSETS = os.path.join(W, "docs", "assets")     # docs/assets（与三站共享）
 DATA = os.path.join(W, "report-data")
+NOVEL = os.path.join(W, "novel-data")          # 独立小说的中间产物（parse_novel.py）
 CFG = os.path.join(W, "data", "report_site.json")
+
+# 原著 md（parse_novel.py 的产物）里只有两种结构行：`@part 篇名` 与 `## 章名`。
+# 用本文件自定的这两个正则、而不是通用 Markdown，是因为小说正文里可能有
+# 以 `-` / `|` / `#` 开头的行，走通用解析会被误判成列表/表格/标题。
+NOVEL_PART_RE = re.compile(r"^@part\s+(.+)$")
+NOVEL_SEC_RE = re.compile(r"^##\s+(.+)$")
 
 SITE = {
     "title": "黑柩分析站",
@@ -95,7 +102,8 @@ def slugify_anchor(text, seen):
 # ══════════════════════════════════════════════════════════════
 # Markdown（本项目的子集）→ HTML
 # ══════════════════════════════════════════════════════════════
-COVER_TOC_RE = re.compile(r"^#{1,6}\s*目\s*[录錄]\s*$", re.M)
+COVER_TOC_RE = re.compile(
+    r"^#{1,6}[ \t\u3000]*\*{0,3}目[ \t\u3000]*[录錄]\*{0,3}[ \t\u3000]*$", re.M)
 # docx 里给 Word 用户的操作提示（「按 F9 更新域」「视图→导航窗格」等），网页读者不需要
 # 两种实际形态都要覆盖：
 #   · （本目录为自动域：在 Word 中全选后按 F9…）
@@ -180,13 +188,17 @@ def md_to_html(md):
         if m:
             lv = max(2, len(m.group(1)) - _shift)
             txt = m.group(2).strip()
+            # docx 里整行加粗的标题会让 parse_report 导出 `# **标题**`。
+            # 目录/锚点必须用**去掉强调标记**的纯文本，否则页面上会露出 `**`，
+            # 而且与 main() 里生成搜索索引时用的锚点算法对不上（真实踩过的坑）。
+            plain = re.sub(r"\*+", "", txt).strip()
             # 兜底：残留的「目录」标题直接跳过（不进 toc、不输出）
-            if re.fullmatch(r"目\s*[录錄]", txt.replace("\u3000", "").strip()):
+            if re.fullmatch(r"目\s*[录錄]", plain.replace("\u3000", "").strip()):
                 i += 1
                 continue
-            aid = slugify_anchor(txt, seen)
+            aid = slugify_anchor(plain, seen)
             if lv <= 3:
-                toc.append((lv, txt, aid))
+                toc.append((lv, plain, aid))
             out.append('<h%d id="%s">%s</h%d>' % (lv, aid, inline(txt), lv))
             i += 1
             continue
@@ -291,17 +303,23 @@ def station_switch(up, self_rel=""):
     return "".join(out)
 
 
-def page(title, body, self_rel="", up="../", extra_head="", show_search=True):
+def page(title, body, self_rel="", up="../", extra_head="", show_search=True,
+         foot_note=None):
     """self_rel：本站内资源前缀（首页 ""、entry/ 页 "../"）。
 
     up：回 docs/ 根的前缀（首页 "../"、entry/ 页 "../../"），用于跨站菜单与品牌链接。
     分析站自带 assets 副本，故本站资源不依赖共享 docs/assets，路径更稳。
+
+    foot_note：页脚那句「本站报告由 AI …撰写」。原著页必须换掉——
+    原著是作者原文，页脚还写「由 AI 撰写」就是错的。
     """
     import json as _json
     # SITE_REL = 「回本站根」的前缀。分析站的结果页都在 entry/ 下，
     # app.js 会拼成 SITE_REL + <报告slug>.html → 必须指向 entry/ 所在层的上一层。
     sr_json = _json.dumps(self_rel)
     si_json = _json.dumps("assets/search.json")   # 本站自己的搜索索引（相对本站根）
+    if foot_note is None:
+        foot_note = "本站报告由 AI 依据《黑柩》设定集整理撰写，属读者分析，非作者设定原文。"
     search = ('<div class="search-wrap">'
               '<input id="q" type="search" placeholder="搜索报告与章节…" '
               'autocomplete="off" aria-label="搜索">'
@@ -330,7 +348,7 @@ def page(title, body, self_rel="", up="../", extra_head="", show_search=True):
 </main>
 <footer class="site-foot">
   <p class="disclaimer">{html.escape(SITE['disclaimer'])}</p>
-  <p>本站报告由 AI 依据《黑柩》设定集整理撰写，属读者分析，非作者设定原文。</p>
+  <p>{foot_note}</p>
   <p class="muted">静态站 · 由 <code>tools/build_report.py</code> 生成</p>
   <p class="friend-links">友情链接：{friend_links_html()}</p>
 </footer>
@@ -352,13 +370,191 @@ def write_if_changed(path, content):
 
 
 # ══════════════════════════════════════════════════════════════
+# 独立作品（原著）—— novel-data/ 的读取与渲染
+# ══════════════════════════════════════════════════════════════
+def load_works(cfg):
+    """→ {报告 key: 作品记录}。
+
+    作品记录来自 novel-data/catalog.json（parse_novel.py 生成）。
+    这里只补一个 series（第十六/十七/十八），与报告的系列号同源，
+    避免同一个数字在配置里写两遍、改稿时忘了同步。
+    """
+    p = os.path.join(NOVEL, "catalog.json")
+    if not os.path.exists(p):
+        return {}
+    out = {}
+    for c in json.load(io.open(p, encoding="utf-8")):
+        c["series"] = cfg["series"].get(c["key"], "")
+        out[c["key"]] = c
+    return out
+
+
+def basis_of(w):
+    """原著的规模描述（「44,636 字 · 13 章」）。
+
+    章数要扣掉「前言」：黑柩校园两篇各有一个前言节，不扣就会报成 49 章
+    （实际 26＋21＝47 章）。
+    """
+    n = w.get("sections", 0) - w.get("front", 0)
+    h = format(w.get("hanzi", 0), ",")
+    split = w.get("split")
+    if split == "parts":
+        return "%s 字 · %d 章（%d 篇）" % (h, n, len(w.get("parts") or []))
+    if split == "date":
+        return "%s 字 · 无章节 · 按日期分节" % h
+    return "%s 字 · %d 章" % (h, n)
+
+
+def parse_novel_md(md, toc_strip=""):
+    """原著 md → [{"title": 篇名或 None, "prefix": '', "secs": [...]}]
+
+    锚点规则：有篇时加一字母前缀（a-1、b-1），因为《黑柩校园》两篇
+    **各自从「1」编章**，不加前缀会出现两个 id="1"。
+    """
+    has_parts = any(NOVEL_PART_RE.match(x) for x in md.split("\n"))
+    parts, seen = [], {}
+    cur_part = cur_sec = None
+    part_i = -1
+    for raw in md.split("\n"):
+        line = raw.rstrip()
+        if not line:
+            continue
+        m = NOVEL_PART_RE.match(line)
+        if m:
+            part_i += 1
+            cur_part = {"title": m.group(1).strip(),
+                        "prefix": chr(ord("a") + part_i) if has_parts else "",
+                        "secs": []}
+            parts.append(cur_part)
+            cur_sec = None
+            continue
+        m = NOVEL_SEC_RE.match(line)
+        if m:
+            if cur_part is None:
+                cur_part = {"title": None, "prefix": "", "secs": []}
+                parts.append(cur_part)
+            title = m.group(1).strip()
+            pre = cur_part["prefix"]
+            aid = slugify_anchor((pre + "-" + title) if pre else title, seen)
+            toc = re.sub(toc_strip, "", title).strip() if toc_strip else title
+            cur_sec = {"title": title, "toc": toc or title,
+                       "anchor": aid, "paras": []}
+            cur_part["secs"].append(cur_sec)
+            continue
+        if cur_sec is not None:
+            cur_sec["paras"].append(line)
+    return parts, has_parts
+
+
+def notes_html(notes, kind="basis"):
+    """封面区那几行重要说明（面向谁读 / 定位 / 内容提示）。
+
+    这些字原本长在 docx 封面上，而 strip_cover() 会把封面整片剥掉
+    （避免 Word 的「按 F9 更新域」漏到页面上），所以必须由配置补回来，
+    否则「读之前不需要任何背景」「定位：正史」这些作者原话就丢了。
+
+    每项可以是字符串（默认 .basis），也可以是 {"kind": ..., "text": ...}——
+    「内容提示」用 kind="content" 换橙色左边框，视觉上与「定位」区分开。
+    """
+    out = []
+    for n in notes:
+        if isinstance(n, dict):
+            out.append('<p class="rp-warn %s">%s</p>'
+                       % (n.get("kind", kind), inline(n["text"])))
+        else:
+            out.append('<p class="rp-warn %s">%s</p>' % (kind, inline(n)))
+    return "".join(out)
+
+
+def series_label(key, cfg, works):
+    """报告页顶部的系列标签。
+
+    老 15 篇是「《黑柩》设定研究之十五」；独立作品研究的三篇同时挂两个号——
+    **全站系列号（用户定的 16/17/18）+ 栏目序号（报告封面自称的「之二」「之三」）**。
+    两个都显示，是因为报告正文里已经在引用「第一篇」「第三篇」了，
+    只留全站号会让这些引用失指。
+    """
+    num = cfg.get("series", {}).get(key, "")
+    w = works.get(key)
+    if num and w and w.get("column_no"):
+        return "《黑柩》报告系列之%s · 独立作品研究之%s" % (num, w["column_no"])
+    return ("《黑柩》设定研究之%s" % num) if num else "专题报告"
+
+
+def work_series_label(w):
+    num = w.get("series") or ""
+    return ("《黑柩》独立作品 · 系列之%s" % num) if num else "《黑柩》独立作品"
+
+
+def render_novel_page(w, parts, has_parts):
+    """原著页。正文用 nv-body（书）：首行缩进、段间不空行。"""
+    title = html.escape(w["title"])
+    n_sec = sum(len(p["secs"]) for p in parts)
+
+    # ── 目录 ──
+    # 原著是「书」：章动辄 47 个（黑柩校园），用报告页那种竖排 <ol> 会占掉
+    # 一整屏，读者得滚过目录才见到正文。改成**一行排开的芯片**，长目录也只是几行。
+    def toc_chips(secs):
+        return '<p class="nv-chips">%s</p>' % "".join(
+            '<a href="#%s">%s</a>' % (s["anchor"], html.escape(s["toc"]))
+            for s in secs)
+
+    if has_parts:
+        toc_html = "".join(
+            '<p class="nv-part-title">%s</p>%s'
+            % (html.escape(p["title"]), toc_chips(p["secs"])) for p in parts)
+    else:
+        toc_html = toc_chips(parts[0]["secs"]) if parts else ""
+
+    # ── 正文 ──
+    body = []
+    for p in parts:
+        if has_parts and p["title"]:
+            body.append('<h2 class="nv-part" id="part-%s">%s</h2>'
+                        % (p["prefix"], html.escape(p["title"])))
+        for s in p["secs"]:
+            lv = 3 if has_parts else 2
+            body.append('<h%d class="nv-chap" id="%s">%s</h%d>'
+                        % (lv, s["anchor"], html.escape(s["title"]), lv))
+            for para in s["paras"]:
+                body.append("<p>%s</p>" % html.escape(para, quote=False))
+
+    # ── 与研究报告互跳 ──
+    rep = w.get("report")
+    rep_html = ""
+    if rep:
+        rep_html = ('<p class="nv-report"><a href="../entry/%s.html">'
+                    '阅读本作研究报告 →</a></p>' % w["slug"])
+
+    return f"""<article class="rp-doc nv-doc">
+<nav class="crumbs"><a href="../index.html">分析站</a> · <a href="../index.html#works">独立作品研究</a> · {title}</nav>
+<header class="rp-head nv-head">
+  <p class="rp-series mono">{html.escape(work_series_label(w))}</p>
+  <h1>{title}</h1>
+  <p class="rp-meta muted">{html.escape(basis_of(w))} · 据 {html.escape(w.get('source_date',''))} 稿</p>
+  {rep_html}
+  {notes_html(w.get('work_notes') or [])}
+</header>
+<nav class="toc rp-toc nv-toc"><h2 class="plain">目录</h2>{toc_html}</nav>
+<section class="nv-body">
+{chr(10).join(body)}
+</section>
+<p class="back"><a href="../index.html#works">← 返回独立作品研究</a></p>
+</article>"""
+
+
+# ══════════════════════════════════════════════════════════════
 # 渲染报告页
 # ══════════════════════════════════════════════════════════════
-def render_report(key, cfg, md, slug=None):
-    """key：原中文名（**查配置用这个**）；slug：ASCII 文件名（只用于文件名，本函数不用）。"""
+def render_report(key, cfg, md, slug=None, works=None):
+    """key：原中文名（**查配置用这个**）；slug：ASCII 文件名（只用于文件名，本函数不用）。
+
+    works：独立作品表。报告若绑定了原著（works[key]），页头会多一条
+    「本报告分析的原文 →」和一个注明版本日的依据行；否则保持原样。
+    """
+    works = works or {}
     meta_t = cfg["titles"].get(key, key)
     meta_s = cfg["subtitles"].get(key, "")
-    num = cfg["series"].get(key, "")
     html_body, toc = md_to_html(md)
     hanzi = len(HANZI.findall(md))
     n_tbl = html_body.count('<table class="rp">')
@@ -366,7 +562,39 @@ def render_report(key, cfg, md, slug=None):
     toc_items = "".join(
         '<li class="l%d"><a href="#%s">%s</a></li>' % (lv, aid, html.escape(txt))
         for lv, txt, aid in toc if lv >= 2)
-    num_txt = ('《黑柩》设定研究之%s' % num) if num else "专题报告"
+    num_txt = series_label(key, cfg, works)
+
+    w = works.get(key)
+    if w:
+        basis = ("依据《%s》原文（%s）· 原文据 %s 稿"
+                 % (html.escape(w["title"]), html.escape(basis_of(w)),
+                    html.escape(w.get("source_date", ""))))
+        origin = ('<p class="rp-origin">本报告分析的原文 → '
+                  '<a href="../works/%s.html">《%s》%s</a></p>'
+                  % (w["slug"], html.escape(w["title"]),
+                     html.escape(basis_of(w))))
+        warn = ('⚠️ 本报告由 <strong>AI 撰写</strong>，属读者分析；'
+                '同栏目的<strong>原著是作者原文</strong>，两者页面分开标注。'
+                '引用原文处随文标明，推断处标【推断】。')
+        notes = notes_html(w.get("report_notes") or [])
+    else:
+        basis = "依据《黑柩设定集》整理"
+        origin = ""
+        # 保持原来的两行排版（换行 + 5 空格续行），这样老报告的成品一个字节都不变
+        warn = ('⚠️ 本报告由 <strong>AI 撰写</strong>，属读者分析，'
+                '<strong>非作者设定原文</strong>；\n'
+                '     引用原文处随文标明，推断处标【推断】。')
+        notes = ""
+
+    # 页头的可选行拼成一块：空着的时候不要留下「只有两个空格」的行，
+    # 否则每份报告页的 HTML 里都会多出几行空白，diff 里也难看。
+    extra = []
+    if origin:
+        extra.append(origin)
+    extra.append('<p class="rp-ai">%s</p>' % warn)
+    if notes:
+        extra.append(notes)
+    extra_html = "\n".join(extra)
 
     return f"""<article class="rp-doc">
 <nav class="crumbs"><a href="../index.html">分析站</a> · {html.escape(meta_t)}</nav>
@@ -374,9 +602,8 @@ def render_report(key, cfg, md, slug=None):
   <p class="rp-series mono">{html.escape(num_txt)}</p>
   <h1>{html.escape(meta_t)}</h1>
   {f'<p class="rp-sub">{html.escape(meta_s)}</p>' if meta_s else ''}
-  <p class="rp-meta muted">{hanzi:,} 汉字 · {n_tbl} 张表 · 依据《黑柩设定集》整理</p>
-  <p class="rp-ai">⚠️ 本报告由 <strong>AI 撰写</strong>，属读者分析，<strong>非作者设定原文</strong>；
-     引用原文处随文标明，推断处标【推断】。</p>
+  <p class="rp-meta muted">{hanzi:,} 汉字 · {n_tbl} 张表 · {basis}</p>
+  {extra_html}
 </header>
 <nav class="toc rp-toc"><h2 class="plain">目录</h2><ol>{toc_items}</ol></nav>
 <section class="rp-body">
@@ -386,36 +613,79 @@ def render_report(key, cfg, md, slug=None):
 </article>"""
 
 
+
 # ══════════════════════════════════════════════════════════════
 # 渲染首页
 # ══════════════════════════════════════════════════════════════
-def render_index(cfg, catalog):
+def work_card(cfg, w, by):
+    """独立作品卡：一个作品一张卡，卡上两枚入口（原著 / 报告）。
+
+    与普通报告卡的区别只有一处——整张卡不是 <a>，因为里面要放两个 <a>
+    （HTML 不允许嵌套链接）。所以栏目里这一块的网格用 .rp-card--work。
+    """
+    c = by.get(w["key"])
+    t = cfg["titles"].get(w["key"], w["title"])
+    sub = cfg["subtitles"].get(w["key"], "")
+    rep_btn = ""
+    rep_meta = ""
+    if c:
+        rep_btn = ('<a class="rp-btn rp-btn-ghost" href="entry/%s.html">读研究报告</a>'
+                   % c["slug"])
+        rep_meta = " ｜ 报告 %s 字 · %d 表" % (format(c["hanzi"], ","), c["tables"])
+    return (
+        '<div class="rp-card rp-card--work">'
+        '<p class="rp-series mono">{n}</p><h3>{t}</h3>'
+        '<p class="rp-sub">{sub}</p>'
+        '<p class="muted">原著 {basis}{rep}</p>'
+        '<p class="rp-work-links">'
+        '<a class="rp-btn" href="works/{slug}.html">读原著</a>{rb}'
+        '</p></div>').format(
+            # 卡片窄，挂全站前缀会折成三行；这里是分析站内部，省掉「《黑柩》报告」
+            n=html.escape("系列之%s · 独立作品研究之%s"
+                          % (w.get("series", ""), w.get("column_no", ""))
+                          if w.get("column_no") else
+                          ("系列之%s" % w.get("series", ""))),
+            t=html.escape(t), sub=html.escape(sub),
+            basis=html.escape(basis_of(w)), rep=rep_meta,
+            slug=w["slug"], rb=rep_btn)
+
+
+def render_index(cfg, catalog, works=None):
+    works = works or {}
     # g["reports"] 里写的是**原中文名**，故按 key 建索引
     by = {(c.get("key") or c["slug"]): c for c in catalog}
     blocks = []
+    n_works = 0
     for g in cfg["groups"]:
-        cards = []
-        for slug in g["reports"]:
-            c = by.get(slug)
-            if not c:
-                continue
-            num = cfg["series"].get(slug, "")
-            t = cfg["titles"].get(slug, slug)
-            sub = cfg["subtitles"].get(slug, "")
-            cards.append(
-                '<a class="rp-card" href="entry/{slug}.html">'
-                '<p class="rp-series mono">{n}</p><h3>{t}</h3>'
-                '<p class="rp-sub">{sub}</p>'
-                '<p class="muted">{h} 汉字 · {tb} 张表</p></a>'.format(
-                    n=("《黑柩》设定研究之%s" % num) if num else "专题报告",
-                    t=html.escape(t), sub=html.escape(sub),
-                    h=format(c["hanzi"], ","), tb=c["tables"],
-                    slug=c["slug"]))   # 卡片链接用 ASCII slug
+        if g.get("kind") == "works":
+            cards = [work_card(cfg, works[k], by)
+                     for k in g["reports"] if k in works]
+            n_works += len(cards)
+        else:
+            cards = []
+            for slug in g["reports"]:
+                c = by.get(slug)
+                if not c:
+                    continue
+                t = cfg["titles"].get(slug, slug)
+                sub = cfg["subtitles"].get(slug, "")
+                cards.append(
+                    '<a class="rp-card" href="entry/{slug}.html">'
+                    '<p class="rp-series mono">{n}</p><h3>{t}</h3>'
+                    '<p class="rp-sub">{sub}</p>'
+                    '<p class="muted">{h} 汉字 · {tb} 张表</p></a>'.format(
+                        n=html.escape(series_label(slug, cfg, works)),
+                        t=html.escape(t), sub=html.escape(sub),
+                        h=format(c["hanzi"], ","), tb=c["tables"],
+                        slug=c["slug"]))   # 卡片链接用 ASCII slug
         blocks.append(
-            '<section class="rp-group"><h2>%s</h2>'
+            '<section class="rp-group"%s><h2>%s</h2>'
             '<p class="muted">%s</p>'
-            '<div class="rp-grid">%s</div></section>'
-            % (html.escape(g["name"]), html.escape(g["desc"]), "".join(cards)))
+            '<div class="rp-grid%s">%s</div></section>'
+            % (' id="%s"' % html.escape(g["anchor"]) if g.get("anchor") else "",
+               html.escape(g["name"]), html.escape(g["desc"]),
+               " rp-grid-work" if g.get("kind") == "works" else "",
+               "".join(cards)))
 
     # ── 置顶「最近主打」──
     # 配置见 data/report_site.json 的 featured：{report, label, note}
@@ -425,13 +695,12 @@ def render_index(cfg, catalog):
     _fk = _f.get("report")
     if _fk and _fk in by:
         _c = by[_fk]
-        _num = cfg["series"].get(_fk, "")
         _t = cfg["titles"].get(_fk, _fk)
         _sub = cfg["subtitles"].get(_fk, "")
         feat_html = f"""<section class="rp-feature">
   <a class="rp-feature-card" href="entry/{_c['slug']}.html">
     <p class="rp-feature-tag">{html.escape(_f.get('label', '最近主打'))}</p>
-    <p class="rp-series mono">{('《黑柩》设定研究之%s' % _num) if _num else '专题报告'}</p>
+    <p class="rp-series mono">{html.escape(series_label(_fk, cfg, works))}</p>
     <h2>{html.escape(_t)}</h2>
     {f'<p class="rp-sub">{html.escape(_sub)}</p>' if _sub else ''}
     <p class="muted">{format(_c['hanzi'], ',')} 汉字 · {_c['tables']} 张表</p>
@@ -444,11 +713,14 @@ def render_index(cfg, catalog):
         for w in cfg["warnings"])
     tot_h = sum(c["hanzi"] for c in catalog)
     tot_t = sum(c["tables"] for c in catalog)
+    tot_nv = sum(w.get("hanzi", 0) for w in works.values())
+    nv_bit = (" · 附 %d 部原著（%s 字）" % (n_works, format(tot_nv, ","))
+              if n_works else "")
     return f"""<article class="rp-home">
 <header class="hero">
   <h1>{html.escape(cfg['site_title'])}</h1>
   <p class="sub">{html.escape(cfg['subtitle'])}</p>
-  <p class="stats">{len(catalog)} 份报告 · {format(tot_h, ',')} 汉字 · {tot_t} 张表</p>
+  <p class="stats">{len(catalog)} 份报告 · {format(tot_h, ',')} 汉字 · {tot_t} 张表{nv_bit}</p>
 </header>
 <section class="rp-warns">{warns}</section>
 <section class="rp-intro"><p>{inline(cfg['intro'])}</p></section>
@@ -458,9 +730,11 @@ def render_index(cfg, catalog):
 <ol class="howto">
   <li>本站在<strong>设定站</strong>之外，收录基于设定集的<strong>研究报告</strong>——适合已经知道设定、想看制度与人物怎么被分析的读者。</li>
   <li>每份报告一篇，页内目录可跳转；报告里的<b>表格</b>是它的主要论证骨架。</li>
+  <li><strong>独立作品研究</strong>栏目的每张卡有两个入口：<b>读原著</b>（作者的原文全文，本站附上）与<b>读研究报告</b>（AI 的分析）。报告是<strong>面向第一次读的人</strong>写的，读之前不需要任何背景——<strong>先读哪个都行</strong>；报告里每一处引用都能回原文核对。</li>
   <li>只想确认<strong>设定本身</strong>，请去 <a href="../lore/index.html">设定站</a>；想看跑团实录去 <a href="../trpg/index.html">跑团站</a>；花絮在 <a href="../huaxu/index.html">花絮站</a>。</li>
 </ol></section>
 </article>"""
+
 
 
 # ══════════════════════════════════════════════════════════════
@@ -603,6 +877,7 @@ font-size:.88rem;transition:width .18s,border-color .18s}
 border-radius:0 10px 10px 0;padding:.6rem .95rem;margin:.55rem 0;font-size:.93rem}
 .rp-warn.ai{border-left-color:#d98b2b}
 .rp-warn.not_lore{border-left-color:var(--accent)}
+.rp-warn.origin{border-left-color:var(--accent2)}
 .rp-warn.future{border-left-color:var(--muted)}
 .rp-intro{background:var(--card);border:1px solid var(--line);border-radius:12px;
 padding:.8rem 1rem;margin:1.1rem 0 1.6rem}
@@ -616,6 +891,63 @@ border-radius:12px;padding:.8rem .95rem;color:var(--fg)}
 .rp-card h3{margin:.15rem 0 .3rem;font-size:1.05rem;line-height:1.4}
 .rp-card .rp-sub{font-size:.88rem;margin:.1rem 0 .4rem}
 .rp-card p{margin:.12rem 0}
+
+/* ══ 独立作品研究：作品卡（一张卡两个入口）══ */
+/* 与普通报告卡的唯一差别：卡本身不是链接，里面放两个 <a>，
+   所以用 div + .rp-card 的同一套外观，只补按钮与排版。 */
+.rp-grid-work{grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))}
+.rp-card--work{display:flex;flex-direction:column}
+.rp-card--work:hover{border-color:var(--line)}   /* 整卡不可点，就别给可点的反馈 */
+.rp-work-links{margin:auto 0 0;padding-top:.65rem;display:flex;gap:.5rem;flex-wrap:wrap}
+.rp-btn{display:inline-block;padding:.3rem .85rem;border-radius:99px;
+border:1px solid var(--accent);background:var(--accent);color:#fff;
+font-size:.86rem;font-weight:600;line-height:1.5}
+.rp-btn:hover{text-decoration:none;opacity:.88}
+.rp-btn-ghost{background:transparent;color:var(--accent)}
+.rp-btn-ghost:hover{background:var(--card);opacity:1;border-color:var(--accent2);
+color:var(--accent2)}
+
+/* ══ 报告页：原文入口条（只出现在绑定了原著的报告上）══ */
+.rp-origin{margin:.75rem 0 0;padding:.5rem .9rem;border-left:3px solid var(--accent);
+background:var(--card);border-radius:0 10px 10px 0;font-size:.93rem}
+.rp-origin a{color:var(--accent);font-weight:600}
+/* 封面区搬过来的说明（面向谁读 / 定位 / 内容提示）：
+   沿用 .rp-warn 的外观，只把内边距压小一点，免得页头太长 */
+.rp-head .rp-warn{margin:.55rem 0 0;padding:.5rem .9rem;font-size:.92rem}
+.rp-head .rp-warn.content{border-left-color:#d98b2b}
+
+/* ══ 原著页：这是「书」，不是「论文」══
+   报告页是空行分段、首行不缩进、表格多；原著页反过来——首行缩进 2 字、
+   段间不空行、无表格。两套排版明确区分，读者一眼知道自己在读哪种东西。 */
+.nv-body{line-height:1.98;font-size:1.03rem;max-width:39rem;margin:0 auto}
+.nv-body p{margin:0;text-indent:2em;text-align:justify}
+.nv-body p+p{margin-top:.35rem}
+.nv-body h2.nv-part{font-size:1.32rem;margin:3rem 0 1.2rem;text-align:center;
+padding-bottom:.5rem;border-bottom:1px solid var(--line);scroll-margin-top:1rem}
+/* 章标题要把 .rp-body h2 的下划线关掉——章很多，条条带线会碎掉版面 */
+.nv-body h2.nv-chap,.nv-body h3.nv-chap{font-size:1.02rem;font-weight:700;
+margin:2.4rem 0 1rem;text-align:center;color:var(--accent2);letter-spacing:.02em;
+border-bottom:0;padding-bottom:0;scroll-margin-top:1rem}
+/* 原著页目录：章多（黑柩校园 47 章），保持两列；篇名单独一行做分组 */
+.nv-toc{padding:.55rem 1rem .7rem}
+.nv-toc h2.plain{margin:0 0 .4rem;font-size:1.02rem;padding:0 0 .3rem;
+border-bottom:1px solid var(--line)}
+.nv-toc .nv-part-title{margin:.55rem 0 .25rem;font-weight:700;font-size:.92rem;
+color:var(--accent)}
+.nv-toc .nv-part-title:first-of-type{margin-top:.1rem}
+/* 目录做成芯片而不是竖排 <ol>：47 个章名的竖排目录会占掉一整屏，
+   读者得先滚过目录才见到正文。芯片一行排开，长目录也只是几行。 */
+.nv-chips{display:flex;flex-wrap:wrap;gap:.35rem .4rem;margin:0 0 .3rem}
+.nv-chips a{display:inline-block;padding:.02rem .5rem;border:1px solid var(--line);
+border-radius:6px;font-size:.86rem;line-height:1.7;color:var(--fg)}
+.nv-chips a:hover{border-color:var(--accent2);color:var(--accent2);
+text-decoration:none}
+/* 原著页页头：研究报告入口做成按钮，和首页作品卡的按钮同一套 */
+.nv-report{margin:.85rem 0 0}
+.nv-report a{display:inline-block;padding:.32rem .95rem;border-radius:99px;
+border:1px solid var(--accent);background:var(--accent);color:#fff;
+font-size:.9rem;font-weight:600}
+.nv-report a:hover{text-decoration:none;opacity:.88}
 """
 
 
@@ -624,6 +956,7 @@ def main():
         sys.exit("找不到 report-data/，请先跑 tools/parse_report.py")
     cfg = json.load(io.open(CFG, encoding="utf-8"))
     catalog = json.load(io.open(os.path.join(DATA, "catalog.json"), encoding="utf-8"))
+    works = load_works(cfg)
     n = 0
 
     # 本站 assets：report.css 自己生成，style.css / app.js 从共享 docs/assets 复制
@@ -646,19 +979,49 @@ def main():
             data = io.open(src, encoding="utf-8").read()
             n += write_if_changed(dst, data)
 
+    # 原著页（独立作品研究）。works 为空时整块跳过，不影响原 15 篇。
+    NV = {}
+    for key, w in works.items():
+        p = os.path.join(NOVEL, w["slug"] + ".md")
+        if not os.path.exists(p):
+            sys.exit("缺 novel-data/%s.md，请先跑 tools/parse_novel.py" % w["slug"])
+        md = io.open(p, encoding="utf-8").read()
+        parts, has_parts = parse_novel_md(md, w.get("toc_strip") or "")
+        NV[key] = (md, parts, has_parts)
+        n += write_if_changed(
+            os.path.join(OUT, "works", w["slug"] + ".html"),
+            page("《%s》原著 · %s" % (w["title"], cfg["site_title"]),
+                 render_novel_page(w, parts, has_parts),
+                 self_rel="../", up="../../",
+                 foot_note="本页是<strong>作者原文全文</strong>（据 %s 稿整理），"
+                           "非 AI 生成；分析见同作的<strong>研究报告</strong>。"
+                           % html.escape(w.get("source_date", ""))))
+
     # 报告页
     order = [s for g in cfg["groups"] for s in g["reports"]]
     for c in catalog:
         slug = c["slug"]              # ASCII slug → 文件名
         key = c.get("key") or slug    # 原中文名 → 查 titles/series/subtitles
         md = io.open(os.path.join(DATA, slug + ".md"), encoding="utf-8").read()
+        _w = works.get(key)
+        _foot = None
+        if _w:
+            _foot = ("本报告由 <strong>AI</strong> 依据《%s》原著整理撰写，属读者分析；"
+                     "原著是<strong>作者原文</strong>，见同栏目的原著页。"
+                     % html.escape(_w["title"]))
         n += write_if_changed(
             os.path.join(OUT, "entry", slug + ".html"),
             page(cfg["titles"].get(key, slug) + " · " + cfg["site_title"],
-                 render_report(key, cfg, md, slug=slug), self_rel="../",
-                 up="../../"))
+                 render_report(key, cfg, md, slug=slug, works=works),
+                 self_rel="../", up="../../", foot_note=_foot))
 
-    # 本站搜索索引：报告标题 + 各节标题（子项带锚点）
+    # 本站搜索索引：报告标题 + 各节标题（子项带锚点）+ 原著与其各章
+    def kind_of(k):
+        if k in works and works[k].get("column_no"):
+            return "独立作品研究之%s" % works[k]["column_no"]
+        num = cfg["series"].get(k, "")
+        return ("设定研究之%s" % num) if num else "专题报告"
+
     idx = []
     for c in catalog:
         slug = c["slug"]              # ASCII → 搜索结果链接
@@ -666,13 +1029,12 @@ def main():
         md = io.open(os.path.join(DATA, slug + ".md"), encoding="utf-8").read()
         title = cfg["titles"].get(key, slug)
         sub = cfg["subtitles"].get(key, "")
-        num = cfg["series"].get(key, "")
         # id 必须带上目录：app.js 拼的是 SITE_REL + id + ".html"，
         # 而报告页在 entry/ 下（与设定站的 entry/ 同理）
         # id 已是完整路径（entry/<报告名>），故 slug 留空；
         # 约定见 build_site.py 的 app.js：href = rel + id + slug + ".html"
         idx.append({"id": "entry/" + slug, "slug": "", "title": title,
-                    "kind": ("设定研究之%s" % num) if num else "专题报告",
+                    "kind": kind_of(key),
                     "tags": [w for w in (sub, key) if w]})
         for i, (hashes, htxt) in enumerate(re.findall(r"^(#{2,3}) (.+)$", md, re.M)):
             t = re.sub(r"\*\*", "", htxt).strip()
@@ -682,16 +1044,33 @@ def main():
             _a = re.sub(r"[^\w\u4e00-\u9fff]+", "-", t).strip("-")[:48].lower() or "h"
             idx.append({"id": "entry/" + slug, "slug": "", "title": t,
                         "kind": title, "tags": [], "frag": _a})
+
+    # 原著：整篇一条（标题带《》便于与报告区分）+ 每一章一条（带锚点）。
+    # 章节必须进索引——否则「妮卡 墓碑」这类查具体情节的搜索只能命中报告，
+    # 而命中的报告又要靠原文核对。kind 统一以「原著」开头，结果里一眼分得清。
+    for key, (md, parts, has_parts) in NV.items():
+        w = works[key]
+        idx.append({"id": "works/" + w["slug"], "slug": "",
+                    "title": "《%s》原著" % w["title"],
+                    "kind": "独立作品 · 原文", "tags": [w["title"]]})
+        for p in parts:
+            for s in p["secs"]:
+                idx.append({"id": "works/" + w["slug"], "slug": "",
+                            "title": s["title"], "kind": "原著 · " + w["title"],
+                            "tags": [], "frag": s["anchor"]})
+
     n += write_if_changed(
         os.path.join(OWN, "search.json"),
         json.dumps({"entries": idx}, ensure_ascii=False, separators=(",", ":")))
 
     # 首页也在 docs/report/ 下，而样式在共享的 docs/assets/ → 必须用 rel="../"
     n += write_if_changed(os.path.join(OUT, "index.html"),
-                          page(cfg["site_title"], render_index(cfg, catalog)))
+                          page(cfg["site_title"],
+                               render_index(cfg, catalog, works)))
 
     print(json.dumps({"station": "report", "written": n,
-                      "reports": len(catalog), "order": len(order)},
+                      "reports": len(catalog), "order": len(order),
+                      "works": len(works)},
                      ensure_ascii=False))
 
 

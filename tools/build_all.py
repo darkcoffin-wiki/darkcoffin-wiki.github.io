@@ -127,6 +127,15 @@ def joint_index():
                   "hanzi": sum(c.get("hanzi", 0) for c in rc)}
     except Exception:
         pass
+    # 分析站·独立作品研究：原著正文（来自 novel-data/catalog.json）
+    novel = {}
+    try:
+        nv = json.load(io.open(os.path.join(W, "novel-data", "catalog.json"),
+                               encoding="utf-8"))
+        novel = {"works": len(nv),
+                 "hanzi": sum(c.get("hanzi", 0) for c in nv)}
+    except Exception:
+        pass
     site = {}
     try:
         site = json.load(io.open(os.path.join(W, "data", "site.json"),
@@ -157,14 +166,17 @@ def joint_index():
         '<li><b>原典</b>设定集 %d 卷 · %s 词条</li>'
         '<li><b>实录</b>跑团 %d 季 · %d 场</li>'
         '<li><b>短篇</b>花絮与画外音 %d 篇</li>'
+        '<li><b>小说</b>独立作品 %d 部（原著全文）</li>'
         '</ul>\n'
         '  <p class="about-hint"><b>第一次来？</b>'
         '想看这是什么样的世界 → <a href="lore/index.html">设定站</a>（从卷一读起）；'
         '想看故事怎么真实发生 → <a href="trpg/index.html">跑团站</a>；'
-        '想读短篇 → <a href="huaxu/index.html">花絮站</a>。</p>\n'
+        '想读短篇 → <a href="huaxu/index.html">花絮站</a>；'
+        '想看独立小说与它的分析 → <a href="report/index.html#works">分析站·独立作品研究</a>。</p>\n'
         '</section>\n\n'
     ) % (lore.get("vols", 11), format(lore.get("entries", 0), ","),
-         trpg.get("seasons", 0), trpg.get("sessions", 0), huaxu.get("entries", 0))
+         trpg.get("seasons", 0), trpg.get("sessions", 0), huaxu.get("entries", 0),
+         novel.get("works", 0))
 
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -222,14 +234,14 @@ def joint_index():
 
   <a class="station-card warn" id="station-report" href="report/index.html">
     <h2>分析站</h2>
-    <p class="sum">基于《黑柩设定集》的<strong>专题研究报告</strong>：制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物。</p>
+    <p class="sum">基于《黑柩设定集》与跑团记录的<strong>专题研究报告</strong>：制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物；另设<strong>独立作品研究</strong>，附独立小说的<strong>原著全文</strong>。</p>
     <ul class="nums">
       <li><b>{report.get('reports', '—')}</b> 份报告</li>
-      <li><b>{report.get('tables', '—')}</b> 张表</li>
+      <li><b>{novel.get('works', '—')}</b> 部原著</li>
       <li>{format(report.get('hanzi', 0), ',') if report.get('hanzi') else '—'} 汉字</li>
     </ul>
     <span class="enter">进入分析站 →</span>
-    <span class="card-warn">⚠️ 全部报告由 <b>AI 撰写</b>，属读者分析、非作者设定</span>
+    <span class="card-warn">⚠️ 报告由 <b>AI 撰写</b>；独立作品的「原著」是<b>作者原文</b></span>
   </a>
 </div>
 
@@ -249,8 +261,10 @@ def joint_index():
         按<strong>主线 12 季 + 短团 4 个</strong>、共 152 场整理，强调时间线与场次。</li>
     <li><strong>花絮站</strong>（<code>/huaxu/</code>）是<strong>花絮与画外音</strong>：作者的短篇体裁作品，
         按人物／组织／地理／主题等维度整理，强调题材与人物关系。</li>
-    <li><strong>分析站</strong>（<code>/report/</code>）是<strong>读者解读</strong>：基于设定集撰写的专题研究报告
-        （制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物）。⚠️ <strong>全部由 AI 撰写，不是作者设定</strong>。</li>
+    <li><strong>分析站</strong>（<code>/report/</code>）是<strong>读者解读</strong>：基于设定集与跑团记录撰写的专题研究报告
+        （制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物）。⚠️ <strong>全部由 AI 撰写，不是作者设定</strong>。
+        其中<strong>独立作品研究</strong>栏目另收独立小说的<strong>原著全文</strong>——原著是<strong>作者原文</strong>，
+        报告才是 AI 写的，两者页面分开标注。</li>
   </ul>
   <p class="muted"><strong>互链情况</strong>：</p>
   <ul>

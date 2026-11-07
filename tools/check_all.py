@@ -7,7 +7,8 @@
 1. 花絮站：每个条目/标签/分类都有页面（沿用 check_site 的逻辑）
 2. 跑团站：16 份季志（12 主季 + 4 短团）、152 场次卡、时间轴、首页都在
 3. **跨站链接**：所有站内 href 都能解析到实际文件（四站互链）
-3b. 分析站：10 份报告页 + 首页都在
+3b. 分析站：全部报告页 + 独立作品原著页 + 首页都在，且报告页能跳回原著
+3c. 分析站成品无 Markdown 星号残留、无 Word 目录占位
 4. 联合首页存在，且指向四站首页
 5. 共享资源在位：docs/assets/{style.css,app.js,joint.css}
 6. 无未替换占位符、无过短页面
@@ -155,7 +156,7 @@ def main():
         if "（一）" not in t:
             warns.append("跑团站第 2 层编号（（一））未见，检查剧情摘要小节")
 
-    # 分析站：10 份报告页 + 首页
+    # 分析站：报告页 + 原著页 + 首页
     cat_p = os.path.join(W, "report-data", "catalog.json")
     if os.path.exists(cat_p):
         rcat = json.load(io.open(cat_p, encoding="utf-8"))
@@ -170,10 +171,60 @@ def main():
     else:
         warns.append("分析站：未找到 report-data/catalog.json（跳过报告页检查）")
 
+    # 分析站·独立作品研究：原著页 + 首页入口
+    nv = []
+    nv_p = os.path.join(W, "novel-data", "catalog.json")
+    if os.path.exists(nv_p):
+        nv = json.load(io.open(nv_p, encoding="utf-8"))
+        miss_nv = [c["slug"] for c in nv
+                   if not os.path.exists(os.path.join(DOCS, "report", "works",
+                                                      c["slug"] + ".html"))]
+        if miss_nv:
+            errs.append("分析站·缺原著页：%d 个（例：%s）"
+                        % (len(miss_nv), "、".join(miss_nv[:3])))
+        ridx = os.path.join(DOCS, "report", "index.html")
+        if os.path.exists(ridx):
+            it = io.open(ridx, encoding="utf-8").read()
+            if 'id="works"' not in it:
+                errs.append("分析站首页缺「独立作品研究」栏目（id=works）")
+            for c in nv:
+                for href in ('works/%s.html' % c["slug"],
+                             'entry/%s.html' % c["slug"]):
+                    if href not in it:
+                        errs.append("分析站首页缺入口：%s" % href)
+            # 报告页必须能跳回原著
+            for c in nv:
+                ep = os.path.join(DOCS, "report", "entry", c["slug"] + ".html")
+                if os.path.exists(ep):
+                    et = io.open(ep, encoding="utf-8").read()
+                    if ('../works/%s.html' % c["slug"]) not in et:
+                        errs.append("报告页缺「原文入口」：%s" % c["slug"])
+    else:
+        warns.append("分析站：未找到 novel-data/catalog.json（跳过原著页检查）")
+
+    # 8) 分析站成品洁癖（两条都是真实踩过的坑，见 build_report.py 注释）
+    #    · Markdown 残留：报告标题整行加粗时导出 `# **标题**`，目录里会露出 `**`
+    #    · Word 目录占位：封面没被 strip_cover 认出时，「按 F9 更新域」会漏到页面上
+    star_pages, hint_pages = [], []
+    for p in glob.glob(os.path.join(DOCS, "report", "**", "*.html"), recursive=True):
+        t = io.open(p, encoding="utf-8").read()
+        if "*" in t:
+            star_pages.append(os.path.relpath(p, DOCS))
+        if re.search(r"更新域|按 F9|目录占位", t):
+            hint_pages.append(os.path.relpath(p, DOCS))
+    if star_pages:
+        errs.append("分析站成品含 Markdown 星号：%d 页（例：%s）"
+                    % (len(star_pages), "、".join(star_pages[:3])))
+    if hint_pages:
+        errs.append("分析站成品含 Word 目录占位：%d 页（例：%s）"
+                    % (len(hint_pages), "、".join(hint_pages[:3])))
+
+
     n_report = len(glob.glob(os.path.join(DOCS, "report", "**", "*.html"),
                             recursive=True))
     stats = {"总页数": len(pages),
              "分析站": n_report,
+             "原著": len(nv),
              "花絮站": len(glob.glob(os.path.join(DOCS, "huaxu", "**", "*.html"),
                                     recursive=True)),
              "跑团站": len(glob.glob(os.path.join(DOCS, "trpg", "**", "*.html"),
