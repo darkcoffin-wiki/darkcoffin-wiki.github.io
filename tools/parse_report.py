@@ -257,8 +257,12 @@ def main():
     out_dir = args.out if os.path.isabs(args.out) else os.path.join(W, args.out)
     os.makedirs(out_dir, exist_ok=True)
 
+    # `~$` 是 Word 打开文档时留下的锁文件；`_` 开头是构建/临时产物
+    # （2026-11-08 实测：报告目录里出现过一个 225 KB 的 `_build_tmp.docx`，
+    #  内容是《竖棺》的半成品副本。不跳掉的话它会变成第 22 份「报告」。）
     files = sorted(f for f in os.listdir(args.src)
-                   if f.lower().endswith(".docx") and not f.startswith("~$"))
+                   if f.lower().endswith(".docx")
+                   and not f.startswith(("~$", "_")))
     # 中间产物与页面都用 ASCII slug（配置在 data/report_site.json 的 slugs）
     slugs = {}
     excludes = set()

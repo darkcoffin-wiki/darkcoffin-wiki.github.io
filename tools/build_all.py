@@ -234,7 +234,7 @@ def joint_index():
 
   <a class="station-card warn" id="station-report" href="report/index.html">
     <h2>分析站</h2>
-    <p class="sum">基于《黑柩设定集》与跑团记录的<strong>专题研究报告</strong>：制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物；另设<strong>独立作品研究</strong>，附独立小说的<strong>原著全文</strong>。</p>
+    <p class="sum">基于《黑柩设定集》与跑团记录的<strong>专题研究报告</strong>：制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物；另设<strong>跑团集锦</strong>（把一段跑团记录读成一篇长文）与<strong>独立作品研究</strong>（附小说原著全文）。</p>
     <ul class="nums">
       <li><b>{report.get('reports', '—')}</b> 份报告</li>
       <li><b>{novel.get('works', '—')}</b> 部原著</li>
@@ -263,7 +263,8 @@ def joint_index():
         按人物／组织／地理／主题等维度整理，强调题材与人物关系。</li>
     <li><strong>分析站</strong>（<code>/report/</code>）是<strong>读者解读</strong>：基于设定集与跑团记录撰写的专题研究报告
         （制度 · 法律 · 刑罚 · 意识形态 · 政权 · 人物）。⚠️ <strong>全部由 AI 撰写，不是作者设定</strong>。
-        其中<strong>独立作品研究</strong>栏目另收独立小说的<strong>原著全文</strong>——原著是<strong>作者原文</strong>，
+        其中<strong>跑团集锦</strong>把一段跑团记录整个读成一篇长文（每处引用标季与场，可回跑团站核对）；
+        <strong>独立作品研究</strong>另收独立小说的<strong>原著全文</strong>——原著是<strong>作者原文</strong>，
         报告才是 AI 写的，两者页面分开标注。</li>
   </ul>
   <p class="muted"><strong>互链情况</strong>：</p>

@@ -469,15 +469,38 @@ def notes_html(notes, kind="basis"):
 def series_label(key, cfg, works):
     """报告页顶部的系列标签。
 
-    老 15 篇是「《黑柩》设定研究之十五」；独立作品研究的三篇同时挂两个号——
-    **全站系列号（用户定的 16/17/18）+ 栏目序号（报告封面自称的「之二」「之三」）**。
-    两个都显示，是因为报告正文里已经在引用「第一篇」「第三篇」了，
-    只留全站号会让这些引用失指。
+    三种写法：
+      · 老 15 篇     →「《黑柩》设定研究之十五」（它们确实就是设定研究）
+      · 独立作品研究 →「《黑柩》报告系列之十六 · 独立作品研究之一」
+        两个号都挂，因为报告正文里已经在引用「第一篇」「第三篇」，只留全站号会失指
+      · 其它栏目     →「《黑柩》报告系列之十九 · 跑团集锦」
+        这里**不写栏目序号**：《竖棺》封面自报「跑团集锦之三」、「青都事变」自报
+        「之四」，而《三大恨》封面还是旧的「设定研究之十七」，三篇凑不齐一套序号，
+        硬编一个「之二」就是替作者编数字。栏目名照样能告诉读者这是哪一栏。
     """
     num = cfg.get("series", {}).get(key, "")
     w = works.get(key)
     if num and w and w.get("column_no"):
         return "《黑柩》报告系列之%s · 独立作品研究之%s" % (num, w["column_no"])
+    col = (cfg.get("columns") or {}).get(key)
+    if num and col:
+        return "《黑柩》报告系列之%s · %s" % (num, col["name"])
+    return ("《黑柩》设定研究之%s" % num) if num else "专题报告"
+
+
+def card_series_label(key, cfg, works):
+    """首页卡片上的系列标签（比报告页的短一截）。
+
+    卡片只有 17rem 宽，「《黑柩》报告系列之十九 · 跑团集锦」会折成两行、
+    行尾孤零零剩一个「锦」字。分析站内部不需要再自称一次「《黑柩》报告」。
+    """
+    num = cfg.get("series", {}).get(key, "")
+    w = works.get(key)
+    if num and w and w.get("column_no"):
+        return "系列之%s · 独立作品研究之%s" % (num, w["column_no"])
+    col = (cfg.get("columns") or {}).get(key)
+    if num and col:
+        return "系列之%s · %s" % (num, col["name"])
     return ("《黑柩》设定研究之%s" % num) if num else "专题报告"
 
 
@@ -578,7 +601,10 @@ def render_report(key, cfg, md, slug=None, works=None):
                 '引用原文处随文标明，推断处标【推断】。')
         notes = notes_html(w.get("report_notes") or [])
     else:
-        basis = "依据《黑柩设定集》整理"
+        # 依据行：默认「依据《黑柩设定集》整理」；跑团集锦三篇的依据写在 docx 封面上
+        # （那一行会被 strip_cover 剥掉），所以由配置 bases 补回来。
+        basis = ((cfg.get("bases") or {}).get(key)
+                 or "依据《黑柩设定集》整理")
         origin = ""
         # 保持原来的两行排版（换行 + 5 空格续行），这样老报告的成品一个字节都不变
         warn = ('⚠️ 本报告由 <strong>AI 撰写</strong>，属读者分析，'
@@ -596,8 +622,15 @@ def render_report(key, cfg, md, slug=None, works=None):
         extra.append(notes)
     extra_html = "\n".join(extra)
 
+    # 面包屑：有栏目归属的报告多一节「跑团集锦 →」，方便从正文跳回栏目。
+    # 老 15 篇没有 columns 配置 → 输出与以前逐字节相同。
+    _col = (cfg.get("columns") or {}).get(key)
+    crumb_mid = (' · <a href="../index.html#%s">%s</a>'
+                 % (html.escape(_col["anchor"]), html.escape(_col["name"]))
+                 if _col else "")
+
     return f"""<article class="rp-doc">
-<nav class="crumbs"><a href="../index.html">分析站</a> · {html.escape(meta_t)}</nav>
+<nav class="crumbs"><a href="../index.html">分析站</a>{crumb_mid} · {html.escape(meta_t)}</nav>
 <header class="rp-head">
   <p class="rp-series mono">{html.escape(num_txt)}</p>
   <h1>{html.escape(meta_t)}</h1>
@@ -617,7 +650,7 @@ def render_report(key, cfg, md, slug=None, works=None):
 # ══════════════════════════════════════════════════════════════
 # 渲染首页
 # ══════════════════════════════════════════════════════════════
-def work_card(cfg, w, by):
+def work_card(cfg, w, by, works):
     """独立作品卡：一个作品一张卡，卡上两枚入口（原著 / 报告）。
 
     与普通报告卡的区别只有一处——整张卡不是 <a>，因为里面要放两个 <a>
@@ -641,10 +674,7 @@ def work_card(cfg, w, by):
         '<a class="rp-btn" href="works/{slug}.html">读原著</a>{rb}'
         '</p></div>').format(
             # 卡片窄，挂全站前缀会折成三行；这里是分析站内部，省掉「《黑柩》报告」
-            n=html.escape("系列之%s · 独立作品研究之%s"
-                          % (w.get("series", ""), w.get("column_no", ""))
-                          if w.get("column_no") else
-                          ("系列之%s" % w.get("series", ""))),
+            n=html.escape(card_series_label(w["key"], cfg, works)),
             t=html.escape(t), sub=html.escape(sub),
             basis=html.escape(basis_of(w)), rep=rep_meta,
             slug=w["slug"], rb=rep_btn)
@@ -658,7 +688,7 @@ def render_index(cfg, catalog, works=None):
     n_works = 0
     for g in cfg["groups"]:
         if g.get("kind") == "works":
-            cards = [work_card(cfg, works[k], by)
+            cards = [work_card(cfg, works[k], by, works)
                      for k in g["reports"] if k in works]
             n_works += len(cards)
         else:
@@ -674,7 +704,7 @@ def render_index(cfg, catalog, works=None):
                     '<p class="rp-series mono">{n}</p><h3>{t}</h3>'
                     '<p class="rp-sub">{sub}</p>'
                     '<p class="muted">{h} 汉字 · {tb} 张表</p></a>'.format(
-                        n=html.escape(series_label(slug, cfg, works)),
+                        n=html.escape(card_series_label(slug, cfg, works)),
                         t=html.escape(t), sub=html.escape(sub),
                         h=format(c["hanzi"], ","), tb=c["tables"],
                         slug=c["slug"]))   # 卡片链接用 ASCII slug
@@ -728,8 +758,9 @@ def render_index(cfg, catalog, works=None):
 {''.join(blocks)}
 <section class="rp-howto"><h2>怎么读</h2>
 <ol class="howto">
-  <li>本站在<strong>设定站</strong>之外，收录基于设定集的<strong>研究报告</strong>——适合已经知道设定、想看制度与人物怎么被分析的读者。</li>
+  <li>本站在<strong>设定站</strong>之外，收录基于<strong>设定集与跑团记录</strong>的研究报告——适合已经知道设定、想看制度与人物怎么被分析的读者。</li>
   <li>每份报告一篇，页内目录可跳转；报告里的<b>表格</b>是它的主要论证骨架。</li>
+  <li><strong>跑团集锦</strong>是把一段跑团记录整个读成一篇长文：一次事变、一个短团、一场戏。每一处引用都标了季与场，想核对原始记录可以去 <a href="../trpg/index.html">跑团站</a> 按场次查。</li>
   <li><strong>独立作品研究</strong>栏目的每张卡有两个入口：<b>读原著</b>（作者的原文全文，本站附上）与<b>读研究报告</b>（AI 的分析）。报告是<strong>面向第一次读的人</strong>写的，读之前不需要任何背景——<strong>先读哪个都行</strong>；报告里每一处引用都能回原文核对。</li>
   <li>只想确认<strong>设定本身</strong>，请去 <a href="../lore/index.html">设定站</a>；想看跑团实录去 <a href="../trpg/index.html">跑团站</a>；花絮在 <a href="../huaxu/index.html">花絮站</a>。</li>
 </ol></section>
@@ -1019,6 +1050,11 @@ def main():
     def kind_of(k):
         if k in works and works[k].get("column_no"):
             return "独立作品研究之%s" % works[k]["column_no"]
+        # 有栏目归属却凑不齐栏目序号的（跑团集锦三篇），只写栏目名——
+        # 写「跑团集锦之二十一」会被读成「这一栏的第 21 篇」，而它其实是全站第 21 篇。
+        col = (cfg.get("columns") or {}).get(k)
+        if col:
+            return col["name"]
         num = cfg["series"].get(k, "")
         return ("设定研究之%s" % num) if num else "专题报告"
 
