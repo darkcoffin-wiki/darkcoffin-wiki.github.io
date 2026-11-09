@@ -387,7 +387,9 @@ def dim_hits(body, spec, floor=2, cap=3, dim="", min_override=None):
             score = rel_score(body, label, score, rule.get("keywords", []))
             # 阈值按标签的「强词数量」定；min_override 供「标题匹配」等场景放宽
             need = min_override if min_override is not None else (
-                3 if label in ("政敌", "同盟") else 4)
+                # 亲族 2026-11-09 放宽到 3：亲属关系勘误后正文改用「大伯/侄儿」等词，
+                # 这些词单次只值 1 分，4 分的门槛会把「正文确实在讲亲属」的篇目卡掉。
+                3 if label in ("政敌", "同盟", "亲族") else 4)
         else:
             need = auto_min(rule, floor)
         if score >= need:

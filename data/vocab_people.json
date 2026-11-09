@@ -406,9 +406,7 @@
    "kind": "person",
    "confidence": 1,
    "variants": [
-    "智先生",
-    "小智先生",
-    "小智"
+    "智先生"
    ],
    "evidence": "智波先生——如果他们攻过来了，我优先保护你。"
   },
@@ -1570,6 +1568,16 @@
     "织梦小姐"
    ],
    "evidence": "名为织梦之人，以歌舞集万众之力，终使护城林得以保星都一方平安"
+  },
+  {
+   "tag": "小智",
+   "entries": 7,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "小智先生"
+   ],
+   "evidence": "镜缘：小智在休息，我手上事都堆成山了（hx-174）"
   }
  ],
  "noise_removed": [
