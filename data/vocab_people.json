@@ -402,12 +402,13 @@
   },
   {
    "tag": "智波",
-   "entries": 6,
+   "entries": 7,
    "kind": "person",
    "confidence": 1,
    "variants": [
     "智先生",
-    "小智先生"
+    "小智先生",
+    "小智"
    ],
    "evidence": "智波先生——如果他们攻过来了，我优先保护你。"
   },
@@ -1543,6 +1544,32 @@
    "confidence": 1,
    "variants": [],
    "evidence": "陆柩：我在教团国的时候还见过一个叫龙涟的，是个有异能的穿越者。"
+  },
+  {
+   "tag": "阿拉莎",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "月见力在小老鼠旅馆遇上满口“统购包销”的孩子们与阿拉莎"
+  },
+  {
+   "tag": "镜清",
+   "entries": 1,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [],
+   "evidence": "镜缘二十岁，父亲镜清与十六岁的月见灯"
+  },
+  {
+   "tag": "织梦",
+   "entries": 2,
+   "kind": "person",
+   "confidence": 1,
+   "variants": [
+    "织梦小姐"
+   ],
+   "evidence": "名为织梦之人，以歌舞集万众之力，终使护城林得以保星都一方平安"
   }
  ],
  "noise_removed": [
