@@ -296,6 +296,9 @@ python tools/tag_entries.py && python tools/build_site.py
 python tools/parse_trpg.py   && python tools/build_trpg.py
 python tools/parse_lore.py   && python tools/build_lore.py
 python tools/parse_report.py && python tools/build_report.py
+
+# 玩家名册（/trpg/players.html）：源是「玩家活跃表」与「玩家名册」两份表
+python tools/parse_players.py && python tools/build_trpg.py
 ```
 
 四个站的构建都是**幂等**的：内容没变就不重写文件（保住 mtime），所以可以放心反复跑。

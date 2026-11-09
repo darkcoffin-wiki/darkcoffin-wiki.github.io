@@ -97,3 +97,12 @@ box-shadow:0 4px 18px #0003}
 .to-top.show{opacity:.96;pointer-events:auto}
 .to-top:hover{border-color:var(--accent2);text-decoration:none;transform:translateY(-2px)}
 li.tl-item.hide{display:none}
+
+/* 玩家名册 */
+.players-page h1{margin:.3rem 0 .4rem}
+.players-page .lede{color:var(--fg);margin:.2rem 0 .4rem}
+.players-page h2{font-size:1.05rem;margin:1.8rem 0 .5rem}
+.players-page .num{text-align:right;white-space:nowrap}
+.players-page td.mono{white-space:nowrap}   /* 日期/QQ 不许折行，否则 2019-10-02 会断成两截 */
+.players-page .ali{color:var(--muted);font-size:.86em}
+.players-page table td{border-color:var(--line)}

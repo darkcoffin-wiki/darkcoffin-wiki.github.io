@@ -235,6 +235,7 @@ def crosslink(escaped_html, _keys):
 
 
 SLUGS = {}
+PLAYER_COUNT = 0        # main() 里按 data/players.json 填；首页 hero 用它
 XLINK_REL = "../../"   # 从 session/ 或 season/ 回到站点根
 
 # 只有起始时间戳、无法标记结束时间的场次，统一加这句标注（改这里即可换措辞）
@@ -286,6 +287,7 @@ def page(title, body, rel, extra_head="", body_class=""):
     <a href="{rel}index.html">本站首页</a>
     <a href="{rel}index.html#seasons">季志</a>
     <a href="{rel}timeline.html">时间轴</a>
+    <a href="{rel}players.html">玩家</a>
     <span class="nav-sep"></span>
     <a class="nav-other" href="{rel}../huaxu/index.html" title="切换到花絮站">花絮站 →</a>
     <a class="nav-other" href="{rel}../lore/index.html" title="切换到设定站">设定站 →</a>
@@ -585,6 +587,68 @@ def render_timeline(sess, seasons):
 </article>""" % "".join(blocks)
 
 
+def render_players(doc):
+    """玩家名册页（作者 2026-11-09 指定）。
+
+    数据全部来自 `data/players.json`（由 tools/parse_players.py 从「玩家活跃表」
+    与「玩家名册」生成），这一页只做排版，不做任何推断——
+    尤其**不猜「谁演了哪个角色」**：跑团站的「在场」只记玩家角色名，没有玩家→角色的映射。
+    """
+    ps = doc["players"]
+    seasons = doc["seasons"]
+
+    def nm(name):
+        """名字若在花絮站也是一个标签，就链过去（同一个名字，两边都能查）。"""
+        slug = SLUGS.get(name)
+        if slug:
+            return ('<a href="../huaxu/tag/%s.html" title="花絮站里也有这个名字">%s</a>'
+                    % (html.escape(slug), html.escape(name)))
+        return html.escape(name)
+
+    rows = []
+    for p in ps:
+        rows.append(
+            '<tr id="p-%d"><td class="num mono">%d</td><td>%s</td>'
+            '<td class="mono">%s</td><td class="num mono">%s</td>'
+            '<td class="num mono">%d</td><td class="mono">%s</td>'
+            '<td class="mono">%s</td><td class="ali">%s</td></tr>'
+            % (p["no"], p["no"], nm(p["name"]), html.escape(p["qq"] or "—"),
+               format(p["total"], ","), p["scenes"],
+               html.escape(p["first"] or "—"), html.escape(p["last"] or "—"),
+               "／".join(html.escape(a) for a in p["aliases"]) or "—"))
+
+    thead = "".join('<th class="num">%s</th>' % html.escape(s) for s in seasons)
+    srows = []
+    for p in ps:
+        tds = "".join(
+            '<td class="num mono">%s</td>'
+            % (format(p["seasons"][s], ",") if p["seasons"].get(s) else "")
+            for s in seasons)
+        srows.append('<tr><td class="mono">%s</td>%s</tr>'
+                     % (html.escape(p["name"]), tds))
+
+    return f"""<article class="players-page">
+<nav class="crumbs"><a href="index.html">跑团首页</a> · 玩家名册</nav>
+<h1>玩家名册</h1>
+<p class="lede">共 <strong>{len(ps)}</strong> 人。一人一行；同一 QQ 的多个角色／别名已合并。
+活跃数＝该 QQ（无 QQ 者为该名字）在<strong>原始层＋口述层</strong>的发言条数，
+已去噪声与舞台。</p>
+<p class="muted">第二、三季记录不全，那两季的数字只能当参考。名字能在花絮站查到的，会链到对应标签页。</p>
+<div class="tw"><table class="idx">
+<thead><tr><th class="num">#</th><th>玩家</th><th>QQ</th><th class="num">总计</th>
+<th class="num">实场</th><th>首次</th><th>末次</th><th>主要用名</th></tr></thead>
+<tbody>{''.join(rows)}</tbody>
+</table></div>
+
+<h2>逐季发言</h2>
+<p class="muted">左列是玩家，列是季与短团，格子是发言条数（空白＝该季没参加）。</p>
+<div class="tw"><table class="idx">
+<thead><tr><th>玩家</th>{thead}</tr></thead>
+<tbody>{''.join(srows)}</tbody>
+</table></div>
+</article>"""
+
+
 def render_index(sess, seasons, whitelist_note):
     def card(s):
         items = [x for x in sess if x["season"] == s["name"]]
@@ -631,7 +695,8 @@ def render_index(sess, seasons, whitelist_note):
      <strong>{len(sess)}</strong> 场（主线 {n_main_sess} / 短团 {n_short_sess}） ·
      <strong>{format(tot_h, ',')}</strong> 汉字 ·
      决策点 {sum(x['n_decisions'] for x in sess)} 条 ·
-     骰点 {sum(x['n_dice'] for x in sess)} 条</p>
+     骰点 {sum(x['n_dice'] for x in sess)} 条 ·
+     <a href="players.html"><strong>{PLAYER_COUNT or '—'}</strong> 位玩家</a></p>
   <p class="muted">{html.escape(whitelist_note)}</p>
 </header>
 <section class="disc">
@@ -702,6 +767,17 @@ def main():
                                    body_class="session"))
     n += write_if_changed(os.path.join(OUT, "timeline.html"),
                           page("时间轴", render_timeline(sess, seasons), rel=""))
+    # 玩家名册（数据由 tools/parse_players.py 生成；缺文件就跳过，不阻断构建）
+    global PLAYER_COUNT
+    try:
+        pdoc = json.load(io.open(os.path.join(W, "data", "players.json"),
+                                 encoding="utf-8"))
+        PLAYER_COUNT = pdoc["count"]
+        n += write_if_changed(os.path.join(OUT, "players.html"),
+                              page("玩家名册", render_players(pdoc), rel=""))
+    except Exception as e:      # noqa: BLE001
+        print("[WARN] 玩家名册跳过：%s" % e)
+        pdoc = None
     n += write_if_changed(os.path.join(OUT, "index.html"),
                           page("跑团首页", render_index(sess, seasons, note), rel=""))
 
@@ -759,6 +835,14 @@ def main():
         entries.append({"id": "season/" + season_slug(s["name"]), "slug": "",
                         "title": s["name"] + " · " + ("团志" if s["name"].startswith("短团·") else "季志"),
                         "kind": "季志", "tags": []})
+
+    # 玩家名册也进索引：搜「智波」这类名字时，能直接落到名册那一行
+    if pdoc:
+        entries.append({"id": "players", "slug": "", "title": "玩家名册",
+                        "kind": "名册", "tags": []})
+        for p in pdoc["players"]:
+            entries.append({"id": "players", "slug": "", "title": p["name"],
+                            "kind": "玩家", "tags": [], "frag": "p-%d" % p["no"]})
 
     # 缩短键名以压体积（客户端在 app.js 里按同样约定读）
     search = {"entries": entries}
@@ -872,6 +956,15 @@ box-shadow:0 4px 18px #0003}
 .to-top.show{opacity:.96;pointer-events:auto}
 .to-top:hover{border-color:var(--accent2);text-decoration:none;transform:translateY(-2px)}
 li.tl-item.hide{display:none}
+
+/* 玩家名册 */
+.players-page h1{margin:.3rem 0 .4rem}
+.players-page .lede{color:var(--fg);margin:.2rem 0 .4rem}
+.players-page h2{font-size:1.05rem;margin:1.8rem 0 .5rem}
+.players-page .num{text-align:right;white-space:nowrap}
+.players-page td.mono{white-space:nowrap}   /* 日期/QQ 不许折行，否则 2019-10-02 会断成两截 */
+.players-page .ali{color:var(--muted);font-size:.86em}
+.players-page table td{border-color:var(--line)}
 """
 
 
