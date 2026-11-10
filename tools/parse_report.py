@@ -27,6 +27,8 @@ DEFAULT_SRC = r"E:\黑柩\黑柩报告"
 DEFAULT_OUT = "report-data"
 
 RE_HANZI = re.compile(r"[\u4e00-\u9fff]")
+# 换源归档：`黑柩报告-XXX-v1-旧版.docx`。它们不是新报告，是备份。
+BACKUP_RE = re.compile(r"-v\d+-旧版\.docx$", re.I)
 
 
 # ══════════════════════════════════════════════════════════════
@@ -260,9 +262,12 @@ def main():
     # `~$` 是 Word 打开文档时留下的锁文件；`_` 开头是构建/临时产物
     # （2026-11-08 实测：报告目录里出现过一个 225 KB 的 `_build_tmp.docx`，
     #  内容是《竖棺》的半成品副本。不跳掉的话它会变成第 22 份「报告」。）
+    # `-vN-旧版.docx` 是换源时的归档备份（2026-11-11 起用这个命名），
+    # 同理不能让它们各变成一份新报告。
     files = sorted(f for f in os.listdir(args.src)
                    if f.lower().endswith(".docx")
-                   and not f.startswith(("~$", "_")))
+                   and not f.startswith(("~$", "_"))
+                   and not BACKUP_RE.search(f))
     # 中间产物与页面都用 ASCII slug（配置在 data/report_site.json 的 slugs）
     slugs = {}
     excludes = set()

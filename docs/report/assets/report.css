@@ -24,6 +24,14 @@
 .rp-body{background:var(--bg);color:var(--fg)}
 .rp-head{margin:1rem 0 1.4rem}
 .rp-series{font-size:.82rem;color:var(--accent2);margin:0 0 .3rem;letter-spacing:.04em}
+/* 「重制」标记：换源重写过的报告，卡片与正文页都挂一枚。 */
+.rp-remake{display:inline-block;margin-left:.5rem;padding:.02rem .45rem;
+border:1px solid var(--accent2);border-radius:99px;color:var(--accent2);
+font-size:.72rem;font-weight:700;letter-spacing:.04em;vertical-align:.06em;
+white-space:nowrap}
+/* 卡片里单独占一行（放在字数之后）：与系列标签同行会把标签挤成两行，
+   同一行里这张卡的标题就会比邻卡低一截。 */
+.rp-card .rp-remake{display:block;width:max-content;margin:.45rem 0 0}
 .rp-head h1{font-size:1.85rem;line-height:1.35;margin:0 0 .4rem}
 .rp-sub{color:var(--muted);margin:.2rem 0 .5rem;font-size:.98rem}
 .rp-meta{margin:.2rem 0 .7rem}

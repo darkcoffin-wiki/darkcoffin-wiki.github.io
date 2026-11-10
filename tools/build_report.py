@@ -104,6 +104,14 @@ def slugify_anchor(text, seen):
 # ══════════════════════════════════════════════════════════════
 COVER_TOC_RE = re.compile(
     r"^#{1,6}[ \t\u3000]*\*{0,3}目[ \t\u3000]*[录錄]\*{0,3}[ \t\u3000]*$", re.M)
+# 2026-11 起的重制版不再放 Word 目录，封面改用一行「— · —」收尾：
+#   # 标题 / **——副标题** / **——《黑柩》设定研究之N** / 本稿为重制版… / 全书章目：…
+#   — · —
+#   ## 一、导论
+# 没有这一条的话 strip_cover 找不到锚点，整片封面（含「本稿为重制版」和全书章目）
+# 会原样渲染到页面顶部。
+COVER_SEP_RE = re.compile(r"^[\u2014\u2013\u2015-][ \t\u3000]*\u00b7"
+                          r"[ \t\u3000]*[\u2014\u2013\u2015-][ \t\u3000]*$", re.M)
 # docx 里给 Word 用户的操作提示（「按 F9 更新域」「视图→导航窗格」等），网页读者不需要
 # 两种实际形态都要覆盖：
 #   · （本目录为自动域：在 Word 中全选后按 F9…）
@@ -141,6 +149,11 @@ def strip_cover(md):
     md = WORD_HINT_RE.sub("", md)
     m = COVER_TOC_RE.search(md)
     if not m:
+        # 结构 C（2026-11 重制版）：没有目录，封面以「— · —」收尾，剥到该行之后。
+        # 只在这行确实存在时才剥；没有就原样返回，免得误伤没有封面的文档。
+        sep = COVER_SEP_RE.search(md)
+        if sep:
+            return md[sep.end():].lstrip("\n")
         return md
     tail = md[m.end():]
 
@@ -466,6 +479,16 @@ def notes_html(notes, kind="basis"):
     return "".join(out)
 
 
+def remake_badge(cfg, key):
+    """「重制」标记。日期写死在 data/report_site.json 的 remakes 里——
+    重制日期是**作者换源的那一天**，不是本次构建日期，所以不能从文件 mtime 推。"""
+    d = (cfg.get("remakes") or {}).get(key)
+    if not d:
+        return ""
+    return ('<span class="rp-remake" title="本报告已重制换源">'
+            '重制 · %s</span>' % html.escape(d))
+
+
 def series_label(key, cfg, works):
     """报告页顶部的系列标签。
 
@@ -632,7 +655,7 @@ def render_report(key, cfg, md, slug=None, works=None):
     return f"""<article class="rp-doc">
 <nav class="crumbs"><a href="../index.html">分析站</a>{crumb_mid} · {html.escape(meta_t)}</nav>
 <header class="rp-head">
-  <p class="rp-series mono">{html.escape(num_txt)}</p>
+  <p class="rp-series mono">{html.escape(num_txt)}{remake_badge(cfg, key)}</p>
   <h1>{html.escape(meta_t)}</h1>
   {f'<p class="rp-sub">{html.escape(meta_s)}</p>' if meta_s else ''}
   <p class="rp-meta muted">{hanzi:,} 汉字 · {n_tbl} 张表 · {basis}</p>
@@ -703,8 +726,11 @@ def render_index(cfg, catalog, works=None):
                     '<a class="rp-card" href="entry/{slug}.html">'
                     '<p class="rp-series mono">{n}</p><h3>{t}</h3>'
                     '<p class="rp-sub">{sub}</p>'
-                    '<p class="muted">{h} 汉字 · {tb} 张表</p></a>'.format(
+                    '<p class="muted">{h} 汉字 · {tb} 张表</p>{rm}</a>'.format(
                         n=html.escape(card_series_label(slug, cfg, works)),
+                        # 卡片窄，把重制标记放到最后一行，免得把系列标签挤成两行、
+                        # 让同一行里这张卡的标题比邻卡低一截
+                        rm=remake_badge(cfg, slug),
                         t=html.escape(t), sub=html.escape(sub),
                         h=format(c["hanzi"], ","), tb=c["tables"],
                         slug=c["slug"]))   # 卡片链接用 ASCII slug
@@ -730,7 +756,7 @@ def render_index(cfg, catalog, works=None):
         feat_html = f"""<section class="rp-feature">
   <a class="rp-feature-card" href="entry/{_c['slug']}.html">
     <p class="rp-feature-tag">{html.escape(_f.get('label', '最近主打'))}</p>
-    <p class="rp-series mono">{html.escape(series_label(_fk, cfg, works))}</p>
+    <p class="rp-series mono">{html.escape(series_label(_fk, cfg, works))}{remake_badge(cfg, _fk)}</p>
     <h2>{html.escape(_t)}</h2>
     {f'<p class="rp-sub">{html.escape(_sub)}</p>' if _sub else ''}
     <p class="muted">{format(_c['hanzi'], ',')} 汉字 · {_c['tables']} 张表</p>
@@ -798,6 +824,14 @@ CSS = r"""
 .rp-body{background:var(--bg);color:var(--fg)}
 .rp-head{margin:1rem 0 1.4rem}
 .rp-series{font-size:.82rem;color:var(--accent2);margin:0 0 .3rem;letter-spacing:.04em}
+/* 「重制」标记：换源重写过的报告，卡片与正文页都挂一枚。 */
+.rp-remake{display:inline-block;margin-left:.5rem;padding:.02rem .45rem;
+border:1px solid var(--accent2);border-radius:99px;color:var(--accent2);
+font-size:.72rem;font-weight:700;letter-spacing:.04em;vertical-align:.06em;
+white-space:nowrap}
+/* 卡片里单独占一行（放在字数之后）：与系列标签同行会把标签挤成两行，
+   同一行里这张卡的标题就会比邻卡低一截。 */
+.rp-card .rp-remake{display:block;width:max-content;margin:.45rem 0 0}
 .rp-head h1{font-size:1.85rem;line-height:1.35;margin:0 0 .4rem}
 .rp-sub{color:var(--muted);margin:.2rem 0 .5rem;font-size:.98rem}
 .rp-meta{margin:.2rem 0 .7rem}
