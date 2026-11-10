@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""解析《黑柩设定集·第一版·DSH版.docx》→ 结构化 JSON。
+"""解析《黑柩设定集》2.0 版 docx → 结构化 JSON。
 
 **只读源文件，不改动任何东西。**
 
@@ -43,10 +43,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numbering  # noqa: E402  分层序号 / 标题清洗（去掉尾随页码）
 
 W = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# 作者 2026-10-14：结构源改为 **1.1 版**（1.1 已含全部结构改动与 7 条合并稿，
-# 由设定集侧的对话直接生成 docx；本站不再用 overrides 做结构改写）
-DEFAULT_SRC = r"E:\黑柩\黑柩小说花絮\黑柩设定集·1.1版·DSH版.docx"
-SOURCE_VERSION = "1.1"
+# 作者 2026-11-11：源换成 **2.0 版**（书里重构了分节、卷八人物志只留主角团；
+# 旧版归档在 E:\黑柩\黑柩小说花絮\ 下）。
+DEFAULT_SRC = r"E:\黑柩\黑柩报告\黑柩设定集-2.0.docx"
+SOURCE_VERSION = "2.0"
 
 # 段落 → 纯文本
 W_T = re.compile(r"<w:t[^>]*>([^<]*)</w:t>")

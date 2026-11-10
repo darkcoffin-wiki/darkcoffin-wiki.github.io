@@ -78,6 +78,10 @@ def main():
     # 2b) 设定站页面存在性
     miss_lore, miss_lvol, miss_lsec = [], [], []
     for v in lore["vols"]:
+        # 2.0 起书里多了一个只有书名的 H1（「黑柩设定集（2.0）」），它没有节，
+        # 不生成卷页；其他卷（含卷首）都要有页。
+        if v.get("n_sections", 0) == 0:
+            continue
         vp = os.path.join(DOCS, "lore", "vol", "%s.html" % common.slugify(v["title"]))
         if not os.path.exists(vp):
             miss_lvol.append(v["title"])

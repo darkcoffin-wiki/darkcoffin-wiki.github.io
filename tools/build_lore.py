@@ -46,9 +46,32 @@ LORE_SRC = os.path.join(W, "lore-data")
 OUT = os.path.join(W, "docs", "lore")
 SHARED = os.path.join(W, "docs", "assets")
 
+# 当前整理的是哪一版设定集。换版（1.1 → 2.0）时只改这里 + parse_lore 的 SOURCE_VERSION。
+VERSION = "2.0"
+
+# 前置卷的显示名。2.0 起书里的前言叫「卷首」，1.1 叫「前言与编纂说明」；
+# 由 main() 按实际卷名覆盖，page() 导航与首页入口都用它。
+PREFACE_LABEL = "卷首"
+
+
+def is_preface_vol(v):
+    """前置卷：1.1 的「前言与编纂说明」、2.0 的「卷首」。"""
+    return v["title"].startswith(("前言", "卷首"))
+
+
+def is_meta_vol(v):
+    """非正卷：前置卷、目录卷、以及只有书名的那一行（2.0 的 H1「黑柩设定集（2.0）」）。"""
+    return (is_preface_vol(v) or v["title"].startswith("目")
+            or v.get("n_sections", 0) == 0)
+
+
+def content_vols(vols):
+    return [v for v in vols if not is_meta_vol(v)]
+
+
 SITE = {
     "title": "黑柩设定集Wiki",
-    "subtitle": "《黑柩设定集·1.1版》· 卷 / 节 / 词条",
+    "subtitle": "《黑柩设定集·%s版》· 卷 / 节 / 词条" % VERSION,
     "description": "把《黑柩设定集》按卷、节、词条整理成可浏览、可跳转的 wiki。",
     "disclaimer": "本网站由 AI 生成，内容准确性无法完全保证。",
 }
@@ -66,7 +89,8 @@ except Exception as _e:
 WARN_SPOILER = "本站内容**包含剧透**。设定集涵盖全书人物、事件与结局，点入即视为接受剧透风险。"
 WARN_EATING = ("**吃书警告**：原作设定前后不一致（作者自称「吃书」）之处，"
                "本站**一律照录、不代为圆说**；确有分歧的条目会以【异说】单列。")
-WARN_VERSION = "本站整理自《黑柩设定集·**1.1版**》，内容仍在演进中，**以最新版设定集为准**。"
+WARN_VERSION = ("本站整理自《黑柩设定集·**%s版**》，内容仍在演进中，"
+                "**以最新版设定集为准**。" % VERSION)
 
 # 【】块名 → 渲染角色
 BLOCK_META = {
@@ -248,7 +272,7 @@ def page(title, body, rel, extra_head="", body_class=""):
   <a class="brand" href="{rel}index.html">黑柩设定集Wiki</a>
   <nav class="site-nav">
     <a href="{rel}index.html">本站首页</a>
-    <a href="{rel}preface.html">前言与编纂说明</a>
+    <a href="{rel}preface.html">{PREFACE_LABEL}</a>
     <a href="{rel}index.html#vols">卷次与词条</a>
     <span class="nav-sep"></span>
     <a class="nav-other" href="{rel}../huaxu/index.html" title="切换到花絮站">花絮站 →</a>
@@ -266,7 +290,7 @@ def page(title, body, rel, extra_head="", body_class=""):
 </main>
 <footer class="site-foot">
   <p class="disclaimer">{html.escape(SITE['disclaimer'])}</p>
-  <p>《黑柩设定集·1.1版》的整理与索引，内容版权归原作者所有。</p>
+  <p>《黑柩设定集·{VERSION}版》的整理与索引，内容版权归原作者所有。</p>
   <p class="muted">静态站 · 由 <code>tools/build_lore.py</code> 生成</p>
 <p class="friend-links">友情链接：{friend_links_html(SITE)}</p>
 </footer>
@@ -421,9 +445,10 @@ def is_note(title):
 
 
 def render_preface(vols):
-    pv = next((v for v in vols if v["title"].startswith("前言")), None)
+    pv = next((v for v in vols if is_preface_vol(v)), None)
     if not pv:
-        return "<p>未找到前言。</p>"
+        return "<p>未找到卷首／前言。</p>"
+    ptitle = pv["title"]
     secs = "".join(
         '<section class="blk" id="s-%d"><h2>%s%s</h2>%s</section>'
         % (i, NB.level1(i), html.escape(s["title"]), md(s["text"]))
@@ -432,9 +457,9 @@ def render_preface(vols):
                   % (i, NB.level1(i), html.escape(s["title"]))
                   for i, s in enumerate(pv["sections"], 1))
     return f"""<article class="preface">
-<nav class="crumbs"><a href="index.html">设定站</a> · 前言</nav>
-<h1>前言与编纂说明</h1>
-<p class="muted">理解全书体例的钥匙：这部书怎么来的、编纂原则、卷次结构、阅读约定。</p>
+<nav class="crumbs"><a href="index.html">设定站</a> · {html.escape(ptitle)}</nav>
+<h1>{html.escape(ptitle)}</h1>
+<p class="muted">理解全书体例的钥匙：这本书是什么、卷次结构、阅读约定、剧情线标注规则。</p>
 <nav class="toc"><h2 class="plain">目录</h2><ol>{toc}</ol></nav>
 {secs}
 </article>"""
@@ -444,7 +469,7 @@ def render_index(vols, sess_stats):
     # 作者 2026-10-14：不用卡片，改为「卷」直接列出「节」，节可折叠展开看词条
     cards = []
     for v in vols:
-        if v["title"].startswith(("目", "前言")):
+        if is_meta_vol(v):
             continue
         secs = []
         for sec in v["sections"]:
@@ -485,7 +510,7 @@ def render_index(vols, sess_stats):
 <header class="hero">
   <h1>黑柩设定集Wiki</h1>
   <p class="sub">{html.escape(SITE['subtitle'])}</p>
-  <p class="stats">共 <strong>{len([v for v in vols if not v['title'].startswith(('目', '前言'))])}</strong> 卷 ·
+  <p class="stats">共 <strong>{len(content_vols(vols))}</strong> 卷 ·
      <strong>{tot_s}</strong> 节 ·
      <strong>{tot_e}</strong> 个词条 ·
      <strong>{format(tot_h, ',')}</strong> 汉字</p>
@@ -496,8 +521,8 @@ def render_index(vols, sess_stats):
   <p class="warn version">🕒 {md(WARN_VERSION).replace('<p>', '').replace('</p>', '')}</p>
 </section>
 <section class="preface-entry">
-  <a href="preface.html"><b>先读：前言与编纂说明 →</b>
-  <span class="muted">这部书的来源、编纂原则、卷次结构、阅读约定</span></a>
+  <a href="preface.html"><b>先读：{html.escape(PREFACE_LABEL)} →</b>
+  <span class="muted">这本书是什么、卷次结构、阅读约定、剧情线标注规则</span></a>
 </section>
 <section id="vols"><h2>卷次与词条</h2>
 <p class="muted">展开任一卷，可见该卷的节与全部词条。</p>
@@ -513,7 +538,7 @@ def render_index(vols, sess_stats):
 </ol></section>
 <section><h2>本书的已知情况</h2>
 <ul class="gaps">
-  <li>本集为<b>1.1 版</b>，内容仍在演进；后续修订以最新版为准。</li>
+  <li>本集为<b>{VERSION} 版</b>，内容仍在演进；后续修订以最新版为准。</li>
   <li>编纂者遵循「<b>零事实损失、不擅自补齐</b>」原则：无法判定的矛盾集中在附录备查。</li>
   <li>原始文件中有三份在打包时损坏，其内容未进入本集。</li>
   <li>合集中有两处「只有提问、没有回答」，故本集无法收录（详见附录）。</li>
@@ -604,6 +629,12 @@ def main():
     d = json.load(io.open(os.path.join(LORE_SRC, "doc.json"), encoding="utf-8"))
     vols = d["vols"]
 
+    # 前置卷的显示名跟着书走：1.1 是「前言与编纂说明」，2.0 是「卷首」
+    global PREFACE_LABEL
+    _pv = next((v for v in vols if is_preface_vol(v)), None)
+    if _pv:
+        PREFACE_LABEL = _pv["title"]
+
     # ── 节 slug 唯一化（全名基础上，撞车才加 -2/-3）──
     seen = {}
     for v in vols:
@@ -631,13 +662,14 @@ def main():
             n += write_if_changed(
                 os.path.join(OUT, "sec", sec_slug(v["title"], s["title"]) + ".html"),
                 page(s["title"], render_section(v["title"], s), rel="../"))
-    # 卷页
-    for v in vols:
+    # 卷页（只跳过「只有书名的那一行」——2.0 的 H1「黑柩设定集（2.0）」没有节；
+    # 卷首虽然是前置卷，但它自己的节页要链回卷页，所以照常生成）
+    for v in [x for x in vols if x.get("n_sections", 0) > 0]:
         n += write_if_changed(os.path.join(OUT, "vol", vol_slug(v["title"]) + ".html"),
                               page(v["title"], render_vol(v), rel="../"))
     # 前言 + 首页
     n += write_if_changed(os.path.join(OUT, "preface.html"),
-                          page("前言与编纂说明", render_preface(vols), rel=""))
+                          page(PREFACE_LABEL, render_preface(vols), rel=""))
     n += write_if_changed(os.path.join(OUT, "index.html"),
                           page("设定站首页", render_index(vols, {}), rel=""))
     # 样式 + 搜索索引

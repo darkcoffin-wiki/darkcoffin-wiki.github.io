@@ -111,7 +111,13 @@ def joint_index():
     try:
         ld = json.load(io.open(os.path.join(W, "lore-data", "doc.json"),
                                encoding="utf-8"))
-        lore = {"vols": ld["counts"]["vols"] - 2,      # 去掉「目录」「前言」两个 H1
+        # 正卷数 = H1 总数 - 非正卷（1.1：目录 + 前言；2.0：书名行 + 卷首）。
+        # 不写死 `- 2`：用和 build_lore 同一套判据，换版时不会算错。
+        _vols = ld["vols"]
+        _meta = [v for v in _vols
+                 if v["title"].startswith(("目", "前言", "卷首"))
+                 or v.get("n_sections", 0) == 0]
+        lore = {"vols": len(_vols) - len(_meta),
                 "sections": ld["counts"]["sections"],
                 "entries": ld["counts"]["entries"],
                 "hanzi": ld["counts"]["hanzi"]}
@@ -222,7 +228,7 @@ def joint_index():
 
   <a class="station-card" href="lore/index.html">
     <h2>设定站</h2>
-    <p class="sum">《黑柩设定集·1.1版》：按<strong>卷 / 节 / 词条</strong>整理的设定辞书。</p>
+    <p class="sum">《黑柩设定集·2.0版》：按<strong>卷 / 节 / 词条</strong>整理的设定辞书。</p>
     <ul class="nums">
       <li><b>{lore.get('vols', '—')}</b> 卷</li>
       <li><b>{lore.get('entries', '—')}</b> 词条</li>
@@ -255,7 +261,7 @@ def joint_index():
   <p class="muted">四站共用一套视觉与导航，但<strong>内容性质不同</strong>，按「原典 → 实录 → 花絮 → 解读」
   的顺序逐层展开：</p>
   <ul>
-    <li><strong>设定站</strong>（<code>/lore/</code>）是<strong>原典</strong>：作者写的《黑柩设定集·1.1版》，
+    <li><strong>设定站</strong>（<code>/lore/</code>）是<strong>原典</strong>：作者写的《黑柩设定集·2.0版》，
         按<strong>卷／节／词条</strong>拆解，便于查概念。<strong>要确认设定是什么，以这里为准。</strong></li>
     <li><strong>跑团站</strong>（<code>/trpg/</code>）是<strong>实录</strong>：真实发生的跑团记录，
         按<strong>主线 12 季 + 短团 4 个</strong>、共 152 场整理，强调时间线与场次。</li>
