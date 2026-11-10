@@ -264,8 +264,11 @@ def main():
     #  内容是《竖棺》的半成品副本。不跳掉的话它会变成第 22 份「报告」。）
     # `-vN-旧版.docx` 是换源时的归档备份（2026-11-11 起用这个命名），
     # 同理不能让它们各变成一份新报告。
+    # **只认 `黑柩报告-` 前缀**：这个文件夹按约定只放报告，但 2026-11-11 作者把
+    # 设定集（`黑柩设定集-2.0.docx`）也存了进来，不卡前缀它会变成两份「报告」。
     files = sorted(f for f in os.listdir(args.src)
                    if f.lower().endswith(".docx")
+                   and f.startswith("黑柩报告-")
                    and not f.startswith(("~$", "_"))
                    and not BACKUP_RE.search(f))
     # 中间产物与页面都用 ASCII slug（配置在 data/report_site.json 的 slugs）
