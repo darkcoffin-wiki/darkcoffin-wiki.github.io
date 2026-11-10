@@ -47,9 +47,9 @@ OUT = os.path.join(W, "docs", "lore")
 SHARED = os.path.join(W, "docs", "assets")
 
 # 当前整理的是哪一版设定集。换版（1.1 → 2.0）时只改这里 + parse_lore 的 SOURCE_VERSION。
-VERSION = "2.0"
+VERSION = "2.1"
 
-# 前置卷的显示名。2.0 起书里的前言叫「卷首」，1.1 叫「前言与编纂说明」；
+# 前置卷的显示名。2.0／2.1 起书里的前言叫「卷首」，1.1 叫「前言与编纂说明」；
 # 由 main() 按实际卷名覆盖，page() 导航与首页入口都用它。
 PREFACE_LABEL = "卷首"
 

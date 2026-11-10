@@ -228,7 +228,7 @@ def joint_index():
 
   <a class="station-card" href="lore/index.html">
     <h2>设定站</h2>
-    <p class="sum">《黑柩设定集·2.0版》：按<strong>卷 / 节 / 词条</strong>整理的设定辞书。</p>
+    <p class="sum">《黑柩设定集·2.1版》：按<strong>卷 / 节 / 词条</strong>整理的设定辞书。</p>
     <ul class="nums">
       <li><b>{lore.get('vols', '—')}</b> 卷</li>
       <li><b>{lore.get('entries', '—')}</b> 词条</li>
@@ -261,7 +261,7 @@ def joint_index():
   <p class="muted">四站共用一套视觉与导航，但<strong>内容性质不同</strong>，按「原典 → 实录 → 花絮 → 解读」
   的顺序逐层展开：</p>
   <ul>
-    <li><strong>设定站</strong>（<code>/lore/</code>）是<strong>原典</strong>：作者写的《黑柩设定集·2.0版》，
+    <li><strong>设定站</strong>（<code>/lore/</code>）是<strong>原典</strong>：作者写的《黑柩设定集·2.1版》，
         按<strong>卷／节／词条</strong>拆解，便于查概念。<strong>要确认设定是什么，以这里为准。</strong></li>
     <li><strong>跑团站</strong>（<code>/trpg/</code>）是<strong>实录</strong>：真实发生的跑团记录，
         按<strong>主线 12 季 + 短团 4 个</strong>、共 152 场整理，强调时间线与场次。</li>

@@ -26,6 +26,7 @@
     python tools/parse_lore.py --src "路径.docx" --out lore-data
 """
 import argparse
+import html
 import io
 import json
 import os
@@ -43,10 +44,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numbering  # noqa: E402  分层序号 / 标题清洗（去掉尾随页码）
 
 W = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# 作者 2026-11-11：源换成 **2.0 版**（书里重构了分节、卷八人物志只留主角团；
+# 作者 2026-11-11：源换成 **2.1 版**（卷八人物志由 8 条扩到 153 条）（书里重构了分节、卷八人物志只留主角团；
 # 旧版归档在 E:\黑柩\黑柩小说花絮\ 下）。
-DEFAULT_SRC = r"E:\黑柩\黑柩报告\黑柩设定集-2.0.docx"
-SOURCE_VERSION = "2.0"
+DEFAULT_SRC = r"E:\黑柩\黑柩报告\黑柩设定集-2.1.docx"
+SOURCE_VERSION = "2.1"
 
 # 段落 → 纯文本
 W_T = re.compile(r"<w:t[^>]*>([^<]*)</w:t>")
@@ -121,7 +122,9 @@ def docx_paragraphs(path, smap):
         sid = st.group(1) if st else ""
         name, outline = smap.get(sid, ("", None))
         raw.append({"style_id": sid, "style": name,
-                    "text": "".join(W_T.findall(p)).strip(),
+                    # html.unescape：docx 里的 `&` / `<` / `>` 是转义过的，
+                    # 不还原就会出现「海老名惠子&amp;海老名双叶」这种标题（2.1 实测 1 处）
+                    "text": html.unescape("".join(W_T.findall(p))).strip(),
                     "toc_anchor": bool(TOC_HINT.search(p)),
                     "level": heading_level(name, outline)})
     # 剥离标题尾随页码。
