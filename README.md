@@ -7,7 +7,7 @@
 docs/
 ├─ index.html      联合首页：四站入口 + 「四个站的关系」
 ├─ assets/         共享样式与脚本（style.css / app.js / joint.css / lore.css / report.css）
-├─ huaxu/          花絮站：作者的短篇作品（210 篇 / 346 标签 / 57 分类页）
+├─ huaxu/          花絮站：作者的短篇作品（251 篇 / 352 标签 / 57 分类页）
 ├─ trpg/           跑团站：跑团实录（主线 12 季 + 短团 4 个 / 152 场 / 时间轴）
 ├─ lore/           设定站：作者的原典（13 卷 / 81 节 / 555 词条）
 └─ report/         分析站：读者解读（15 份研究报告 / 206 张表）
@@ -31,7 +31,7 @@ docs/
 
 ## 花絮站（`/huaxu/`）
 
-* **210 篇**（站点 193 + docx 17），约 67.6 万字
+* **251 篇**（站点 193 + docx 17 + 补录 39 + 新增 2），约 78 万字；每篇带 `date`（原帖创作时间）
 * **一套受控标签体系**（12 个维度），共 **346 个标签**，其中若干是跨维度标签（⋈）
 * 每篇一页（`huaxu/entry/<id>-<slug>.html`）；每个标签一页（`huaxu/tag/<slug>.html`）；
   **每个子分类也有一页**（`huaxu/cat/<维度>-<分类>.html`）
@@ -233,7 +233,7 @@ python tools\verify_records_privacy.py   # 必跑：切片里不能有 QQ 号
 
 | 路径 | 作用 |
 |---|---|
-| `source/` | 210 个 md，一篇一文件（**花絮站的唯一内容源**） |
+| `source/` | 251 个 md，一篇一文件（**花絮站的唯一内容源**） |
 | `data/` | 元数据与词表（见下） |
 | `tools/` | 全部脚本（打标、建站、增量、自检） |
 | `docs/` | **生成物**，GitHub Pages 发布目录（可随时删除重建） |
@@ -251,7 +251,7 @@ python tools/build_all.py --clean    # 先清空 docs/
 python tools/check_all.py            # 全站自检（1447 页 / 跨站链接 / 幂等）
 
 # 花絮站单独
-python tools/tag_entries.py          # 210 篇 → data/tags.json（含相关性分级）
+python tools/tag_entries.py          # 251 篇 → data/tags.json（含相关性分级）
 python tools/build_site.py           # → docs/huaxu/（幂等：内容没变就不重写，保住 mtime）
 python tools/check_site.py           # 花絮站自检：页面齐全、无死链、客户端聚合一致
 python tools/tag_audit.py            # 打标自检：挑出「可能漏标」的篇目 → data/tag_audit.md

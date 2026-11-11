@@ -107,6 +107,7 @@ def page(title, body, rel, site, extra_head="", body_class="", rel_root=None,
   <nav class="site-nav">
     <a href="{rel}index.html">本站首页</a>
     <a href="{rel}index.html#tags">全部标签</a>
+    <a href="{rel}time.html">按创作时间</a>
     <span class="nav-sep"></span>
     <a class="nav-other" href="{rel}../trpg/index.html" title="切换到跑团站">跑团站 →</a>
     <a class="nav-other" href="{rel}../lore/index.html" title="切换到设定站">设定站 →</a>
@@ -292,13 +293,15 @@ def render_entries(data, by_id, site, tag_to_cat=None):
             banner = '<div class="%s">%s</div>' % (cls, note)
 
         prev_next = prev_next_links(data, eid)
+        _d = date_html(rec)
+        _dsep = (" · " + _d) if _d else ""
         body = f"""<article class="entry">
 {banner}
 <header class="entry-head">
   <p class="crumbs"><a href="{rel}index.html">首页</a> · {html.escape(e['collection'])}</p>
   <h1>{html.escape(rec['title'])}</h1>
   <p class="meta">{html.escape(e['kind'])} · {e['chars']} 字 · {html.escape(e['origin'])}
-      · <span class="mono">{eid}</span></p>
+      {_dsep} · <span class="mono">{eid}</span></p>
   <div class="chips">{chips(e['tags'], meta, rel, e['primary'], e.get('grades'))}</div>
   {catmod.chips(eid, e['tags'], None, tag_to_cat, rel)}
 </header>
@@ -417,6 +420,59 @@ def layer_of(e, meta):
         if meta[t]["dimension"] == "叙事层级":
             return t
     return ""
+
+
+def date_html(e):
+    """条目页上的「创作时间」。只到日；D 档（区间推定）写成「起 ~ 止（推定）」。"""
+    d = (e.get("date") or "").strip()
+    if not d:
+        return ""
+    end = (e.get("date_end") or "").strip()
+    if end:
+        return ('<span class="edate" title="群记录无痕迹，按同总集前后篇夹逼推定">'
+                '%s ~ %s（推定）</span>' % (d[:10], end[:10]))
+    lvl = (e.get("date_level") or "A").upper()
+    tip = {"A": "创作时间（原帖确证）", "B": "创作时间（一手旁证）"}.get(lvl, "创作时间")
+    return '<span class="edate" title="%s">%s</span>' % (tip, d[:10])
+
+
+def render_time(data, by_id, site):
+    """「按创作时间」页：全部条目按原帖发布时间倒序，按年分组。"""
+    # data 是 tags.json（不带日期），日期在 entries.json 的 by_id 里
+    ents = [by_id[e["id"]] for e in data["entries"] if by_id.get(e["id"], {}).get("date")]
+    ents.sort(key=lambda e: (e["date"], e["id"]), reverse=True)
+    by_year = {}
+    for e in ents:
+        by_year.setdefault(e["date"][:4], []).append(e)
+
+    n_d = sum(1 for e in ents if e.get("date_end"))
+    blocks = []
+    for y in sorted(by_year, reverse=True):
+        rows = []
+        for e in by_year[y]:
+            tail = ('<span class="est">推定</span>' if e.get("date_end") else "")
+            rows.append(
+                '<li><span class="mono d">%s</span>'
+                '<a href="entry/%s-%s.html">%s</a>'
+                '<span class="muted">%s · %s</span>%s</li>'
+                % (e["date"][:10], e["id"], common.slugify(e["title"]),
+                   html.escape(e["title"]), html.escape(e["kind"]),
+                   html.escape(e.get("collection") or ""), tail))
+        blocks.append(
+            '<section class="time-year"><h2>%s<span class="muted">%d 篇</span></h2>'
+            '<ul class="time-list">%s</ul></section>'
+            % (y, len(by_year[y]), "".join(rows)))
+
+    span = "%s ~ %s" % (ents[-1]["date"][:10], ents[0]["date"][:10]) if ents else "—"
+    return f"""<article class="time-page">
+<nav class="crumbs"><a href="index.html">首页</a> · 按创作时间</nav>
+<h1>按创作时间</h1>
+<p class="muted">共 <strong>{len(ents)}</strong> 篇，按<strong>原帖发布时间</strong>倒序，跨 {html.escape(span)}。
+其中 {n_d} 篇在群记录里查不到，按同总集前后篇夹逼推定为区间，标「推定」。</p>
+<p class="muted">注意：这是<strong>作者写这篇的时刻</strong>，不是剧情内时间。
+站内「时间」标签（如「战后5年」）记的才是剧情内时间。</p>
+{''.join(blocks)}
+</article>"""
 
 
 def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
@@ -570,6 +626,7 @@ def render_index(data, by_id, site, featured, subcats=None, cat_index=None):
     <button data-quick="未来可能">只看楔子（未来可能）</button>
     <button data-quick="平行世界线">只看画外音（平行世界线）</button>
     <button data-quick="">全部</button>
+    <a class="quick-link" href="time.html">按创作时间 →</a>
   </div>
   <p class="ai-note">{html.escape(site.get('disclaimer', '本网站由 AI 生成，内容准确性无法完全保证。'))}</p>
 </section>
@@ -780,6 +837,26 @@ background:var(--card);border-radius:0 8px 8px 0;color:var(--muted);font-size:.8
 
 @media(max-width:640px){main{padding:1rem .8rem 3rem}#q{min-width:9rem}
 .q-results{min-width:16rem;right:-1rem}.entry-list li{flex-direction:column;gap:.1rem}}
+
+/* ── 创作时间 ───────────────────────────────────────────── */
+/* 条目页 meta 里的日期；带 title 提示证据等级，不强加视觉重量 */
+.edate{white-space:nowrap}
+/* 「按创作时间」页 */
+.quick-link{align-self:center;margin-left:.4rem;padding:.18rem .7rem;border-radius:99px;
+border:1px solid var(--accent2);color:var(--accent2);font-size:.86rem}
+.quick-link:hover{text-decoration:none;border-color:var(--accent);color:var(--accent)}
+.time-page h1{margin:.3rem 0 .5rem}.time-year{margin:1.6rem 0 0}
+.time-year h2{font-size:1.02rem;margin:.2rem 0 .5rem;display:flex;gap:.6rem;
+align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:.3rem}
+.time-list{list-style:none;padding:0;margin:0}
+.time-list li{display:flex;gap:.55rem;align-items:baseline;flex-wrap:wrap;
+padding:.22rem 0;border-bottom:1px dashed var(--line);font-size:.94rem}
+.time-list li:last-child{border-bottom:0}
+.time-list .d{color:var(--muted);font-size:.86rem;min-width:6.2rem}
+.time-list a{flex:1 1 18rem}
+.time-list .muted{font-size:.82rem}
+.est{display:inline-block;padding:0 .35rem;border:1px solid var(--muted);
+border-radius:99px;color:var(--muted);font-size:.72rem}
 """
 
 APP_JS = """/* 黑柩花絮 Wiki · 客户端增强（服务端渲染为主，这里只做筛选/搜索） */
@@ -1007,6 +1084,8 @@ def main():
     n += render_entries(data, by_id, site, tag_to_cat)
     n += render_tags(data, by_id, site)
     n += catmod.render_pages(cat_index, data, site, page, write_if_changed)
+    n += write_if_changed(os.path.join(DOCS, "time.html"),
+                          page("按创作时间", render_time(data, by_id, site), "", site))
     n += write_if_changed(os.path.join(DOCS, "index.html"),
                           render_index(data, by_id, site, featured, subcats, cat_index))
     stale = prune_stale(("entry", "tag", "cat", ""))

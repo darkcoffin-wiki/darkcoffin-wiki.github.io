@@ -1,5 +1,5 @@
 {
- "entry_count": 249,
+ "entry_count": 251,
  "entries": [
   {
    "id": "hx-001",
@@ -9,7 +9,10 @@
    "origin": "site",
    "file": "hx-001-叶心与红樱的谈话.md",
    "chars": 2132,
-   "source_hash": "ebbdbe258c8a5d6a"
+   "source_hash": "ebbdbe258c8a5d6a",
+   "date": "2022-11-19 23:39:35",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-002",
@@ -19,7 +22,10 @@
    "origin": "site",
    "file": "hx-002-叶心在星都的走访.md",
    "chars": 2310,
-   "source_hash": "fb8ad88bc5741234"
+   "source_hash": "fb8ad88bc5741234",
+   "date": "2022-11-21 02:36:24",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-003",
@@ -29,7 +35,10 @@
    "origin": "site",
    "file": "hx-003-归来之人-风薰.md",
    "chars": 1703,
-   "source_hash": "65a650009d1bf322"
+   "source_hash": "65a650009d1bf322",
+   "date": "2022-12-05 04:12:22",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-004",
@@ -39,7 +48,10 @@
    "origin": "site",
    "file": "hx-004-高冒与高领的对话.md",
    "chars": 1421,
-   "source_hash": "cba4310066fde6da"
+   "source_hash": "cba4310066fde6da",
+   "date": "2022-12-06 01:28:34",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-005",
@@ -49,7 +61,10 @@
    "origin": "site",
    "file": "hx-005-升变之人-伊森.md",
    "chars": 1423,
-   "source_hash": "dba90b123c220e59"
+   "source_hash": "dba90b123c220e59",
+   "date": "2022-12-08 00:05:00",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-006",
@@ -59,7 +74,10 @@
    "origin": "site",
    "file": "hx-006-如果希共在希联政局中胜出.md",
    "chars": 1866,
-   "source_hash": "d6f2c87277495c9d"
+   "source_hash": "d6f2c87277495c9d",
+   "date": "2022-12-10 04:32:11",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-007",
@@ -69,7 +87,10 @@
    "origin": "site",
    "file": "hx-007-如果玩家们从未来过黑柩世界.md",
    "chars": 2093,
-   "source_hash": "90fb695a286a7115"
+   "source_hash": "90fb695a286a7115",
+   "date": "2022-12-13 03:33:14",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-008",
@@ -79,7 +100,10 @@
    "origin": "site",
    "file": "hx-008-叶心和高冒的对话.md",
    "chars": 2509,
-   "source_hash": "a8ca70d467decfda"
+   "source_hash": "a8ca70d467decfda",
+   "date": "2022-12-14 16:17:09",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-009",
@@ -89,7 +113,10 @@
    "origin": "site",
    "file": "hx-009-一个普通的圣照会教徒.md",
    "chars": 819,
-   "source_hash": "19c09791f0edc69e"
+   "source_hash": "19c09791f0edc69e",
+   "date": "2022-12-18 06:54:22",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-010",
@@ -99,7 +126,10 @@
    "origin": "site",
    "file": "hx-010-圣照会为何逃脱了罪责.md",
    "chars": 1138,
-   "source_hash": "ef08b6e7cae5426c"
+   "source_hash": "ef08b6e7cae5426c",
+   "date": "2022-12-18 07:41:25",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-011",
@@ -109,7 +139,10 @@
    "origin": "site",
    "file": "hx-011-多重世界猎手.md",
    "chars": 1790,
-   "source_hash": "bdb7f81e55082c0b"
+   "source_hash": "bdb7f81e55082c0b",
+   "date": "2022-12-18 14:01:03",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-012",
@@ -119,7 +152,10 @@
    "origin": "site",
    "file": "hx-012-论新保守主义.md",
    "chars": 919,
-   "source_hash": "1668db7435bf7976"
+   "source_hash": "1668db7435bf7976",
+   "date": "2022-12-28 01:01:43",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-013",
@@ -129,7 +165,10 @@
    "origin": "site",
    "file": "hx-013-希联需要空中力量.md",
    "chars": 1675,
-   "source_hash": "780606878e99de78"
+   "source_hash": "780606878e99de78",
+   "date": "2022-12-29 23:36:20",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-014",
@@ -139,7 +178,10 @@
    "origin": "site",
    "file": "hx-014-启示录教团国的朋友们.md",
    "chars": 2818,
-   "source_hash": "4418c67464695735"
+   "source_hash": "4418c67464695735",
+   "date": "2022-12-30 21:04:46",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-015",
@@ -149,7 +191,10 @@
    "origin": "site",
    "file": "hx-015-对民主党的特别军事行动.md",
    "chars": 2470,
-   "source_hash": "8dd7aff0eacb2577"
+   "source_hash": "8dd7aff0eacb2577",
+   "date": "2023-01-02 22:59:06",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-016",
@@ -159,7 +204,10 @@
    "origin": "site",
    "file": "hx-016-比希联287年更早的时候.md",
    "chars": 275,
-   "source_hash": "916326c13bb424ca"
+   "source_hash": "916326c13bb424ca",
+   "date": "2023-01-03 00:15:13",
+   "date_level": "B",
+   "date_note": "长文，命中为其后续段；首段被改写，时间与前后篇连续"
   },
   {
    "id": "hx-017",
@@ -169,7 +217,10 @@
    "origin": "site",
    "file": "hx-017-玩家提供了很多花絮.md",
    "chars": 2283,
-   "source_hash": "e2a51b47bae06f81"
+   "source_hash": "e2a51b47bae06f81",
+   "date": "2023-02-24 23:29:02",
+   "date_level": "B",
+   "date_note": "特别环节（玩家投稿汇编），置总集之首；取投稿当刻"
   },
   {
    "id": "hx-018",
@@ -179,7 +230,10 @@
    "origin": "site",
    "file": "hx-018-隐藏在山丘里的虚无会.md",
    "chars": 2280,
-   "source_hash": "c93f570b77c34524"
+   "source_hash": "c93f570b77c34524",
+   "date": "2023-01-06 00:09:49",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-019",
@@ -189,7 +243,10 @@
    "origin": "site",
    "file": "hx-019-正在做梦的希共党员叶心同志.md",
    "chars": 1647,
-   "source_hash": "0f66ef5078869668"
+   "source_hash": "0f66ef5078869668",
+   "date": "2023-01-08 04:15:15",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-020",
@@ -199,7 +256,10 @@
    "origin": "site",
    "file": "hx-020-骷髅先生的探子谈论希联意识形态.md",
    "chars": 1530,
-   "source_hash": "236d56d68cde7aa6"
+   "source_hash": "236d56d68cde7aa6",
+   "date": "2023-01-11 00:47:35",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-021",
@@ -209,7 +269,10 @@
    "origin": "site",
    "file": "hx-021-希共论坛上的讨论-你心中的康米.md",
    "chars": 2099,
-   "source_hash": "625311a651042d39"
+   "source_hash": "625311a651042d39",
+   "date": "2023-01-11 03:57:20",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-022",
@@ -219,7 +282,10 @@
    "origin": "site",
    "file": "hx-022-叶心写给区委同志的信-警惕快乐革命.md",
    "chars": 1289,
-   "source_hash": "a103743cf08228f0"
+   "source_hash": "a103743cf08228f0",
+   "date": "2023-01-13 05:09:54",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-023",
@@ -229,7 +295,10 @@
    "origin": "site",
    "file": "hx-023-新年篇-四位姐妹花的酒桌小聚.md",
    "chars": 2509,
-   "source_hash": "beda1d7f8c1488d4"
+   "source_hash": "beda1d7f8c1488d4",
+   "date": "2023-01-23 01:13:08",
+   "date_level": "B",
+   "date_note": "原帖标签为 `#花絮#`，无「黑柩」前缀"
   },
   {
    "id": "hx-024",
@@ -239,7 +308,10 @@
    "origin": "site",
    "file": "hx-024-两个对话-乙醇在希共和民主党眼中.md",
    "chars": 2108,
-   "source_hash": "4a1a2fe3f43eb555"
+   "source_hash": "4a1a2fe3f43eb555",
+   "date": "2023-01-24 01:03:49",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-025",
@@ -249,7 +321,10 @@
    "origin": "site",
    "file": "hx-025-希共党代会现场-和来自北沙镇的信.md",
    "chars": 1211,
-   "source_hash": "cb01ecf3bf18aee3"
+   "source_hash": "cb01ecf3bf18aee3",
+   "date": "2023-01-27 20:17:11",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-026",
@@ -259,7 +334,10 @@
    "origin": "site",
    "file": "hx-026-苍鬼会为自己的老公做什么.md",
    "chars": 944,
-   "source_hash": "50095dd7da1f689b"
+   "source_hash": "50095dd7da1f689b",
+   "date": "2023-02-10 22:45:06",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-027",
@@ -269,7 +347,10 @@
    "origin": "site",
    "file": "hx-027-进盟精英们如何理解自己的意识形态.md",
    "chars": 1327,
-   "source_hash": "88147045d528ddba"
+   "source_hash": "88147045d528ddba",
+   "date": "2023-02-11 15:11:32",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-028",
@@ -279,7 +360,10 @@
    "origin": "site",
    "file": "hx-028-叶心对新民主主义的时代宣言.md",
    "chars": 2425,
-   "source_hash": "0a365e9710eb5afe"
+   "source_hash": "0a365e9710eb5afe",
+   "date": "2023-02-11 16:23:23",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-029",
@@ -289,7 +373,10 @@
    "origin": "site",
    "file": "hx-029-千分的部下们-今天帮主不在家.md",
    "chars": 3935,
-   "source_hash": "716c13392f57e783"
+   "source_hash": "716c13392f57e783",
+   "date": "2023-02-12 05:36:43",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-030",
@@ -299,7 +386,10 @@
    "origin": "site",
    "file": "hx-030-如果希联告别革命-而乌鸦开始号叫.md",
    "chars": 1841,
-   "source_hash": "f5d759214f22cdaa"
+   "source_hash": "f5d759214f22cdaa",
+   "date": "2023-02-12 13:07:35",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-031",
@@ -309,7 +399,10 @@
    "origin": "site",
    "file": "hx-031-人为何会安于现状-原平的小故事.md",
    "chars": 4295,
-   "source_hash": "03a6af7df3ecc449"
+   "source_hash": "03a6af7df3ecc449",
+   "date": "2023-02-15 23:38:04",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-032",
@@ -319,7 +412,10 @@
    "origin": "site",
    "file": "hx-032-如果进盟没有进攻-一切会好起来吗.md",
    "chars": 1965,
-   "source_hash": "3f9a534a3e533647"
+   "source_hash": "3f9a534a3e533647",
+   "date": "2023-02-19 23:58:19",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-033",
@@ -329,7 +425,10 @@
    "origin": "site",
    "file": "hx-033-如果天使消灭了人间-谁来主持正义.md",
    "chars": 867,
-   "source_hash": "d7b9de32c0a79810"
+   "source_hash": "d7b9de32c0a79810",
+   "date": "2023-02-22 13:00:23",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-034",
@@ -339,7 +438,10 @@
    "origin": "site",
    "file": "hx-034-疯子写给另一个疯子的情书.md",
    "chars": 4929,
-   "source_hash": "2b80513ae1b39cef"
+   "source_hash": "2b80513ae1b39cef",
+   "date": "2023-02-22 22:46:44",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-035",
@@ -349,7 +451,10 @@
    "origin": "site",
    "file": "hx-035-希联内战开始之后.md",
    "chars": 2611,
-   "source_hash": "4087f296c4d82ff7"
+   "source_hash": "4087f296c4d82ff7",
+   "date": "2023-02-24 04:02:20",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-036",
@@ -359,7 +464,10 @@
    "origin": "site",
    "file": "hx-036-叶心致全体希共党员的公开信.md",
    "chars": 1493,
-   "source_hash": "d33cd247d5f28a34"
+   "source_hash": "d33cd247d5f28a34",
+   "date": "2023-02-25 15:35:39",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-037",
@@ -369,7 +477,10 @@
    "origin": "site",
    "file": "hx-037-玩家之声.md",
    "chars": 2481,
-   "source_hash": "ec9bfd2130cf7f2d"
+   "source_hash": "ec9bfd2130cf7f2d",
+   "date": "2023-04-25 17:58:52",
+   "date_level": "B",
+   "date_note": "特别环节（玩家投稿汇编），置总集之首；取投稿当刻"
   },
   {
    "id": "hx-038",
@@ -379,7 +490,10 @@
    "origin": "site",
    "file": "hx-038-叶心与原星、风薰对话-尘封过往之事.md",
    "chars": 1818,
-   "source_hash": "6497cefead1418e5"
+   "source_hash": "6497cefead1418e5",
+   "date": "2023-03-08 04:55:07",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-039",
@@ -389,7 +503,10 @@
    "origin": "site",
    "file": "hx-039-希共中央致人民的公开信-衣食住行.md",
    "chars": 1690,
-   "source_hash": "2c4c0ff18099953a"
+   "source_hash": "2c4c0ff18099953a",
+   "date": "2023-03-09 01:39:33",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-040",
@@ -399,7 +516,10 @@
    "origin": "site",
    "file": "hx-040-陆柩给叶心的信-深夜独行之人.md",
    "chars": 2751,
-   "source_hash": "5c8d00dea74f445f"
+   "source_hash": "5c8d00dea74f445f",
+   "date": "2023-04-10 15:46:02",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-041",
@@ -409,7 +529,10 @@
    "origin": "site",
    "file": "hx-041-路絮给陆柩的回信-迎风扬帆之人.md",
    "chars": 1858,
-   "source_hash": "3d22341de543dc93"
+   "source_hash": "3d22341de543dc93",
+   "date": "2023-04-10 16:51:12",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-042",
@@ -419,7 +542,10 @@
    "origin": "site",
    "file": "hx-042-叶心的小团体时间-我们真的错了吗.md",
    "chars": 3503,
-   "source_hash": "4abb20fcc44aee82"
+   "source_hash": "4abb20fcc44aee82",
+   "date": "2023-04-10 18:31:37",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-043",
@@ -429,7 +555,10 @@
    "origin": "site",
    "file": "hx-043-陆柩、李伊、原星、风薰-正邪合作.md",
    "chars": 3740,
-   "source_hash": "a81c44b93965b074"
+   "source_hash": "a81c44b93965b074",
+   "date": "2023-04-10 20:35:08",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-044",
@@ -439,7 +568,10 @@
    "origin": "site",
    "file": "hx-044-陆柩拜访路絮-前来讨教军体拳.md",
    "chars": 4469,
-   "source_hash": "16b10900b305fe7f"
+   "source_hash": "16b10900b305fe7f",
+   "date": "2023-04-12 03:42:04",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-045",
@@ -449,7 +581,10 @@
    "origin": "site",
    "file": "hx-045-陆柩找上李伊-代表人民揍你一顿.md",
    "chars": 4748,
-   "source_hash": "96e92487d74842c7"
+   "source_hash": "96e92487d74842c7",
+   "date": "2023-04-13 07:13:20",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-046",
@@ -459,7 +594,10 @@
    "origin": "site",
    "file": "hx-046-康康希联推博-安那其妈妈的新女儿.md",
    "chars": 2490,
-   "source_hash": "fb2c572d994e3f23"
+   "source_hash": "fb2c572d994e3f23",
+   "date": "2023-04-14 12:13:29",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-047",
@@ -469,7 +607,10 @@
    "origin": "site",
    "file": "hx-047-陆柩给路絮的回信-守夜人与警钟.md",
    "chars": 2272,
-   "source_hash": "f75e189d71d7e9d8"
+   "source_hash": "f75e189d71d7e9d8",
+   "date": "2023-04-17 08:08:06",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-048",
@@ -479,7 +620,10 @@
    "origin": "site",
    "file": "hx-048-高冒与高领之结束政敌的生物学生命.md",
    "chars": 1506,
-   "source_hash": "7905093270944e67"
+   "source_hash": "7905093270944e67",
+   "date": "2023-04-27 01:36:57",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-049",
@@ -489,7 +633,10 @@
    "origin": "site",
    "file": "hx-049-北沙镇的白色恐怖-女儿还在等他回家.md",
    "chars": 3938,
-   "source_hash": "ddd2ee13a5841636"
+   "source_hash": "ddd2ee13a5841636",
+   "date": "2023-04-28 02:43:37",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-050",
@@ -499,7 +646,10 @@
    "origin": "site",
    "file": "hx-050-康康希共论坛-大家对新时期的理解.md",
    "chars": 1483,
-   "source_hash": "f1a0e0ab8db59daf"
+   "source_hash": "f1a0e0ab8db59daf",
+   "date": "2023-05-05 19:18:06",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-051",
@@ -509,7 +659,10 @@
    "origin": "site",
    "file": "hx-051-康康希联飞视-魔怔人与魔怔人对轰.md",
    "chars": 3252,
-   "source_hash": "64c39006a89d16e7"
+   "source_hash": "64c39006a89d16e7",
+   "date": "2023-05-10 22:42:33",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-052",
@@ -519,7 +672,10 @@
    "origin": "site",
    "file": "hx-052-叶心和路絮在星都-拯救失火工厂.md",
    "chars": 3489,
-   "source_hash": "34a67b0c471b10e0"
+   "source_hash": "34a67b0c471b10e0",
+   "date": "2023-05-12 06:26:12",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-053",
@@ -529,7 +685,10 @@
    "origin": "site",
    "file": "hx-053-康康希联小蓝信-什么都能饭圈了.md",
    "chars": 2828,
-   "source_hash": "29bd71d7d6f1de36"
+   "source_hash": "29bd71d7d6f1de36",
+   "date": "2023-05-13 08:49:34",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-054",
@@ -539,7 +698,10 @@
    "origin": "site",
    "file": "hx-054-来自希联的追猎者-猎手亦是猎物.md",
    "chars": 3741,
-   "source_hash": "8bd4152873b3a837"
+   "source_hash": "8bd4152873b3a837",
+   "date": "2023-05-14 07:29:10",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-055",
@@ -549,7 +711,10 @@
    "origin": "site",
    "file": "hx-055-帝国致进盟的公开信-你有点太极端了.md",
    "chars": 1384,
-   "source_hash": "7c63d3b1db651382"
+   "source_hash": "7c63d3b1db651382",
+   "date": "2023-05-20 23:33:44",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-056",
@@ -559,7 +724,10 @@
    "origin": "site",
    "file": "hx-056-高冒与经济部长的对话-经济如此简单.md",
    "chars": 1012,
-   "source_hash": "6fd1ff0b8c4f0b07"
+   "source_hash": "6fd1ff0b8c4f0b07",
+   "date": "2023-05-26 00:59:53",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-057",
@@ -569,7 +737,10 @@
    "origin": "site",
    "file": "hx-057-希共要员的上网记录-没什么特别的.md",
    "chars": 2380,
-   "source_hash": "ba2ecf908386e607"
+   "source_hash": "ba2ecf908386e607",
+   "date": "2023-05-28 00:07:23",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-058",
@@ -579,7 +750,10 @@
    "origin": "site",
    "file": "hx-058-如果高冒壮烈牺牲.md",
    "chars": 3572,
-   "source_hash": "77dbe6768e6b8a01"
+   "source_hash": "77dbe6768e6b8a01",
+   "date": "2023-07-28 05:08:18",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-059",
@@ -589,7 +763,10 @@
    "origin": "site",
    "file": "hx-059-如果高冒获得世界.md",
    "chars": 2904,
-   "source_hash": "a571fb593232bec7"
+   "source_hash": "a571fb593232bec7",
+   "date": "2023-07-29 05:20:31",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-060",
@@ -599,7 +776,10 @@
    "origin": "site",
    "file": "hx-060-如果红樱解放世界.md",
    "chars": 2105,
-   "source_hash": "a2bb770b1fd812a3"
+   "source_hash": "a2bb770b1fd812a3",
+   "date": "2023-07-30 00:06:02",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-061",
@@ -609,7 +789,10 @@
    "origin": "site",
    "file": "hx-061-如果红樱败给人民.md",
    "chars": 2867,
-   "source_hash": "947793a9804aa5e4"
+   "source_hash": "947793a9804aa5e4",
+   "date": "2023-07-31 13:30:40",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-062",
@@ -619,7 +802,10 @@
    "origin": "site",
    "file": "hx-062-陆柩以前的故事.md",
    "chars": 3316,
-   "source_hash": "137a2d369370a248"
+   "source_hash": "137a2d369370a248",
+   "date": "2023-07-30 10:32:58",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-063",
@@ -629,7 +815,10 @@
    "origin": "site",
    "file": "hx-063-叶心以前的故事.md",
    "chars": 4294,
-   "source_hash": "cb2a78a02606eb51"
+   "source_hash": "cb2a78a02606eb51",
+   "date": "2023-07-31 00:42:48",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-064",
@@ -639,7 +828,10 @@
    "origin": "site",
    "file": "hx-064-夜瞳、受辱与心死.md",
    "chars": 5723,
-   "source_hash": "5e1176be65201be5"
+   "source_hash": "5e1176be65201be5",
+   "date": "2023-08-06 17:50:28",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-065",
@@ -649,7 +841,10 @@
    "origin": "site",
    "file": "hx-065-戡乱政府广播电台.md",
    "chars": 485,
-   "source_hash": "e5021bd89fb70b7c"
+   "source_hash": "e5021bd89fb70b7c",
+   "date": "2023-08-06 19:22:23",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-066",
@@ -659,7 +854,10 @@
    "origin": "site",
    "file": "hx-066-夜瞳、心死与疯狂.md",
    "chars": 3603,
-   "source_hash": "008b4c32bc122bcf"
+   "source_hash": "008b4c32bc122bcf",
+   "date": "2023-08-07 23:21:38",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-067",
@@ -669,7 +867,10 @@
    "origin": "site",
    "file": "hx-067-深黑军团、辩论失利.md",
    "chars": 2998,
-   "source_hash": "2d91aef9e28b70c2"
+   "source_hash": "2d91aef9e28b70c2",
+   "date": "2023-08-10 19:59:41",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-068",
@@ -679,7 +880,10 @@
    "origin": "site",
    "file": "hx-068-希望的影像传向全世界.md",
    "chars": 3623,
-   "source_hash": "c42161062acc9551"
+   "source_hash": "c42161062acc9551",
+   "date": "2023-08-02 12:36:34",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-069",
@@ -689,7 +893,10 @@
    "origin": "site",
    "file": "hx-069-希望的影像公布之后.md",
    "chars": 1720,
-   "source_hash": "1effdc88c5cbb5f3"
+   "source_hash": "1effdc88c5cbb5f3",
+   "date": "2023-08-03 21:17:59",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-070",
@@ -699,7 +906,10 @@
    "origin": "site",
    "file": "hx-070-原星对过往的申辩.md",
    "chars": 5549,
-   "source_hash": "9a8e421b57ada6ad"
+   "source_hash": "9a8e421b57ada6ad",
+   "date": "2023-08-12 17:38:57",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-071",
@@ -709,7 +919,10 @@
    "origin": "site",
    "file": "hx-071-如何处理特殊战犯.md",
    "chars": 2994,
-   "source_hash": "d928b586de3ea500"
+   "source_hash": "d928b586de3ea500",
+   "date": "2023-08-13 08:20:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-072",
@@ -719,7 +932,10 @@
    "origin": "site",
    "file": "hx-072-李伊、噩梦与悔恨.md",
    "chars": 2777,
-   "source_hash": "a01d7de43613a8e8"
+   "source_hash": "a01d7de43613a8e8",
+   "date": "2023-08-19 04:55:57",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-073",
@@ -729,7 +945,10 @@
    "origin": "site",
    "file": "hx-073-叶心桌上的四封信.md",
    "chars": 1510,
-   "source_hash": "078085fa8154ba42"
+   "source_hash": "078085fa8154ba42",
+   "date": "2023-08-30 13:55:57",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-074",
@@ -739,7 +958,10 @@
    "origin": "site",
    "file": "hx-074-大家兴奋地问-子明未是谁.md",
    "chars": 1610,
-   "source_hash": "d35f1682a676ad56"
+   "source_hash": "d35f1682a676ad56",
+   "date": "2023-08-30 15:41:14",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-075",
@@ -749,7 +971,10 @@
    "origin": "site",
    "file": "hx-075-我们在同一个花园荡秋千.md",
    "chars": 4652,
-   "source_hash": "86125841ef3b5ca0"
+   "source_hash": "86125841ef3b5ca0",
+   "date": "2023-03-09 03:44:49",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-076",
@@ -759,7 +984,10 @@
    "origin": "site",
    "file": "hx-076-新官上任之社会保障计划.md",
    "chars": 1827,
-   "source_hash": "4f640753840485dc"
+   "source_hash": "4f640753840485dc",
+   "date": "2023-07-02 09:37:19",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-077",
@@ -769,7 +997,10 @@
    "origin": "site",
    "file": "hx-077-三人组、始动、向未知突袭.md",
    "chars": 3366,
-   "source_hash": "173f3a51b1887b54"
+   "source_hash": "173f3a51b1887b54",
+   "date": "2023-09-06 17:40:50",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-078",
@@ -779,7 +1010,10 @@
    "origin": "site",
    "file": "hx-078-陆柩论女权主义.md",
    "chars": 2458,
-   "source_hash": "778b46f9af814200"
+   "source_hash": "778b46f9af814200",
+   "date": "2023-09-07 01:07:29",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-079",
@@ -789,7 +1023,10 @@
    "origin": "site",
    "file": "hx-079-三人组行动前的五月蝇.md",
    "chars": 3154,
-   "source_hash": "8710d81de82c675f"
+   "source_hash": "8710d81de82c675f",
+   "date": "2023-09-07 11:28:44",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-080",
@@ -799,7 +1036,10 @@
    "origin": "site",
    "file": "hx-080-三人组未曾意料的展开.md",
    "chars": 2189,
-   "source_hash": "48a96c05e7005528"
+   "source_hash": "48a96c05e7005528",
+   "date": "2023-09-07 11:28:51",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-081",
@@ -809,7 +1049,10 @@
    "origin": "site",
    "file": "hx-081-典中典之灵魂互换.md",
    "chars": 3293,
-   "source_hash": "0d6a814daaf4551b"
+   "source_hash": "0d6a814daaf4551b",
+   "date": "2023-09-09 00:18:54",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-082",
@@ -819,7 +1062,10 @@
    "origin": "site",
    "file": "hx-082-三人组之上网冲浪.md",
    "chars": 3256,
-   "source_hash": "689e11602aa162ef"
+   "source_hash": "689e11602aa162ef",
+   "date": "2023-09-23 06:24:26",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-083",
@@ -829,7 +1075,10 @@
    "origin": "site",
    "file": "hx-083-如果时间魔法回溯成功.md",
    "chars": 2567,
-   "source_hash": "4a7c401ce135e76f"
+   "source_hash": "4a7c401ce135e76f",
+   "date": "2023-09-23 08:55:39",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-084",
@@ -839,7 +1088,10 @@
    "origin": "site",
    "file": "hx-084-典中典之激情密室.md",
    "chars": 3651,
-   "source_hash": "b9847d863da62d9a"
+   "source_hash": "b9847d863da62d9a",
+   "date": "2023-09-23 14:34:13",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-085",
@@ -849,7 +1101,10 @@
    "origin": "site",
    "file": "hx-085-尴尬的事情也要分享给朋友.md",
    "chars": 2515,
-   "source_hash": "8fc7e958aed8e88a"
+   "source_hash": "8fc7e958aed8e88a",
+   "date": "2023-09-24 06:18:48",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-086",
@@ -859,7 +1114,10 @@
    "origin": "site",
    "file": "hx-086-我的正义与你无关.md",
    "chars": 4151,
-   "source_hash": "bc7e0895e122e0a0"
+   "source_hash": "bc7e0895e122e0a0",
+   "date": "2023-09-25 08:06:58",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-087",
@@ -869,7 +1127,10 @@
    "origin": "site",
    "file": "hx-087-三人组之雨下闲聊.md",
    "chars": 2927,
-   "source_hash": "2ad7d5751c99a302"
+   "source_hash": "2ad7d5751c99a302",
+   "date": "2023-09-26 04:50:34",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-088",
@@ -879,7 +1140,10 @@
    "origin": "site",
    "file": "hx-088-极乐世界的教母.md",
    "chars": 2907,
-   "source_hash": "3da97f9ee0cbf8e7"
+   "source_hash": "3da97f9ee0cbf8e7",
+   "date": "2023-09-27 06:58:21",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-089",
@@ -889,7 +1153,10 @@
    "origin": "site",
    "file": "hx-089-三人组之雨下醉话.md",
    "chars": 3455,
-   "source_hash": "e2ef3febe1f3a62c"
+   "source_hash": "e2ef3febe1f3a62c",
+   "date": "2023-10-13 14:25:14",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-090",
@@ -899,7 +1166,10 @@
    "origin": "site",
    "file": "hx-090-如果高冒的帝国毁灭.md",
    "chars": 2820,
-   "source_hash": "5ce4267ebaedb393"
+   "source_hash": "5ce4267ebaedb393",
+   "date": "2023-10-16 22:54:54",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-091",
@@ -909,7 +1179,10 @@
    "origin": "site",
    "file": "hx-091-为什么要上演黑柩.md",
    "chars": 3256,
-   "source_hash": "b3a2a6c47f21c362"
+   "source_hash": "b3a2a6c47f21c362",
+   "date": "2023-10-18 11:27:33",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-092",
@@ -919,7 +1192,11 @@
    "origin": "site",
    "file": "hx-092-民主与真正社会主义.md",
    "chars": 3771,
-   "source_hash": "1b627f48e8a0a7da"
+   "source_hash": "1b627f48e8a0a7da",
+   "date": "2023-10-18 11:27:33",
+   "date_level": "D",
+   "date_end": "2023-10-27 23:02:23",
+   "date_note": "群记录中无任何痕迹（疑以长图发布）"
   },
   {
    "id": "hx-093",
@@ -929,7 +1206,11 @@
    "origin": "site",
    "file": "hx-093-你有点太极端了.md",
    "chars": 2391,
-   "source_hash": "1ac3e764a4f19572"
+   "source_hash": "1ac3e764a4f19572",
+   "date": "2023-10-18 11:27:33",
+   "date_level": "D",
+   "date_end": "2023-10-27 23:02:23",
+   "date_note": "正文仅在 2026-02-14 出现（和平会议作道具复用）；花絮5 的 docx 2025-09 已收，故 2026 非创作时间"
   },
   {
    "id": "hx-094",
@@ -939,7 +1220,11 @@
    "origin": "site",
    "file": "hx-094-家族、正义与恩情.md",
    "chars": 3459,
-   "source_hash": "89090917ebc51eaa"
+   "source_hash": "89090917ebc51eaa",
+   "date": "2023-10-18 11:27:33",
+   "date_level": "D",
+   "date_end": "2023-10-27 23:02:23",
+   "date_note": "群记录中无任何痕迹（疑以长图发布）"
   },
   {
    "id": "hx-095",
@@ -949,7 +1234,10 @@
    "origin": "site",
    "file": "hx-095-温柔的曼哈顿计划.md",
    "chars": 3480,
-   "source_hash": "e74477e3fd3a9fb2"
+   "source_hash": "e74477e3fd3a9fb2",
+   "date": "2023-10-27 23:02:23",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-096",
@@ -959,7 +1247,11 @@
    "origin": "site",
    "file": "hx-096-革命与戡乱的治国方式.md",
    "chars": 3107,
-   "source_hash": "0bd5a3e7e8a4f691"
+   "source_hash": "0bd5a3e7e8a4f691",
+   "date": "2023-10-27 23:02:23",
+   "date_level": "D",
+   "date_end": "2023-10-29 21:13:24",
+   "date_note": "群记录中无任何痕迹（疑以长图发布）"
   },
   {
    "id": "hx-097",
@@ -969,7 +1261,10 @@
    "origin": "site",
    "file": "hx-097-此刻-我就是死神的化身.md",
    "chars": 2262,
-   "source_hash": "388e1d46b26363ca"
+   "source_hash": "388e1d46b26363ca",
+   "date": "2023-10-29 21:13:24",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-098",
@@ -979,7 +1274,10 @@
    "origin": "site",
    "file": "hx-098-最后的布尔什维克.md",
    "chars": 2883,
-   "source_hash": "573cd4c8f1ddfc09"
+   "source_hash": "573cd4c8f1ddfc09",
+   "date": "2023-11-18 20:30:51",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-099",
@@ -989,7 +1287,10 @@
    "origin": "site",
    "file": "hx-099-原知的起源-崇拜宇宙之人.md",
    "chars": 2412,
-   "source_hash": "83b061d5da493b74"
+   "source_hash": "83b061d5da493b74",
+   "date": "2023-11-24 01:49:56",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-100",
@@ -999,7 +1300,10 @@
    "origin": "site",
    "file": "hx-100-我们必须假设他们是快乐的.md",
    "chars": 2519,
-   "source_hash": "38945b1e59c27dfa"
+   "source_hash": "38945b1e59c27dfa",
+   "date": "2023-11-26 04:19:02",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-101",
@@ -1009,7 +1313,10 @@
    "origin": "site",
    "file": "hx-101-老婆重要还是任务重要.md",
    "chars": 4150,
-   "source_hash": "5ee546eaadce6cc9"
+   "source_hash": "5ee546eaadce6cc9",
+   "date": "2023-12-10 19:32:09",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-102",
@@ -1019,7 +1326,10 @@
    "origin": "site",
    "file": "hx-102-斯卡雷特家族线上聚会.md",
    "chars": 3396,
-   "source_hash": "44ceb344a142d435"
+   "source_hash": "44ceb344a142d435",
+   "date": "2023-12-27 12:59:02",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-103",
@@ -1029,7 +1339,10 @@
    "origin": "site",
    "file": "hx-103-原星重回故里.md",
    "chars": 547,
-   "source_hash": "5aac1c28686e26b2"
+   "source_hash": "5aac1c28686e26b2",
+   "date": "2023-12-27 13:32:06",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-104",
@@ -1039,7 +1352,10 @@
    "origin": "site",
    "file": "hx-104-革命结束了享受享受怎么了.md",
    "chars": 4064,
-   "source_hash": "d9f8d04f44ecabaa"
+   "source_hash": "d9f8d04f44ecabaa",
+   "date": "2023-12-27 19:50:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-105",
@@ -1049,7 +1365,10 @@
    "origin": "site",
    "file": "hx-105-中分山火宅-戡乱正当时.md",
    "chars": 3563,
-   "source_hash": "9d7f1ec1510e925c"
+   "source_hash": "9d7f1ec1510e925c",
+   "date": "2024-01-02 19:02:37",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-106",
@@ -1059,7 +1378,10 @@
    "origin": "site",
    "file": "hx-106-原绘自述史.md",
    "chars": 1238,
-   "source_hash": "c3b197abe52b536e"
+   "source_hash": "c3b197abe52b536e",
+   "date": "2024-01-20 23:34:55",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-107",
@@ -1069,7 +1391,10 @@
    "origin": "site",
    "file": "hx-107-第九季新老角色介绍.md",
    "chars": 752,
-   "source_hash": "c082aa69b5ab5b6a"
+   "source_hash": "c082aa69b5ab5b6a",
+   "date": "2024-02-02 16:12:38",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-108",
@@ -1079,7 +1404,10 @@
    "origin": "site",
    "file": "hx-108-和平会议前的朋友圈.md",
    "chars": 2348,
-   "source_hash": "864293295759c747"
+   "source_hash": "864293295759c747",
+   "date": "2024-02-03 01:23:34",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-109",
@@ -1089,7 +1417,10 @@
    "origin": "site",
    "file": "hx-109-最长的平行世界故事-黑柩之黑暗史诗.md",
    "chars": 5888,
-   "source_hash": "8448a299bffabe86"
+   "source_hash": "8448a299bffabe86",
+   "date": "2024-11-15 02:10:16",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-110",
@@ -1099,7 +1430,10 @@
    "origin": "site",
    "file": "hx-110-一秒六棍启动失败-直升机也干了.md",
    "chars": 1740,
-   "source_hash": "2a22764e1d334444"
+   "source_hash": "2a22764e1d334444",
+   "date": "2024-12-04 01:11:31",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-111",
@@ -1109,7 +1443,10 @@
    "origin": "site",
    "file": "hx-111-原绘和叶暝的起源-爱恨纠缠无望之塔.md",
    "chars": 5066,
-   "source_hash": "4c54705fec912ea4"
+   "source_hash": "4c54705fec912ea4",
+   "date": "2025-01-29 02:53:17",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-112",
@@ -1119,7 +1456,10 @@
    "origin": "site",
    "file": "hx-112-西娜上校-宛如虎豹一般的女人.md",
    "chars": 2243,
-   "source_hash": "fa060fa25030d0d0"
+   "source_hash": "fa060fa25030d0d0",
+   "date": "2025-01-30 16:55:27",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-113",
@@ -1129,7 +1469,10 @@
    "origin": "site",
    "file": "hx-113-希共内部的明争暗斗.md",
    "chars": 1929,
-   "source_hash": "11ea4e7f22473415"
+   "source_hash": "11ea4e7f22473415",
+   "date": "2025-03-13 21:07:05",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-114",
@@ -1139,7 +1482,10 @@
    "origin": "site",
    "file": "hx-114-回顾往昔-一路走来经历的.md",
    "chars": 2668,
-   "source_hash": "b0cab66c08db61a2"
+   "source_hash": "b0cab66c08db61a2",
+   "date": "2025-03-23 00:53:26",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-115",
@@ -1149,7 +1495,10 @@
    "origin": "site",
    "file": "hx-115-一声枪响-黄金万两-上.md",
    "chars": 2431,
-   "source_hash": "a1fd23ffeab2b268"
+   "source_hash": "a1fd23ffeab2b268",
+   "date": "2025-03-27 13:05:25",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-116",
@@ -1159,7 +1508,10 @@
    "origin": "site",
    "file": "hx-116-一声枪响-黄金万两-下.md",
    "chars": 2596,
-   "source_hash": "12627d4c8514bfdc"
+   "source_hash": "12627d4c8514bfdc",
+   "date": "2025-03-27 14:34:10",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-117",
@@ -1169,7 +1521,10 @@
    "origin": "site",
    "file": "hx-117-我所认识的月见力.md",
    "chars": 2319,
-   "source_hash": "82cf62e80f7d1b33"
+   "source_hash": "82cf62e80f7d1b33",
+   "date": "2025-03-27 20:56:14",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-118",
@@ -1179,7 +1534,10 @@
    "origin": "site",
    "file": "hx-118-我所认识的齐藤优子.md",
    "chars": 3457,
-   "source_hash": "adabe99fd2b43982"
+   "source_hash": "adabe99fd2b43982",
+   "date": "2025-03-27 23:21:24",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-119",
@@ -1189,7 +1547,11 @@
    "origin": "site",
    "file": "hx-119-我们不太认识的叶心.md",
    "chars": 3131,
-   "source_hash": "00f826e41d2df258"
+   "source_hash": "00f826e41d2df258",
+   "date": "2025-03-27 23:21:24",
+   "date_level": "D",
+   "date_end": "2025-03-28 17:47:21",
+   "date_note": "群记录中无任何痕迹；前后篇间隔仅 18 小时"
   },
   {
    "id": "hx-120",
@@ -1199,7 +1561,10 @@
    "origin": "site",
    "file": "hx-120-黄金劫案如何解决-且听分解.md",
    "chars": 3809,
-   "source_hash": "879f24346cce49f4"
+   "source_hash": "879f24346cce49f4",
+   "date": "2025-03-28 17:47:21",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-121",
@@ -1209,7 +1574,10 @@
    "origin": "site",
    "file": "hx-121-齐藤优子浪漫史.md",
    "chars": 1157,
-   "source_hash": "ff2ffd5e6e394b9c"
+   "source_hash": "ff2ffd5e6e394b9c",
+   "date": "2025-04-29 06:33:39",
+   "date_level": "B",
+   "date_note": "四格图文，命中同一夜长文的续段；时间由 2025-03-29 校正为 2025-04-29（正文自证）"
   },
   {
    "id": "hx-122",
@@ -1219,7 +1587,10 @@
    "origin": "site",
    "file": "hx-122-学生军的狂飙突进-上.md",
    "chars": 4422,
-   "source_hash": "bb8c207c7e146e80"
+   "source_hash": "bb8c207c7e146e80",
+   "date": "2025-04-13 23:07:24",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-123",
@@ -1229,7 +1600,10 @@
    "origin": "site",
    "file": "hx-123-学生军的狂飙突进-下.md",
    "chars": 2428,
-   "source_hash": "487a2b94a8f4592d"
+   "source_hash": "487a2b94a8f4592d",
+   "date": "2025-04-14 00:26:41",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-124",
@@ -1239,7 +1613,10 @@
    "origin": "site",
    "file": "hx-124-关公指路-还是另辟他途.md",
    "chars": 3220,
-   "source_hash": "69d9eda189350702"
+   "source_hash": "69d9eda189350702",
+   "date": "2025-04-14 02:08:40",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-125",
@@ -1249,7 +1626,10 @@
    "origin": "site",
    "file": "hx-125-怎么-竟然考虑我们的建议.md",
    "chars": 3150,
-   "source_hash": "e116310fbe076591"
+   "source_hash": "e116310fbe076591",
+   "date": "2025-04-19 04:52:08",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-126",
@@ -1259,7 +1639,10 @@
    "origin": "site",
    "file": "hx-126-狂风不愿-孤星坠落.md",
    "chars": 2994,
-   "source_hash": "a3cbc627a546aa57"
+   "source_hash": "a3cbc627a546aa57",
+   "date": "2025-04-19 05:45:33",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-127",
@@ -1269,7 +1652,10 @@
    "origin": "site",
    "file": "hx-127-我死之后-洪水滔天.md",
    "chars": 1623,
-   "source_hash": "17e1fe7f893a2430"
+   "source_hash": "17e1fe7f893a2430",
+   "date": "2025-04-26 23:18:55",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-128",
@@ -1279,7 +1665,10 @@
    "origin": "site",
    "file": "hx-128-做一个革命者-还是一个好邻居.md",
    "chars": 3755,
-   "source_hash": "c5aa99877b02f18e"
+   "source_hash": "c5aa99877b02f18e",
+   "date": "2025-04-28 16:00:53",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-129",
@@ -1289,7 +1678,10 @@
    "origin": "site",
    "file": "hx-129-艺校时期的爱情.md",
    "chars": 3244,
-   "source_hash": "32a049c7932d99ed"
+   "source_hash": "32a049c7932d99ed",
+   "date": "2025-04-29 06:33:39",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-130",
@@ -1299,7 +1691,10 @@
    "origin": "site",
    "file": "hx-130-天道已灭-率兽食人.md",
    "chars": 4559,
-   "source_hash": "bd3f1bc697c47e49"
+   "source_hash": "bd3f1bc697c47e49",
+   "date": "2025-04-29 07:56:30",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-131",
@@ -1309,7 +1704,10 @@
    "origin": "site",
    "file": "hx-131-你为祖国而生-也应为祖国而死.md",
    "chars": 4021,
-   "source_hash": "190658d52cbf8e58"
+   "source_hash": "190658d52cbf8e58",
+   "date": "2025-04-30 01:15:59",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-132",
@@ -1319,7 +1717,10 @@
    "origin": "site",
    "file": "hx-132-圣人之血将唤醒凡庸.md",
    "chars": 2334,
-   "source_hash": "95f908cfe856354b"
+   "source_hash": "95f908cfe856354b",
+   "date": "2025-04-30 02:40:26",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-133",
@@ -1329,7 +1730,10 @@
    "origin": "site",
    "file": "hx-133-大和民族的新希望.md",
    "chars": 4120,
-   "source_hash": "03d435c2fd18cc47"
+   "source_hash": "03d435c2fd18cc47",
+   "date": "2025-05-02 13:49:05",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-134",
@@ -1339,7 +1743,10 @@
    "origin": "site",
    "file": "hx-134-大权手中揽-艺校姐妹花.md",
    "chars": 2103,
-   "source_hash": "03f450b835d68c0a"
+   "source_hash": "03f450b835d68c0a",
+   "date": "2025-05-02 18:44:09",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-135",
@@ -1349,7 +1756,10 @@
    "origin": "site",
    "file": "hx-135-鸣十二与鸣十三.md",
    "chars": 4609,
-   "source_hash": "271e41b4209834fe"
+   "source_hash": "271e41b4209834fe",
+   "date": "2025-05-02 22:32:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-136",
@@ -1359,7 +1769,10 @@
    "origin": "site",
    "file": "hx-136-扭曲的思念长出了血肉.md",
    "chars": 2047,
-   "source_hash": "5aeeb370d6fc2916"
+   "source_hash": "5aeeb370d6fc2916",
+   "date": "2025-05-02 23:31:41",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-137",
@@ -1369,7 +1782,10 @@
    "origin": "site",
    "file": "hx-137-禁忌之恋-围墙之间.md",
    "chars": 4567,
-   "source_hash": "79f59af3508df46b"
+   "source_hash": "79f59af3508df46b",
+   "date": "2025-05-03 00:59:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-138",
@@ -1379,7 +1795,10 @@
    "origin": "site",
    "file": "hx-138-一切都在阴霾中腐朽.md",
    "chars": 8752,
-   "source_hash": "4a5d6a081a9a83db"
+   "source_hash": "4a5d6a081a9a83db",
+   "date": "2025-05-05 01:40:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-139",
@@ -1389,7 +1808,10 @@
    "origin": "site",
    "file": "hx-139-母女重逢叙旧事-只是良辰不再.md",
    "chars": 3999,
-   "source_hash": "d0ba7a7eb7689ce9"
+   "source_hash": "d0ba7a7eb7689ce9",
+   "date": "2025-05-14 21:46:30",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-140",
@@ -1399,7 +1821,10 @@
    "origin": "site",
    "file": "hx-140-日本街家主秘密会议.md",
    "chars": 3719,
-   "source_hash": "bac889c5ee3596da"
+   "source_hash": "bac889c5ee3596da",
+   "date": "2025-06-10 22:20:28",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-141",
@@ -1409,7 +1834,10 @@
    "origin": "site",
    "file": "hx-141-川崎罗与春叶屋-日本街的阴影.md",
    "chars": 4096,
-   "source_hash": "cec10509dfa86fcd"
+   "source_hash": "cec10509dfa86fcd",
+   "date": "2025-06-11 00:28:25",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-142",
@@ -1419,7 +1847,10 @@
    "origin": "site",
    "file": "hx-142-川崎罗的故事.md",
    "chars": 1242,
-   "source_hash": "3c93b47cfe3c0fd8"
+   "source_hash": "3c93b47cfe3c0fd8",
+   "date": "2025-06-11 01:00:28",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-143",
@@ -1429,7 +1860,10 @@
    "origin": "site",
    "file": "hx-143-黄沙之民-指向世界的利刃.md",
    "chars": 2497,
-   "source_hash": "8eb3f9d3e04cd028"
+   "source_hash": "8eb3f9d3e04cd028",
+   "date": "2025-06-12 23:55:18",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-144",
@@ -1439,7 +1873,10 @@
    "origin": "site",
    "file": "hx-144-来自希共的怒火-讨还血债之时.md",
    "chars": 3420,
-   "source_hash": "33a868d5f73bfb6e"
+   "source_hash": "33a868d5f73bfb6e",
+   "date": "2025-06-25 01:06:21",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-145",
@@ -1449,7 +1886,10 @@
    "origin": "site",
    "file": "hx-145-伊甸园计划-为什么.md",
    "chars": 6998,
-   "source_hash": "3c03241cd0035530"
+   "source_hash": "3c03241cd0035530",
+   "date": "2025-06-30 23:35:03",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-146",
@@ -1459,7 +1899,10 @@
    "origin": "site",
    "file": "hx-146-大当家的故事-笑面杀手.md",
    "chars": 6285,
-   "source_hash": "aefd255cd82dd63d"
+   "source_hash": "aefd255cd82dd63d",
+   "date": "2025-07-12 00:37:05",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-147",
@@ -1469,7 +1912,10 @@
    "origin": "site",
    "file": "hx-147-北沙空调危机-太热了.md",
    "chars": 3973,
-   "source_hash": "330fdac049744741"
+   "source_hash": "330fdac049744741",
+   "date": "2025-07-19 00:56:46",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-148",
@@ -1479,7 +1925,10 @@
    "origin": "site",
    "file": "hx-148-须知正义是杀不死的.md",
    "chars": 3856,
-   "source_hash": "d519c41f3e7d8cde"
+   "source_hash": "d519c41f3e7d8cde",
+   "date": "2025-07-26 22:24:48",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-149",
@@ -1489,7 +1938,10 @@
    "origin": "site",
    "file": "hx-149-恋人之死-过往焚尽.md",
    "chars": 4956,
-   "source_hash": "28b77fd35ab91c93"
+   "source_hash": "28b77fd35ab91c93",
+   "date": "2025-07-27 00:14:17",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-150",
@@ -1499,7 +1951,10 @@
    "origin": "site",
    "file": "hx-150-蚀血教来袭-这是什么.md",
    "chars": 8107,
-   "source_hash": "466be8be14521bf1"
+   "source_hash": "466be8be14521bf1",
+   "date": "2025-08-12 00:05:29",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-151",
@@ -1509,7 +1964,10 @@
    "origin": "site",
    "file": "hx-151-2026新年祝福.md",
    "chars": 1187,
-   "source_hash": "b2e0645a69f41416"
+   "source_hash": "b2e0645a69f41416",
+   "date": "2026-02-16 22:39:05",
+   "date_level": "B",
+   "date_note": "合辑型（各角色祝福汇编），跨多次发布，取其中一节时刻"
   },
   {
    "id": "hx-152",
@@ -1519,7 +1977,10 @@
    "origin": "site",
    "file": "hx-152-玩家创作-无声狂啸.md",
    "chars": 9123,
-   "source_hash": "a0a66d11dcb2f356"
+   "source_hash": "a0a66d11dcb2f356",
+   "date": "2026-03-05 23:44:24",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-153",
@@ -1529,7 +1990,10 @@
    "origin": "site",
    "file": "hx-153-办公室的暗斗与神秘的请柬.md",
    "chars": 3853,
-   "source_hash": "fdb6afafb6f4c8a5"
+   "source_hash": "fdb6afafb6f4c8a5",
+   "date": "2025-12-23 23:45:11",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-154",
@@ -1539,7 +2003,10 @@
    "origin": "site",
    "file": "hx-154-高冒之死和国家前进革命.md",
    "chars": 2623,
-   "source_hash": "e2fa7a1aab816c71"
+   "source_hash": "e2fa7a1aab816c71",
+   "date": "2026-01-06 01:27:08",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-155",
@@ -1549,7 +2016,10 @@
    "origin": "site",
    "file": "hx-155-北沙篇休息时发生的事.md",
    "chars": 815,
-   "source_hash": "8df6f42f0d2f80e9"
+   "source_hash": "8df6f42f0d2f80e9",
+   "date": "2026-02-06 00:43:27",
+   "date_level": "B",
+   "date_note": "合辑型（朋友圈式片段汇编），跨多次发布"
   },
   {
    "id": "hx-156",
@@ -1559,7 +2029,10 @@
    "origin": "site",
    "file": "hx-156-如果余烬令苍鬼不安.md",
    "chars": 423,
-   "source_hash": "489d322f66102e5d"
+   "source_hash": "489d322f66102e5d",
+   "date": "2026-02-07 17:21:21",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-157",
@@ -1569,7 +2042,10 @@
    "origin": "site",
    "file": "hx-157-狂狷无所忌-今作七步诗.md",
    "chars": 540,
-   "source_hash": "6102910fca1d35a7"
+   "source_hash": "6102910fca1d35a7",
+   "date": "2026-02-09 12:39:25",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-158",
@@ -1579,7 +2055,10 @@
    "origin": "site",
    "file": "hx-158-黄金与血的天皇.md",
    "chars": 3493,
-   "source_hash": "cae5f606a14b4252"
+   "source_hash": "cae5f606a14b4252",
+   "date": "2026-02-18 01:14:48",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-159",
@@ -1589,7 +2068,10 @@
    "origin": "site",
    "file": "hx-159-飞向星辰的战士.md",
    "chars": 2935,
-   "source_hash": "04d6129b648664a4"
+   "source_hash": "04d6129b648664a4",
+   "date": "2026-02-20 01:31:03",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-160",
@@ -1599,7 +2081,10 @@
    "origin": "site",
    "file": "hx-160-王从天降-愤怒狰狞.md",
    "chars": 1740,
-   "source_hash": "8cd499292b8ce804"
+   "source_hash": "8cd499292b8ce804",
+   "date": "2026-03-01 00:16:22",
+   "date_level": "B",
+   "date_note": "首段为编者按，命中正文段"
   },
   {
    "id": "hx-161",
@@ -1609,7 +2094,10 @@
    "origin": "site",
    "file": "hx-161-她成为伟大存在的一部分.md",
    "chars": 4018,
-   "source_hash": "4f36aa5e911dc2eb"
+   "source_hash": "4f36aa5e911dc2eb",
+   "date": "2026-03-02 15:12:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-162",
@@ -1619,7 +2107,10 @@
    "origin": "site",
    "file": "hx-162-走进黑暗-为了光明中的人.md",
    "chars": 12399,
-   "source_hash": "8a1af5d2b9ce142c"
+   "source_hash": "8a1af5d2b9ce142c",
+   "date": "2026-03-11 16:05:44",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-163",
@@ -1629,7 +2120,10 @@
    "origin": "site",
    "file": "hx-163-文志远的漫漫新知路.md",
    "chars": 3713,
-   "source_hash": "7e3a2de0a577ff30"
+   "source_hash": "7e3a2de0a577ff30",
+   "date": "2026-04-07 00:10:33",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-164",
@@ -1639,7 +2133,10 @@
    "origin": "site",
    "file": "hx-164-守阵青都-红樱刚正拒齐藤.md",
    "chars": 3087,
-   "source_hash": "fceb0e7e2eed93f0"
+   "source_hash": "fceb0e7e2eed93f0",
+   "date": "2026-04-08 10:57:41",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-165",
@@ -1649,7 +2146,10 @@
    "origin": "site",
    "file": "hx-165-辗转玲珑-多面操盘月见灯.md",
    "chars": 4641,
-   "source_hash": "c124b1f7c1cdda9d"
+   "source_hash": "c124b1f7c1cdda9d",
+   "date": "2026-04-08 22:45:41",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-166",
@@ -1659,7 +2159,10 @@
    "origin": "site",
    "file": "hx-166-歌舞岁月-纵横豪宴月见灯.md",
    "chars": 3860,
-   "source_hash": "17a195e64b470477"
+   "source_hash": "17a195e64b470477",
+   "date": "2026-04-09 00:42:54",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-167",
@@ -1669,7 +2172,10 @@
    "origin": "site",
    "file": "hx-167-明觉暗夜-宗望的阴谋始动.md",
    "chars": 3454,
-   "source_hash": "98be995150555331"
+   "source_hash": "98be995150555331",
+   "date": "2026-04-10 00:17:08",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-168",
@@ -1679,7 +2185,10 @@
    "origin": "site",
    "file": "hx-168-原绘、教皇与蚀血教-看向北沙.md",
    "chars": 2949,
-   "source_hash": "77e316033aefbe64"
+   "source_hash": "77e316033aefbe64",
+   "date": "2026-04-15 22:23:55",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-169",
@@ -1689,7 +2198,10 @@
    "origin": "site",
    "file": "hx-169-承罪学社的洞中会议.md",
    "chars": 3617,
-   "source_hash": "3a9338ecfeeb84ce"
+   "source_hash": "3a9338ecfeeb84ce",
+   "date": "2026-04-16 00:53:15",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-170",
@@ -1699,7 +2211,10 @@
    "origin": "site",
    "file": "hx-170-韩帮朴道地-面对家仇和江湖.md",
    "chars": 4633,
-   "source_hash": "1179b6b3f718de28"
+   "source_hash": "1179b6b3f718de28",
+   "date": "2026-05-02 13:40:00",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-171",
@@ -1709,7 +2224,10 @@
    "origin": "site",
    "file": "hx-171-属于高冒的平常一天.md",
    "chars": 3339,
-   "source_hash": "936e3e0a4271b20c"
+   "source_hash": "936e3e0a4271b20c",
+   "date": "2026-05-03 17:41:31",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-172",
@@ -1719,7 +2237,10 @@
    "origin": "site",
    "file": "hx-172-天子棣决定对抗苍天.md",
    "chars": 3110,
-   "source_hash": "90e12ab2c7cbef7b"
+   "source_hash": "90e12ab2c7cbef7b",
+   "date": "2026-05-06 23:13:07",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-173",
@@ -1729,7 +2250,10 @@
    "origin": "site",
    "file": "hx-173-中分山建设计划-发布.md",
    "chars": 1922,
-   "source_hash": "12aa943154279187"
+   "source_hash": "12aa943154279187",
+   "date": "2026-05-25 19:49:58",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-174",
@@ -1739,7 +2263,10 @@
    "origin": "site",
    "file": "hx-174-中分山无心栽柳-全北沙四处成荫.md",
    "chars": 4090,
-   "source_hash": "64a3f960de4caabc"
+   "source_hash": "64a3f960de4caabc",
+   "date": "2026-05-25 21:36:17",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-175",
@@ -1749,7 +2276,10 @@
    "origin": "site",
    "file": "hx-175-地下论坛议论中分山-苍鬼来信.md",
    "chars": 3835,
-   "source_hash": "c824eb44949d1f17"
+   "source_hash": "c824eb44949d1f17",
+   "date": "2026-05-26 19:11:35",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-176",
@@ -1759,7 +2289,10 @@
    "origin": "site",
    "file": "hx-176-相谈甚欢-两位女强人的聚会.md",
    "chars": 4573,
-   "source_hash": "f7fcf653c8cb95e2"
+   "source_hash": "f7fcf653c8cb95e2",
+   "date": "2026-05-27 00:05:27",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-177",
@@ -1769,7 +2302,10 @@
    "origin": "site",
    "file": "hx-177-北沙群星电影院大火案.md",
    "chars": 4495,
-   "source_hash": "e8007c9d2d3e711e"
+   "source_hash": "e8007c9d2d3e711e",
+   "date": "2026-05-29 23:47:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-178",
@@ -1779,7 +2315,10 @@
    "origin": "site",
    "file": "hx-178-北沙政府广场五月四日惨案.md",
    "chars": 4541,
-   "source_hash": "323dc5cb3a256dec"
+   "source_hash": "323dc5cb3a256dec",
+   "date": "2026-05-30 23:19:28",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-179",
@@ -1789,7 +2328,10 @@
    "origin": "site",
    "file": "hx-179-木金水以言胜武-水泥厂转危为安.md",
    "chars": 4555,
-   "source_hash": "fd24ad0b61e17e10"
+   "source_hash": "fd24ad0b61e17e10",
+   "date": "2026-06-01 22:25:48",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-180",
@@ -1799,7 +2341,10 @@
    "origin": "site",
    "file": "hx-180-黑帮的宽恕-侠客的利刃之下.md",
    "chars": 1702,
-   "source_hash": "a03ca9ae55a39af9"
+   "source_hash": "a03ca9ae55a39af9",
+   "date": "2026-07-21 15:09:42",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-181",
@@ -1809,7 +2354,10 @@
    "origin": "site",
    "file": "hx-181-孤儿-饥饿与霍乱.md",
    "chars": 3221,
-   "source_hash": "610d0a9a4952067c"
+   "source_hash": "610d0a9a4952067c",
+   "date": "2025-10-17 00:53:21",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-182",
@@ -1819,7 +2367,10 @@
    "origin": "site",
    "file": "hx-182-毁灭行动的标准行政流程.md",
    "chars": 1740,
-   "source_hash": "36dce194dfcd92fd"
+   "source_hash": "36dce194dfcd92fd",
+   "date": "2025-10-18 20:55:04",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-183",
@@ -1829,7 +2380,10 @@
    "origin": "site",
    "file": "hx-183-食人村与黑旗小队.md",
    "chars": 8909,
-   "source_hash": "b81a7adf38d72544"
+   "source_hash": "b81a7adf38d72544",
+   "date": "2025-10-19 00:30:58",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-184",
@@ -1839,7 +2393,10 @@
    "origin": "site",
    "file": "hx-184-谁是蛛眼.md",
    "chars": 1144,
-   "source_hash": "ca1e83a27f3f1a77"
+   "source_hash": "ca1e83a27f3f1a77",
+   "date": "2025-10-24 23:21:56",
+   "date_level": "B",
+   "date_note": "四格图文"
   },
   {
    "id": "hx-185",
@@ -1849,7 +2406,10 @@
    "origin": "site",
    "file": "hx-185-蛛眼-洞察人心.md",
    "chars": 3226,
-   "source_hash": "cd0ee7f0c2007158"
+   "source_hash": "cd0ee7f0c2007158",
+   "date": "2025-10-25 00:49:14",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-186",
@@ -1859,7 +2419,10 @@
    "origin": "site",
    "file": "hx-186-母亲-姐妹-雷电与海燕.md",
    "chars": 3836,
-   "source_hash": "e86398f56030aab9"
+   "source_hash": "e86398f56030aab9",
+   "date": "2026-01-13 01:14:20",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-187",
@@ -1869,7 +2432,10 @@
    "origin": "site",
    "file": "hx-187-不死的圣女与医生的再会.md",
    "chars": 10425,
-   "source_hash": "9ec754d29a852e73"
+   "source_hash": "9ec754d29a852e73",
+   "date": "2026-01-14 21:33:57",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-188",
@@ -1879,7 +2445,10 @@
    "origin": "site",
    "file": "hx-188-谁是教皇-渊.md",
    "chars": 1583,
-   "source_hash": "72f5dfe00919b695"
+   "source_hash": "72f5dfe00919b695",
+   "date": "2026-01-16 00:14:31",
+   "date_level": "B",
+   "date_note": "四格图文"
   },
   {
    "id": "hx-189",
@@ -1889,7 +2458,10 @@
    "origin": "site",
    "file": "hx-189-蚀血教-追逐完人的影子.md",
    "chars": 3883,
-   "source_hash": "d26d14b29c9bfd44"
+   "source_hash": "d26d14b29c9bfd44",
+   "date": "2026-01-22 22:10:02",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-190",
@@ -1899,7 +2471,10 @@
    "origin": "site",
    "file": "hx-190-最恶摇篮中的最善之人.md",
    "chars": 6344,
-   "source_hash": "c29a33c95309fc55"
+   "source_hash": "c29a33c95309fc55",
+   "date": "2026-01-23 00:07:56",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-191",
@@ -1909,7 +2484,10 @@
    "origin": "site",
    "file": "hx-191-中分山的惊人偶遇.md",
    "chars": 12919,
-   "source_hash": "c85cefc46faf4681"
+   "source_hash": "c85cefc46faf4681",
+   "date": "2026-01-25 22:20:09",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-192",
@@ -1919,7 +2497,10 @@
    "origin": "site",
    "file": "hx-192-为世界牺牲之后-我穿越了.md",
    "chars": 4796,
-   "source_hash": "16d64aa3d2064f36"
+   "source_hash": "16d64aa3d2064f36",
+   "date": "2026-03-02 23:06:34",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-193",
@@ -1929,7 +2510,10 @@
    "origin": "site",
    "file": "hx-193-异常事务委员会特勤组报告.md",
    "chars": 2849,
-   "source_hash": "47fd5c45be69cb01"
+   "source_hash": "47fd5c45be69cb01",
+   "date": "2026-03-03 22:41:50",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-194",
@@ -1939,7 +2523,10 @@
    "origin": "docx",
    "file": "hx-194-六月暴乱与护宪运动.md",
    "chars": 8480,
-   "source_hash": "3b615762e7c19773"
+   "source_hash": "3b615762e7c19773",
+   "date": "2026-03-17 01:18:32",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-195",
@@ -1949,7 +2536,10 @@
    "origin": "docx",
    "file": "hx-195-帝国首相的初次登场.md",
    "chars": 4566,
-   "source_hash": "a5ce580080866ce8"
+   "source_hash": "a5ce580080866ce8",
+   "date": "2026-03-23 23:15:42",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-196",
@@ -1959,7 +2549,10 @@
    "origin": "docx",
    "file": "hx-196-帝国首相的美梦破碎.md",
    "chars": 3630,
-   "source_hash": "c66664dcd64efb8a"
+   "source_hash": "c66664dcd64efb8a",
+   "date": "2026-03-24 21:27:49",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-197",
@@ -1969,7 +2562,10 @@
    "origin": "docx",
    "file": "hx-197-帝星飘摇荧惑高-忽有狂徒夜磨刀.md",
    "chars": 4518,
-   "source_hash": "0281ea80dd444bf8"
+   "source_hash": "0281ea80dd444bf8",
+   "date": "2026-04-10 22:39:13",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-198",
@@ -1979,7 +2575,10 @@
    "origin": "docx",
    "file": "hx-198-北沙起义之帝国的机变.md",
    "chars": 1582,
-   "source_hash": "3ad40389e96662f8"
+   "source_hash": "3ad40389e96662f8",
+   "date": "2026-04-11 11:16:25",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-199",
@@ -1989,7 +2588,10 @@
    "origin": "docx",
    "file": "hx-199-北沙起义-丑陋的高氏之坠.md",
    "chars": 4565,
-   "source_hash": "223d3bae21829c51"
+   "source_hash": "223d3bae21829c51",
+   "date": "2026-04-11 13:26:10",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-200",
@@ -1999,7 +2601,10 @@
    "origin": "docx",
    "file": "hx-200-极恶之人-在农田赎罪一生.md",
    "chars": 4608,
-   "source_hash": "f3636465a364a45a"
+   "source_hash": "f3636465a364a45a",
+   "date": "2026-04-11 17:47:11",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-201",
@@ -2009,7 +2614,10 @@
    "origin": "docx",
    "file": "hx-201-备战进盟-希联总统与世界之仪.md",
    "chars": 4426,
-   "source_hash": "3cfe72befb90f826"
+   "source_hash": "3cfe72befb90f826",
+   "date": "2026-04-30 22:05:07",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-202",
@@ -2019,7 +2627,10 @@
    "origin": "docx",
    "file": "hx-202-北沙警局迎来了新联络员.md",
    "chars": 2514,
-   "source_hash": "56967e2488bbf158"
+   "source_hash": "56967e2488bbf158",
+   "date": "2026-05-01 18:02:05",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-203",
@@ -2029,7 +2640,10 @@
    "origin": "docx",
    "file": "hx-203-北沙警局预备-镇暴前的筹划.md",
    "chars": 3259,
-   "source_hash": "6a9bf085dbeda467"
+   "source_hash": "6a9bf085dbeda467",
+   "date": "2026-05-04 10:21:36",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-204",
@@ -2039,7 +2653,10 @@
    "origin": "docx",
    "file": "hx-204-川崎罗小时候-时崎信子的忧愁.md",
    "chars": 2970,
-   "source_hash": "6295a879e800208e"
+   "source_hash": "6295a879e800208e",
+   "date": "2026-05-02 18:21:48",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-205",
@@ -2049,7 +2666,10 @@
    "origin": "docx",
    "file": "hx-205-时崎宗望的野望-日本街的悲剧.md",
    "chars": 3076,
-   "source_hash": "e3f778ea478e616f"
+   "source_hash": "e3f778ea478e616f",
+   "date": "2026-05-03 21:30:19",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-206",
@@ -2059,7 +2679,10 @@
    "origin": "docx",
    "file": "hx-206-赫炎的审讯-北沙内乱的暗流.md",
    "chars": 3876,
-   "source_hash": "bebdc18f51130a5d"
+   "source_hash": "bebdc18f51130a5d",
+   "date": "2026-05-04 23:49:40",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-207",
@@ -2069,7 +2692,10 @@
    "origin": "docx",
    "file": "hx-207-星都战争-世界之仪防卫战.md",
    "chars": 4606,
-   "source_hash": "85f7dc73e8030c89"
+   "source_hash": "85f7dc73e8030c89",
+   "date": "2026-05-21 00:17:07",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-208",
@@ -2079,7 +2705,10 @@
    "origin": "docx",
    "file": "hx-208-蚀血教的圆桌会议.md",
    "chars": 4590,
-   "source_hash": "5f958959dd2cc062"
+   "source_hash": "5f958959dd2cc062",
+   "date": "2026-06-02 16:55:04",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-209",
@@ -2089,7 +2718,10 @@
    "origin": "docx",
    "file": "hx-209-鲜红超人-和他的虔诚观众.md",
    "chars": 4499,
-   "source_hash": "2d20af210c768ae0"
+   "source_hash": "2d20af210c768ae0",
+   "date": "2026-06-02 22:02:26",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-210",
@@ -2099,7 +2731,10 @@
    "origin": "docx",
    "file": "hx-210-鲜血超人的阴谋-薇薇安的吟唱.md",
    "chars": 4615,
-   "source_hash": "15d8bc20e23d8cb8"
+   "source_hash": "15d8bc20e23d8cb8",
+   "date": "2026-06-03 23:42:20",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-211",
@@ -2109,7 +2744,10 @@
    "origin": "群聊",
    "file": "hx-211-最后一个客人.md",
    "chars": 1331,
-   "source_hash": "4c6e0625b413f30f"
+   "source_hash": "4c6e0625b413f30f",
+   "date": "2022-11-19 03:30:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-212",
@@ -2119,7 +2757,10 @@
    "origin": "群聊",
    "file": "hx-212-未能诞生的情敌.md",
    "chars": 2106,
-   "source_hash": "f9bf9e1078d061bd"
+   "source_hash": "f9bf9e1078d061bd",
+   "date": "2022-12-15 05:25:56",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-213",
@@ -2129,7 +2770,10 @@
    "origin": "群聊",
    "file": "hx-213-抽象骡子识别指南.md",
    "chars": 970,
-   "source_hash": "9fbadf6585d9d27a"
+   "source_hash": "9fbadf6585d9d27a",
+   "date": "2022-12-17 00:47:52",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-214",
@@ -2139,7 +2783,10 @@
    "origin": "群聊",
    "file": "hx-214-路絮评圣照会.md",
    "chars": 449,
-   "source_hash": "34b95e7e4311ff6c"
+   "source_hash": "34b95e7e4311ff6c",
+   "date": "2022-12-17 19:41:42",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-215",
@@ -2149,7 +2796,10 @@
    "origin": "群聊",
    "file": "hx-215-星都陨落-第一夜.md",
    "chars": 893,
-   "source_hash": "819ec70b09a551d3"
+   "source_hash": "819ec70b09a551d3",
+   "date": "2023-04-23 22:17:16",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-216",
@@ -2159,7 +2809,10 @@
    "origin": "群聊",
    "file": "hx-216-日升心理诊所的会议-上.md",
    "chars": 2882,
-   "source_hash": "69edd6a5e3e53478"
+   "source_hash": "69edd6a5e3e53478",
+   "date": "2023-07-01 00:20:04",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-217",
@@ -2169,7 +2822,10 @@
    "origin": "群聊",
    "file": "hx-217-日升心理诊所的会议-下.md",
    "chars": 2793,
-   "source_hash": "7507b3fd613bb638"
+   "source_hash": "7507b3fd613bb638",
+   "date": "2023-07-01 00:20:38",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-218",
@@ -2179,7 +2835,10 @@
    "origin": "群聊",
    "file": "hx-218-陆柩与李伊的单独谈话.md",
    "chars": 3334,
-   "source_hash": "e3f2faa506830247"
+   "source_hash": "e3f2faa506830247",
+   "date": "2023-07-06 01:28:04",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-219",
@@ -2189,7 +2848,10 @@
    "origin": "群聊",
    "file": "hx-219-绝不背叛联名书.md",
    "chars": 2072,
-   "source_hash": "d8627055bbeb2f91"
+   "source_hash": "d8627055bbeb2f91",
+   "date": "2023-07-17 22:03:56",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-220",
@@ -2199,7 +2861,10 @@
    "origin": "群聊",
    "file": "hx-220-叶心突击走访致公小学.md",
    "chars": 3441,
-   "source_hash": "33c172353a5a8259"
+   "source_hash": "33c172353a5a8259",
+   "date": "2023-07-23 20:16:06",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-221",
@@ -2209,7 +2874,10 @@
    "origin": "群聊",
    "file": "hx-221-南塔镇会谈.md",
    "chars": 2915,
-   "source_hash": "89a561d8da4cce4f"
+   "source_hash": "89a561d8da4cce4f",
+   "date": "2023-07-31 18:29:06",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-222",
@@ -2219,7 +2887,10 @@
    "origin": "群聊",
    "file": "hx-222-精英区的幽蓝火焰.md",
    "chars": 2789,
-   "source_hash": "3f5b55147d607b24"
+   "source_hash": "3f5b55147d607b24",
+   "date": "2025-07-04 00:52:08",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-223",
@@ -2229,7 +2900,10 @@
    "origin": "群聊",
    "file": "hx-223-天台上的一瓶汽水.md",
    "chars": 1936,
-   "source_hash": "ff0888f892bba05c"
+   "source_hash": "ff0888f892bba05c",
+   "date": "2025-12-15 22:55:41",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-224",
@@ -2239,7 +2913,10 @@
    "origin": "群聊",
    "file": "hx-224-蛛眼小队的玉横山之行.md",
    "chars": 3629,
-   "source_hash": "3436b76dca70972d"
+   "source_hash": "3436b76dca70972d",
+   "date": "2026-01-31 00:36:38",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-225",
@@ -2249,7 +2926,10 @@
    "origin": "群聊",
    "file": "hx-225-两台强人工智能的寒暄.md",
    "chars": 2177,
-   "source_hash": "055136ffae71f58c"
+   "source_hash": "055136ffae71f58c",
+   "date": "2026-03-25 12:35:40",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-226",
@@ -2259,7 +2939,10 @@
    "origin": "群聊",
    "file": "hx-226-如果北沙与青都开战.md",
    "chars": 1083,
-   "source_hash": "7060c46257da6dc5"
+   "source_hash": "7060c46257da6dc5",
+   "date": "2026-04-10 20:57:45",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-227",
@@ -2269,7 +2952,10 @@
    "origin": "群聊",
    "file": "hx-227-笼中鸟-何时飞.md",
    "chars": 2886,
-   "source_hash": "1589d6aa0519c311"
+   "source_hash": "1589d6aa0519c311",
+   "date": "2026-04-21 21:58:45",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-228",
@@ -2279,7 +2965,10 @@
    "origin": "群聊",
    "file": "hx-228-笼中鸟的困兽之斗.md",
    "chars": 1715,
-   "source_hash": "3f120f5f78420a0a"
+   "source_hash": "3f120f5f78420a0a",
+   "date": "2026-04-22 23:10:11",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-229",
@@ -2289,7 +2978,10 @@
    "origin": "群聊",
    "file": "hx-229-川崎罗的规矩.md",
    "chars": 1018,
-   "source_hash": "a11a3578e0b2bbb5"
+   "source_hash": "a11a3578e0b2bbb5",
+   "date": "2026-04-30 00:13:30",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-230",
@@ -2299,7 +2991,10 @@
    "origin": "群聊",
    "file": "hx-230-我直到现在也讨厌你.md",
    "chars": 1088,
-   "source_hash": "6b9569c1525e734d"
+   "source_hash": "6b9569c1525e734d",
+   "date": "2026-04-30 00:42:21",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-231",
@@ -2309,7 +3004,10 @@
    "origin": "群聊",
    "file": "hx-231-川崎罗论川式死仇.md",
    "chars": 2146,
-   "source_hash": "ae6d2fd1057f1254"
+   "source_hash": "ae6d2fd1057f1254",
+   "date": "2026-04-30 11:06:02",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-232",
@@ -2319,7 +3017,10 @@
    "origin": "群聊",
    "file": "hx-232-倒带-鸣的絮叨.md",
    "chars": 1729,
-   "source_hash": "652d9a166c33ec03"
+   "source_hash": "652d9a166c33ec03",
+   "date": "2026-05-02 08:38:26",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-233",
@@ -2329,7 +3030,10 @@
    "origin": "群聊",
    "file": "hx-233-不存在的告白.md",
    "chars": 949,
-   "source_hash": "c704e99d12c7f4fe"
+   "source_hash": "c704e99d12c7f4fe",
+   "date": "2026-05-02 08:38:26",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-234",
@@ -2339,7 +3043,10 @@
    "origin": "群聊",
    "file": "hx-234-如果镜缘毁了西沙.md",
    "chars": 2021,
-   "source_hash": "ee5597c5286c3410"
+   "source_hash": "ee5597c5286c3410",
+   "date": "2026-05-02 09:15:01",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-235",
@@ -2349,7 +3056,10 @@
    "origin": "群聊",
    "file": "hx-235-西娜和叶心的爱恨情仇.md",
    "chars": 2916,
-   "source_hash": "f5bdd3f5fc27d5b3"
+   "source_hash": "f5bdd3f5fc27d5b3",
+   "date": "2026-05-05 22:46:03",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-236",
@@ -2359,7 +3069,10 @@
    "origin": "群聊",
    "file": "hx-236-西沙孤儿院.md",
    "chars": 4092,
-   "source_hash": "e9565be35becaefa"
+   "source_hash": "e9565be35becaefa",
+   "date": "2026-07-19 23:13:32",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-237",
@@ -2369,7 +3082,10 @@
    "origin": "群聊",
    "file": "hx-237-阿拉莎咨询涌哥餐饮.md",
    "chars": 2571,
-   "source_hash": "1c9b178c33bf4a31"
+   "source_hash": "1c9b178c33bf4a31",
+   "date": "2026-08-06 11:14:18",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-238",
@@ -2379,7 +3095,10 @@
    "origin": "群聊",
    "file": "hx-238-蛛眼与美之居的少女.md",
    "chars": 3541,
-   "source_hash": "abe3dcf210f71010"
+   "source_hash": "abe3dcf210f71010",
+   "date": "2026-08-10 01:31:35",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-239",
@@ -2389,7 +3108,10 @@
    "origin": "群聊",
    "file": "hx-239-蛛眼招募阳戬.md",
    "chars": 414,
-   "source_hash": "fdf9424cdfd992a0"
+   "source_hash": "fdf9424cdfd992a0",
+   "date": "2026-08-10 23:46:11",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-240",
@@ -2399,7 +3121,10 @@
    "origin": "群聊",
    "file": "hx-240-革命需要恐怖.md",
    "chars": 862,
-   "source_hash": "59d679f12972c031"
+   "source_hash": "59d679f12972c031",
+   "date": "2026-08-10 23:47:10",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-241",
@@ -2409,7 +3134,10 @@
    "origin": "群聊",
    "file": "hx-241-如果西娜和蛛眼论革命.md",
    "chars": 1397,
-   "source_hash": "1043bf8c673cd3bd"
+   "source_hash": "1043bf8c673cd3bd",
+   "date": "2026-08-10 23:49:52",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-242",
@@ -2419,7 +3147,10 @@
    "origin": "群聊",
    "file": "hx-242-陆柩与蛛眼的三问.md",
    "chars": 1942,
-   "source_hash": "02c6f34f52754d1b"
+   "source_hash": "02c6f34f52754d1b",
+   "date": "2026-08-10 23:50:45",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-243",
@@ -2429,7 +3160,10 @@
    "origin": "群聊",
    "file": "hx-243-南塔镇精彩二打一.md",
    "chars": 3516,
-   "source_hash": "1d95d9ba577458b4"
+   "source_hash": "1d95d9ba577458b4",
+   "date": "2026-08-28 03:39:46",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-244",
@@ -2439,7 +3173,10 @@
    "origin": "群聊",
    "file": "hx-244-南塔镇精彩一挑三.md",
    "chars": 3170,
-   "source_hash": "5a7c6497ceb9df9d"
+   "source_hash": "5a7c6497ceb9df9d",
+   "date": "2026-08-29 17:33:54",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-245",
@@ -2449,7 +3186,10 @@
    "origin": "群聊",
    "file": "hx-245-良玉村扩张计划.md",
    "chars": 4225,
-   "source_hash": "621052ee04b66e09"
+   "source_hash": "621052ee04b66e09",
+   "date": "2026-09-24 03:25:02",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-246",
@@ -2459,7 +3199,10 @@
    "origin": "群聊",
    "file": "hx-246-两位当家的天台对谈-一.md",
    "chars": 4451,
-   "source_hash": "a23f04804c5996af"
+   "source_hash": "a23f04804c5996af",
+   "date": "2026-10-11 06:46:08",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-247",
@@ -2469,7 +3212,10 @@
    "origin": "群聊",
    "file": "hx-247-两位当家的天台对谈-二.md",
    "chars": 4442,
-   "source_hash": "28d1213062627d41"
+   "source_hash": "28d1213062627d41",
+   "date": "2026-10-11 11:25:28",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-248",
@@ -2479,7 +3225,10 @@
    "origin": "群聊",
    "file": "hx-248-两位当家的天台对谈-三.md",
    "chars": 4451,
-   "source_hash": "41e81b055c15311b"
+   "source_hash": "41e81b055c15311b",
+   "date": "2026-10-13 03:48:04",
+   "date_level": "A",
+   "date_note": ""
   },
   {
    "id": "hx-249",
@@ -2489,7 +3238,34 @@
    "origin": "群聊",
    "file": "hx-249-两位当家的天台对谈-四.md",
    "chars": 4443,
-   "source_hash": "965bb074b95a8519"
+   "source_hash": "965bb074b95a8519",
+   "date": "2026-10-14 06:05:14",
+   "date_level": "A",
+   "date_note": ""
+  },
+  {
+   "id": "hx-250",
+   "title": "楔子：白夜瞳的疾速追杀",
+   "kind": "楔子",
+   "collection": "未收录补录",
+   "origin": "群聊",
+   "file": "hx-250-白夜瞳的疾速追杀.md",
+   "chars": 4491,
+   "date": "2026-11-10 10:04:00",
+   "date_level": "A",
+   "source_hash": "b2bf2b11af437ae2"
+  },
+  {
+   "id": "hx-251",
+   "title": "楔子：齐藤的奥德赛时期",
+   "kind": "楔子",
+   "collection": "未收录补录",
+   "origin": "群聊",
+   "file": "hx-251-齐藤的奥德赛时期.md",
+   "chars": 4449,
+   "date": "2026-11-10 12:47:38",
+   "date_level": "A",
+   "source_hash": "1ebb8ad11ab3254a"
   }
  ]
 }

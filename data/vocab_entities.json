@@ -917,6 +917,12 @@
     "青灯镇"
    ],
    "evidence": "青灯镇山区，劳动党游击队“大厅”"
+  },
+  {
+   "tag": "第一特区",
+   "entries": 2,
+   "variants": [],
+   "evidence": "青都，第一特区，一间小烟花店（hx-250）"
   }
  ],
  "facilities": [
@@ -1261,16 +1267,6 @@
    "variants": [],
    "match_keys": [
     "星都篇"
-   ],
-   "source": "合集映射",
-   "evidence": ""
-  },
-  {
-   "tag": "第一特区",
-   "entries": 0,
-   "variants": [],
-   "match_keys": [
-    "第一特区"
    ],
    "source": "合集映射",
    "evidence": ""

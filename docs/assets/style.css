@@ -172,3 +172,23 @@ background:var(--card);border-radius:0 8px 8px 0;color:var(--muted);font-size:.8
 
 @media(max-width:640px){main{padding:1rem .8rem 3rem}#q{min-width:9rem}
 .q-results{min-width:16rem;right:-1rem}.entry-list li{flex-direction:column;gap:.1rem}}
+
+/* ── 创作时间 ───────────────────────────────────────────── */
+/* 条目页 meta 里的日期；带 title 提示证据等级，不强加视觉重量 */
+.edate{white-space:nowrap}
+/* 「按创作时间」页 */
+.quick-link{align-self:center;margin-left:.4rem;padding:.18rem .7rem;border-radius:99px;
+border:1px solid var(--accent2);color:var(--accent2);font-size:.86rem}
+.quick-link:hover{text-decoration:none;border-color:var(--accent);color:var(--accent)}
+.time-page h1{margin:.3rem 0 .5rem}.time-year{margin:1.6rem 0 0}
+.time-year h2{font-size:1.02rem;margin:.2rem 0 .5rem;display:flex;gap:.6rem;
+align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:.3rem}
+.time-list{list-style:none;padding:0;margin:0}
+.time-list li{display:flex;gap:.55rem;align-items:baseline;flex-wrap:wrap;
+padding:.22rem 0;border-bottom:1px dashed var(--line);font-size:.94rem}
+.time-list li:last-child{border-bottom:0}
+.time-list .d{color:var(--muted);font-size:.86rem;min-width:6.2rem}
+.time-list a{flex:1 1 18rem}
+.time-list .muted{font-size:.82rem}
+.est{display:inline-block;padding:0 .35rem;border:1px solid var(--muted);
+border-radius:99px;color:var(--muted);font-size:.72rem}
