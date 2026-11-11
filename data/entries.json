@@ -1,5 +1,5 @@
 {
- "entry_count": 251,
+ "entry_count": 252,
  "entries": [
   {
    "id": "hx-001",
@@ -2881,16 +2881,16 @@
   },
   {
    "id": "hx-222",
-   "title": "花絮：精英区的幽蓝火焰",
+   "title": "花絮：普通而平凡的一生",
    "kind": "花絮",
    "collection": "未收录补录",
    "origin": "群聊",
-   "file": "hx-222-精英区的幽蓝火焰.md",
-   "chars": 2789,
-   "source_hash": "3f5b55147d607b24",
-   "date": "2025-07-04 00:52:08",
+   "file": "hx-222-普通而平凡的一生.md",
+   "chars": 4725,
+   "source_hash": "e88cae6b982c2736",
+   "date": "2026-09-27 00:00:00",
    "date_level": "A",
-   "date_note": ""
+   "date_note": "作者 2026-11-11 指定；旧稿《精英区的幽蓝火焰》与 hx-145 重复，撤下"
   },
   {
    "id": "hx-223",
@@ -3266,6 +3266,18 @@
    "date": "2026-11-10 12:47:38",
    "date_level": "A",
    "source_hash": "1ebb8ad11ab3254a"
+  },
+  {
+   "id": "hx-252",
+   "title": "楔子：齐藤不死我们都得死",
+   "kind": "楔子",
+   "collection": "未收录补录",
+   "origin": "群聊",
+   "file": "hx-252-齐藤不死我们都得死.md",
+   "chars": 3642,
+   "date": "2026-08-14 23:26:41",
+   "date_level": "A",
+   "source_hash": "3b9727603b0cb1af"
   }
  ]
 }
